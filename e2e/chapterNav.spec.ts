@@ -24,6 +24,25 @@ test("chapter nav reaches every chapter and highlights the active one, with no c
   expect(errors).toEqual([]);
 });
 
+test("CTY-UX-001 regression: the nav highlights '01 Observed world' on fresh load and through the whole intro, not '02 Treatment'", async ({
+  page,
+}) => {
+  // An independent adversarial review found this live: #intro-section mounts conditionally on an
+  // async fetch (IntroSequence.tsx's own `load.status === "ready"` gate) while ch2..ch6 mount
+  // unconditionally, so useActiveChapter's own first setup pass found 5 of 6 ids and permanently
+  // excluded intro-section from observation. Result: the nav highlighted "02 Treatment" from the
+  // very first paint, through the entire intro, and into chapter 2's own section, before "01
+  // Observed world" was ever shown as active, confirmed with a real scroll sweep.
+  await page.goto("/");
+  await expect(page.getByTestId("did-result")).toBeVisible();
+
+  await expect(page.getByTestId("nav-intro-section")).toHaveAttribute("data-active", "true");
+
+  const introBottom = await page.locator("#intro-section").evaluate((el) => el.getBoundingClientRect().bottom + window.scrollY);
+  await page.evaluate((y) => window.scrollTo({ top: y * 0.5, behavior: "auto" }), introBottom);
+  await expect(page.getByTestId("nav-intro-section")).toHaveAttribute("data-active", "true");
+});
+
 test("Reset Scenario in the nav is reachable and works from anywhere on the page", async ({ page }) => {
   await page.goto("/");
   await expect(page.getByTestId("did-result")).toBeVisible();

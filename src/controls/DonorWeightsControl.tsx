@@ -7,22 +7,25 @@ import { useScenario } from "../engine/ScenarioContext";
 export function DonorWeightsControl() {
   const { sc, scError, scenario, weightsRevision, setDonorWeight, applyDonorWeights, clearDonorWeights } =
     useScenario();
-  if (scError) {
-    return (
-      <fieldset>
-        <legend>4. Synthetic control weights</legend>
-        <p className="error" role="alert" data-testid="sc-error">
-          {scError}
-        </p>
-      </fieldset>
-    );
-  }
   if (!sc) return null;
   const donorZones = Object.keys(sc.weights).map(Number).sort((a, b) => a - b);
   const isCustom = scenario.donorWeights !== undefined;
   return (
     <fieldset>
       <legend>4. Synthetic control weights</legend>
+      {scError && (
+        // A real dead end an independent adversarial review found: this error used to REPLACE the
+        // entire control (all sliders + Apply button gone from the DOM), the only way back was an
+        // undocumented workaround (touching an unrelated control elsewhere on the page) or the
+        // global Reset Scenario, which discards unrelated scenario state too. The sliders below now
+        // always render (ScenarioContext.tsx keeps the last successfully computed `sc` around
+        // specifically so this control surface never has to disappear), so the error is a banner
+        // next to a still-usable control, not a dead end.
+        <p className="error" role="alert" data-testid="sc-error">
+          {scError} Adjust the sliders below so they sum to 1, or use auto-fit weights, and apply
+          again.
+        </p>
+      )}
       <p className="hint">
         {isCustom ? "Custom weights applied." : "Auto-fit weights (minimizing pre-period error)."} Pre-period fit
         error (RMSPE): {sc.preRmspe.toFixed(1)}.

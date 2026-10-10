@@ -28,10 +28,11 @@ npm run build      # production build (tsc -b && vite build)
 npm run preview     # serve the production build locally
 ```
 
-Python oracle / analytical tests (uses a local `.venv`; the generator and reference estimator live
-in `analysis/`):
+Python oracle / analytical tests (the generator and reference estimator live in `analysis/`):
 
 ```bash
+python3 -m venv .venv
+.venv/bin/pip install -r requirements.txt
 .venv/bin/python -m pytest analysis/validation/ -q
 ```
 

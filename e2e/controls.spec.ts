@@ -88,6 +88,24 @@ test("CTY-INT-004: applying custom donor weights recomputes the synthetic-contro
   await expect(page.getByTestId("sc-error")).toBeVisible();
   await expect(page.getByTestId("sc-error")).toContainText("sum to 1");
 
+  // Regression for a real dead end an independent adversarial review found: the error used to
+  // REPLACE the entire control, all sliders and the Apply button disappeared from the DOM, with
+  // no in-place way to fix the input and retry. The sliders must still be present and usable
+  // right here, and reapplying a valid vector must clear the error without needing Reset Scenario
+  // (which would also discard the narrowed control pool set up above).
+  await expect(page.locator('input[aria-label^="Donor weight for zone"]')).toHaveCount(2);
+  // The failed apply's own remount lands each slider's defaultValue back at the last GOOD
+  // weights (0.5/0.5, see ScenarioContext.tsx's own `lastGoodSc` fallback), so setting them to
+  // 0.5/0.5 again would be a same-value no-op: React's own input value-tracking suppresses a
+  // synthetic input event when the externally-set value matches what's already on the node,
+  // independent of this app's own code. Use a different valid split (0.4/0.6) to force a real
+  // change.
+  await setRangeValue(page.locator('input[aria-label^="Donor weight for zone"]').nth(0), "0.4");
+  await setRangeValue(page.locator('input[aria-label^="Donor weight for zone"]').nth(1), "0.6");
+  await page.getByRole("button", { name: /apply weights/i }).click();
+  await expect(page.getByTestId("sc-error")).toHaveCount(0);
+  await expect(page.locator('input[aria-label^="Donor weight for zone"]')).toHaveCount(2);
+
   // The DiD section (a separate, independent computation) must still be intact, not crashed by
   // the synthetic-control section's own validation error.
   await expect(page.getByTestId("did-result")).toBeVisible();

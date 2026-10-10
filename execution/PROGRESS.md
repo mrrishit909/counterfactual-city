@@ -478,12 +478,63 @@ This fix has NOT yet been judged by an independent reviewer (see LIMITATIONS.md'
 126/126 Playwright across repeated full runs, 35/35 Vitest, tsc/oxlint clean. This full-requirement
 completion pass has NOT yet been independently reviewed.
 
-## Stage 4-9 remaining: independent review, release acceptance
+## Required documentation set
 
-Not yet done: a fresh, worktree-isolated, independent adversarial review with no access to this
-session's own notes (this session's `CTY-MOTION-001` completion above is exactly the kind of
-self-reported work that review exists to check); a final requirements matrix / limitations / case
-study / performance doc / release acceptance report pass.
+**DONE.** `README.md` was still the unedited Vite scaffold template; `ARCHITECTURE.md`,
+`VISUAL_DESIGN.md`, `MOTION_SYSTEM.md`, `DATA_SOURCES.md`, `TESTING.md`, `DEPLOYMENT.md` didn't
+exist at all. All 6 written from the real, current state of the project. Also added
+`verification/RELEASE_ACCEPTANCE.md` (the release gate, row by row, honest partial/done verdicts)
+and `verification/CASE_STUDY.md` (a portfolio-ready draft, not published anywhere).
+
+## Independent, worktree-isolated adversarial review
+
+**DONE.** A fresh subagent, isolated in its own git worktree, with explicit instructions not to
+read this file, `git log`, or any `note:` field in `REQUIREMENTS.yaml`. Full report:
+`verification/INDEPENDENT_ADVERSARIAL_REVIEW.md`. It independently re-ran the entire verification
+suite from a clean `npm install` (tsc, oxlint, 35/35 Vitest, production build, 126/126 Playwright,
+confirmed these really target the production preview build) and found:
+
+- **1 P0**: the chapter nav never highlighted "01 Observed world," showing "02 Treatment" as active
+  from the very first paint through the entire intro and ~65% of chapter 2. Root cause:
+  `useActiveChapter.ts`'s own retry logic only re-ran setup when ZERO section ids were found on its
+  first pass; since `#intro-section` mounts conditionally (on an async fetch) while `ch2..ch6`
+  mount unconditionally, the first pass reliably found 5 of 6 ids, "succeeded" by the old check,
+  and permanently excluded the intro from observation once it mounted later. **Fixed**: retry until
+  every id is present, not just until any are.
+- **2 P1s**: (a) the donor-weights control (chapter 4) had no in-place recovery from an invalid
+  weights error, the error used to replace the ENTIRE control (23 sliders + Apply button, confirmed
+  0 sliders remained in the DOM) with no retry affordance; **fixed** by having `ScenarioContext.tsx`
+  retain the last successfully computed synthetic-control result during an error state, so the
+  control surface never disappears, the error renders as a banner next to still-usable sliders. (b)
+  no `requirements.txt` existed for the Python oracle, so `CTY-MATH-001`'s own parity evidence
+  wasn't reproducible from a clean checkout; **fixed**, verified against a genuinely fresh venv.
+- **2 P2s**: the pretrend-diagnostic badge was the only numeric result without the shared
+  `ResultCaveat`; **fixed** with a new `pretrend-diagnostic` caveat kind. CTY-INT-006 (change
+  outcome) was the only control with zero local feedback, the effect was only ever visible in
+  chapter 2's own panel; **fixed** with a small local readout in chapter 6 itself.
+- **Confirmed fixed, re-tested with fresh evidence**: every defect this session's own earlier
+  self-reviews and independent review had already reported (the shared-skeleton chapters, the
+  mobile-overflow bug, the collapsed-chart-on-mobile bug, the missing flagship chart, the global
+  contrast regression), all re-checked live by this reviewer with real screenshots/measurements/
+  axe-core, all correct.
+
+Every fix above was reproduced against the pre-fix code first (`git stash`, confirmed a dedicated
+regression test fails, then restored the fix and confirmed it passes), per this project's own
+reproduce-before-fix discipline. One of the new regression tests itself needed a fix along the way:
+a slider-recovery test set a slider back to the exact value it already held post-remount, which
+React's own input value-tracking silently swallows (a known React/testing-library quirk, not a
+product bug), fixed by using a different valid value instead.
+
+128/128 Playwright across repeated full runs (the pre-existing CPU-contention flake class remains,
+documented above, unrelated), 35/35 Vitest, 25/25 Python (now reproducible from a clean venv),
+tsc/oxlint clean.
+
+## Stage 4-9 remaining: a second review pass on this round's own fixes, final release decision
+
+This session's own fixes above have not themselves been re-reviewed by a THIRD independent pass.
+The pattern every review round in this project has shown: each one finds something the last one
+missed. `verification/RELEASE_ACCEPTANCE.md` is the current honest state against the full release
+gate; deployment remains withheld pending explicit authorization, not a known blocking defect.
 
 ## Decision log (append here, do not re-litigate once recorded)
 

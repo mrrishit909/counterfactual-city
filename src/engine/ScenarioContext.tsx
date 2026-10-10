@@ -1,4 +1,4 @@
-import { createContext, useCallback, useContext, useEffect, useMemo, useState, type ReactNode } from "react";
+import { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState, type ReactNode } from "react";
 import { diffInDiff, pretrendDiagnostic, runPlaceboTest, syntheticControl } from "./estimators";
 import { loadPanel } from "./loadPanel";
 import type {
@@ -112,6 +112,15 @@ export function ScenarioProvider({ children }: { children: ReactNode }) {
     }
   }, [load, scenario]);
 
+  // An independent adversarial review found a real dead end: when an applied donor-weights vector
+  // is invalid (doesn't sum to 1), `sc` used to go straight to `null` alongside `scError`, which
+  // made DonorWeightsControl's own early-return-on-error branch drop all 23 sliders and the Apply
+  // button from the DOM entirely, with no control left to fix the invalid input and retry other
+  // than touching an unrelated control elsewhere on the page (undocumented) or the global Reset
+  // Scenario (which discards unrelated state too). Keeping the LAST successfully computed `sc`
+  // around during an error state lets the UI show "last known good result, here's the error,
+  // here are the same sliders to fix it" instead of erasing the whole control surface.
+  const lastGoodSc = useRef<SyntheticControlResult | null>(null);
   const { sc, scError } = useMemo<{ sc: SyntheticControlResult | null; scError: string | null }>(() => {
     if (load.status !== "ready" || !scenario) return { sc: null, scError: null };
     try {
@@ -134,9 +143,10 @@ export function ScenarioProvider({ children }: { children: ReactNode }) {
         pool,
         weightsArray,
       );
+      lastGoodSc.current = r;
       return { sc: r, scError: null };
     } catch (e) {
-      return { sc: null, scError: e instanceof Error ? e.message : String(e) };
+      return { sc: lastGoodSc.current, scError: e instanceof Error ? e.message : String(e) };
     }
   }, [load, scenario, allZones]);
 

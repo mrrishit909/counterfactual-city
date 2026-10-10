@@ -11,12 +11,16 @@
 // previously said "Fitted estimate" even next to the synthetic-control gap (a counterfactual
 // inference, not a point estimate fit to data the same way DiD's ATT is) and the placebo rank
 // (a permutation-test diagnostic, not an estimate of anything).
-type ResultKind = "fitted-estimate" | "counterfactual-gap" | "permutation-diagnostic";
+type ResultKind = "fitted-estimate" | "counterfactual-gap" | "permutation-diagnostic" | "pretrend-diagnostic";
 
 const KIND_TEXT: Record<ResultKind, string> = {
   "fitted-estimate": "Fitted estimate, not a proven causal effect",
   "counterfactual-gap": "Counterfactual inference (what the data implies would have happened absent treatment), not an observed measurement",
   "permutation-diagnostic": "A permutation-test diagnostic, not an estimate of the effect itself",
+  // An independent adversarial review found the pretrend badge was the only numeric result on the
+  // page without this shared caveat. It is its own kind, not a permutation test: a slope
+  // significance test on the pre-period gap between treated and control zones.
+  "pretrend-diagnostic": "A pre-period slope-significance test, not an estimate of the post-period effect",
 };
 
 export function ResultCaveat({ kind = "fitted-estimate" }: { kind?: ResultKind }) {

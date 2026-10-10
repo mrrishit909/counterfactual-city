@@ -149,7 +149,15 @@ controls that drive it; see `execution/PROGRESS.md`'s own Stage 4 entry). `CTY-M
 requirement is now done too (reverse-scroll, reduced-motion captures at every breakpoint for every
 chapter, real scroll recordings + contact sheets, a real production-build frame-pacing
 measurement, functional scenario consistency while scrolling; see `execution/PROGRESS.md`'s own
-entry), though NOT yet independently reviewed. Still not built: the rest of the real visual-design
+entry). A worktree-isolated independent adversarial review has since run against this build (see
+`verification/INDEPENDENT_ADVERSARIAL_REVIEW.md`) and found and this session fixed 1 P0 (the
+chapter nav never highlighted the intro as active), 2 P1s (a dead-end error state in the
+donor-weights control; no reproducible Python test setup), and 2 P2s (a missing result caveat; a
+control with no local feedback), see `execution/PROGRESS.md`'s own entry for the full detail. This
+round's own fixes have NOT yet been independently re-reviewed by a further pass; every review round
+on this project so far has found something the last one missed, so treat the current state as
+"adversarially tested once, not exhaustively verified," not a final clean bill. Still not built:
+the rest of the real visual-design
 pass (varied block treatment, asymmetric composition, texture/depth cues beyond the palette re-skin
 and the cross-chapter-distinctiveness work in chapters 3 and 5 above), 3D/spatial rendering (if
 justified by measurement), responsive compositions per-chapter beyond chapters 1-6's own 3

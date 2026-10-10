@@ -3,6 +3,7 @@ import { PlaceboControl } from "../controls/PlaceboControl";
 import { useScenario } from "../engine/ScenarioContext";
 import { CityStage } from "./CityStage";
 import { VIEWBOX_HEIGHT, VIEWBOX_WIDTH } from "./cityLayout";
+import { ResultCaveat } from "./ResultCaveat";
 import { useScene } from "./useScene";
 
 const SCENE_ID = "ch5";
@@ -11,11 +12,16 @@ function PretrendBadge() {
   const { pretrend } = useScenario();
   if (!pretrend) return null;
   return (
-    <p className="hint" data-testid="pretrend-badge" data-passes={pretrend.passes}>
-      Pretrend diagnostic: {pretrend.passes ? "PASS" : "FAIL"} (slope p-value{" "}
-      {pretrend.slopePvalue.toFixed(3)}). A significant pre-trend means the parallel-trends
-      assumption is suspect for this treated unit and donor pool.
-    </p>
+    <>
+      <p className="hint" data-testid="pretrend-badge" data-passes={pretrend.passes}>
+        Pretrend diagnostic: {pretrend.passes ? "PASS" : "FAIL"} (slope p-value{" "}
+        {pretrend.slopePvalue.toFixed(3)}). A significant pre-trend means the parallel-trends
+        assumption is suspect for this treated unit and donor pool.
+      </p>
+      {/* An independent adversarial review found this was the only numeric result on the page
+          without the shared caveat every other one carries. */}
+      <ResultCaveat kind="pretrend-diagnostic" />
+    </>
   );
 }
 

@@ -4,7 +4,7 @@
 
 | Suite | Command | Covers |
 |---|---|---|
-| Python oracle | `.venv/bin/python -m pytest analysis/validation/ -q` | The reference DiD/synthetic-control/placebo/pretrend implementation, 25 golden + boundary cases. Source of truth for TS parity. |
+| Python oracle | `python3 -m venv .venv && .venv/bin/pip install -r requirements.txt && .venv/bin/python -m pytest analysis/validation/ -q` | The reference DiD/synthetic-control/placebo/pretrend implementation, 25 golden + boundary cases. Source of truth for TS parity. An independent adversarial review found this was previously NOT reproducible from a clean checkout (`requirements.txt` didn't exist); fixed and re-verified against a genuinely fresh venv. |
 | Vitest | `npx vitest run` | `src/engine/estimators.test.ts` (TS-vs-Python parity), `src/scenes/*.test.ts` (pure functions: `cityLayout`, `resultVisualEncoding`), `src/App.test.tsx` (`DiDResultPanel` + `InterventionDateControl` composition, jsdom-safe, no GSAP/ScrollTrigger). 35 tests total. |
 | Playwright e2e | `npx playwright test` | Against the PRODUCTION PREVIEW build (`playwright.config.ts`'s own `webServer: npm run preview`), never a dev server. ~126 tests across the files below. |
 | Typecheck | `npx tsc -b` |, |

@@ -17,7 +17,16 @@ export function useActiveChapter(ids: string[]): string {
     let mo: MutationObserver | null = null;
     const trySetup = (): boolean => {
       const els = ids.map((id) => document.getElementById(id)).filter((e): e is HTMLElement => e !== null);
-      if (els.length === 0) return false;
+      // A real bug an independent adversarial review found: this used to retry only when ZERO
+      // ids were found, but in this app #intro-section mounts conditionally on an async fetch
+      // (IntroSequence.tsx's own `load.status === "ready"` gate) while ch2..ch6 mount
+      // unconditionally, so the FIRST call here reliably finds 5 of 6 ids, "succeeds" by the old
+      // zero-only check, and permanently excludes intro-section from observation once it mounts
+      // later (confirmed live: the nav highlighted "02 Treatment" from scrollY 0, through the
+      // entire intro, and into ~65% of chapter 2, never once showing the intro as active).
+      // Retrying until every id is present, not just until any are, fixes this for any chapter
+      // whose own mount timing is conditional, not only this specific one.
+      if (els.length < ids.length) return false;
       io = new IntersectionObserver(
         (entries) => {
           for (const e of entries) ratios.current.set(e.target.id, e.isIntersecting ? e.intersectionRatio : 0);

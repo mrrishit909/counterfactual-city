@@ -3,9 +3,32 @@ import { OutcomeControl } from "../controls/OutcomeControl";
 import { useScenario } from "../engine/ScenarioContext";
 import { CityStage } from "./CityStage";
 import { VIEWBOX_HEIGHT, VIEWBOX_WIDTH } from "./cityLayout";
+import { unitForOutcome } from "./resultVisualEncoding";
 import { useScene } from "./useScene";
 
 const SCENE_ID = "ch6";
+
+// An independent adversarial review found CTY-INT-006 (change outcome) was the only one of the 6
+// controls with zero local feedback: switching the outcome series here DOES trigger a real
+// recomputation, but the only place it was ever visible was chapter 2's own DiDResultPanel,
+// several thousand pixels back up the page, already scrolled past by the time a visitor reaches
+// the last chapter. This small readout closes that gap without duplicating DiDResultPanel's own
+// full breakdown (pre/post means for both groups): just the one number this control's own change
+// most directly affects.
+function OutcomePreview() {
+  const { did, scenario } = useScenario();
+  if (!did) return null;
+  const unit = unitForOutcome(scenario.outcome);
+  return (
+    <p className="hint" data-testid="ch6-outcome-preview">
+      Recomputed DiD estimate (ATT) for this outcome:{" "}
+      <strong data-testid="ch6-outcome-att">
+        {did.att.toFixed(1)} {unit}
+      </strong>
+      . Full breakdown in chapter 2.
+    </p>
+  );
+}
 
 /**
  * Chapter 6: "limitations" (dossier naming), the "editorial, text-led" archetype
@@ -66,6 +89,7 @@ export function Chapter6Limitations() {
             <CityStage ref={stageRef} instanceId="ch6" nZones={24} treatedZone={scenario.treatedZone} />
           </div>
           <OutcomeControl />
+          <OutcomePreview />
         </div>
       </div>
     </section>

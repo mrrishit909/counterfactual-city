@@ -275,7 +275,13 @@ requirements:
     Independently verified (Stage 1 architecture review, verification/STAGE1_ARCHITECTURE_REVIEW.md):
     the reviewer independently re-ran the full pytest suite (25/25) and, separately, found the
     TS-side parity test's tolerance for synthetic-control ATT (40 units) far looser than the actual
-    achieved agreement (sub-1-unit on all 3 outcomes), tightened to 3 units as a result."
+    achieved agreement (sub-1-unit on all 3 outcomes), tightened to 3 units as a result.
+    A later worktree-isolated independent adversarial review found this gate's own evidence was NOT
+    actually reproducible: no requirements.txt (or any dependency manifest) existed anywhere in the
+    repo, so a fresh clone had no documented way to build the .venv the test recipe assumes. Added
+    requirements.txt (numpy/pandas/scipy/pyarrow/pytest, pinned to the exact versions this suite was
+    built and tested against), verified by installing into a genuinely fresh venv (not this
+    project's own long-lived .venv) and re-running the full suite: 25/25 passed."
   - id: CTY-UX-001
     project: "COUNTERFACTUAL CITY"
     priority: P0
@@ -305,7 +311,31 @@ requirements:
     Stage 4: the original <main> landmark (the standalone Lab section) was removed as part of lab
     integration; re-broke axe-core's landmark-one-main rule, re-fixed by making
     IntroSequence.tsx's own children wrapper (now holding all 6 chapters) the document's <main>
-    instead. Re-verified: 0 axe-core violations after the fix, same bar as before."
+    instead. Re-verified: 0 axe-core violations after the fix, same bar as before.
+    A worktree-isolated independent adversarial review (fresh reviewer, no access to this file's
+    own note fields or git history) found and this session fixed: (1) a P0 in ChapterNav's own
+    active-chapter highlighting (src/scenes/useActiveChapter.ts): #intro-section mounts
+    conditionally on an async fetch while ch2..ch6 mount unconditionally, so the hook's first setup
+    pass found 5 of 6 ids, 'succeeded' by its own old zero-only retry check, and permanently
+    excluded intro-section from observation, so the nav highlighted '02 Treatment' from the very
+    first paint through the entire intro and into chapter 2, '01 Observed world' was never shown
+    as active at any scroll position; fixed by retrying until every id is present, not just until
+    any are; (2) a P1 dead end in the donor-weights control (CTY-INT-004): an invalid-weights error
+    used to replace the ENTIRE control (23 sliders + Apply button) with just the error text, 0
+    sliders remained in the DOM, the only recovery paths were undocumented (touching an unrelated
+    control) or the global Reset Scenario (which discards unrelated scenario state too); fixed by
+    having ScenarioContext.tsx retain the last successfully computed synthetic-control result
+    during an error state so the control surface never has to disappear, the error now renders as a
+    banner next to a still-usable set of sliders; (3) a P2, the pretrend-diagnostic badge was the
+    only numeric result on the page without the shared ResultCaveat every other one carries, fixed
+    with a new 'pretrend-diagnostic' caveat kind; (4) a P2, CTY-INT-006 (change outcome) was the
+    only one of the 6 controls with zero local feedback, the recomputation was only ever visible in
+    chapter 2's own DiDResultPanel; fixed with a small local readout in chapter 6 itself. Each fix
+    reproduced against the pre-fix code first (git stash, confirmed the exact regression test fails,
+    then passes after restoring the fix). Also found and fixed: no requirements.txt existed for the
+    Python oracle, so CTY-MATH-001's own parity evidence was not reproducible from a clean checkout;
+    added one, verified against a genuinely fresh venv. 128/128 Playwright, 35/35 Vitest, 25/25
+    Python across repeated runs after all fixes."
   - id: CTY-MOTION-001
     project: "COUNTERFACTUAL CITY"
     priority: P0

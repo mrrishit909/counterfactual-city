@@ -50,6 +50,27 @@ test("changing the outcome variable in chapter 6 recomputes the ATT to a differe
   }).toPass();
 });
 
+test("CTY-UX regression: chapter 6's own outcome control shows a real local readout, not just a change several chapters back up the page", async ({
+  page,
+}) => {
+  // An independent adversarial review found CTY-INT-006 was the only one of the 6 controls with
+  // zero local feedback: the real recomputation was only ever visible in chapter 2's own
+  // DiDResultPanel, scrolled well past by the time a visitor reaches the last chapter.
+  await page.goto("/");
+  await scrollToChapter6(page);
+
+  await expect(page.getByTestId("ch6-outcome-preview")).toBeVisible();
+  const before = await page.getByTestId("ch6-outcome-att").textContent();
+
+  await page.locator("#outcome-select").selectOption("avg_speed_kmh");
+
+  await expect(async () => {
+    const after = await page.getByTestId("ch6-outcome-att").textContent();
+    expect(after).not.toBe(before);
+  }).toPass();
+  await expect(page.getByTestId("ch6-outcome-att")).toContainText("km/h");
+});
+
 test("state set elsewhere (treated zone) is still reflected on chapter 6's own stage", async ({ page }) => {
   await page.goto("/");
   const ch2Top = await page.locator("#ch2").evaluate((el) => el.getBoundingClientRect().top + window.scrollY);

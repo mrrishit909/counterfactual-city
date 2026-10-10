@@ -27,8 +27,8 @@ duplicate that record here; it is the source of truth).
 
 `analysis/models/estimators.py` is the independent Python reference implementation (DiD,
 synthetic-control via NNLS, placebo permutation test, pretrend diagnostic), tested directly in
-`analysis/validation/test_estimators.py` (25 tests: 9 golden cases plus boundary cases, run with
-`.venv/bin/python -m pytest analysis/validation/ -q`).
+`analysis/validation/test_estimators.py` (25 tests: 9 golden cases plus boundary cases; see
+`requirements.txt` and `TESTING.md` for the exact setup, reproducible from a clean checkout).
 
 `src/engine/estimators.ts` is the TypeScript port that actually runs in the browser. It is NOT a
 line-for-line translation: the Python side uses `scipy.optimize.nnls`; the TypeScript side uses a

@@ -1,0 +1,15 @@
+# Python dependencies for the analytical oracle (analysis/) and its own test suite
+# (analysis/validation/). An independent adversarial review found this file didn't exist, so the
+# repo's own documented run recipe ("source .venv/bin/activate && pytest analysis/validation/ -v")
+# was not actually reproducible from a clean checkout. Versions pinned to what this project was
+# built and tested against.
+#
+#   python3 -m venv .venv
+#   .venv/bin/pip install -r requirements.txt
+#   .venv/bin/python -m pytest analysis/validation/ -q
+
+numpy==2.5.3
+pandas==3.0.6
+scipy==1.18.1
+pyarrow==26.0.0
+pytest==9.1.1

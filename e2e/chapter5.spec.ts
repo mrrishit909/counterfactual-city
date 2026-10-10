@@ -28,6 +28,9 @@ test("chapter 5 hosts CTY-INT-005, with no console errors", async ({ page }) => 
   await expect(page.getByTestId("ch5-city-stage")).toBeVisible();
   await expect(page.getByTestId("run-placebo")).toBeVisible();
   await expect(page.getByTestId("pretrend-badge")).toBeVisible();
+  // An independent adversarial review found the pretrend badge was the only numeric result on
+  // the page without the shared ResultCaveat every other one carries.
+  await expect(page.locator(".result-caveat").filter({ hasText: /slope-significance test/i })).toBeVisible();
 
   expect(errors).toEqual([]);
 });
