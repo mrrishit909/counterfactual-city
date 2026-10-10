@@ -3,6 +3,11 @@
   --ink: #1c1c1a;
   --accent-red: #d65343;
   --accent-blue: #4b84c5;
+  /* A darkened variant of --accent-red for TEXT on --paper: the dossier's own accent red is only
+     3.56:1 against the paper background, below WCAG AA's 4.5:1 minimum for normal text (a real
+     axe-core finding from e2e/a11y.spec.ts). Decorative, non-text uses (slider accent-color) keep
+     --accent-red; any error/alert TEXT uses this. */
+  --accent-red-text: #9c2f20;
 }
 
 body {
@@ -59,5 +64,62 @@ button:hover {
 }
 
 .error {
-  color: var(--accent-red);
+  color: var(--accent-red-text);
+}
+
+fieldset {
+  border: 1px solid #d8d4c8;
+  padding: 0.75rem 1rem 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+legend {
+  font-weight: 600;
+  padding: 0 0.4rem;
+}
+
+.hint {
+  font-size: 0.85rem;
+  color: #55534c;
+  margin: 0;
+}
+
+.zone-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+}
+
+.zone-checkbox {
+  border: 1px solid #c9c4b6;
+  padding: 0.15rem 0.5rem;
+  font-size: 0.8rem;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+.weights-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+.weight-row {
+  display: grid;
+  grid-template-columns: 4.5rem 1fr 3rem;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.85rem;
+}
+
+.button-row {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.reset-button {
+  align-self: flex-start;
 }

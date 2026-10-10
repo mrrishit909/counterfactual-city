@@ -47,3 +47,28 @@ export interface DiDResult {
   postTreatedMean: number;
   postControlMean: number;
 }
+
+export interface SyntheticControlResult {
+  weights: Record<number, number>;
+  preRmspe: number;
+  gapByDay: Record<number, number>;
+  attPostMean: number;
+  treatedZone: number;
+  interventionDay: number;
+  outcome: Outcome;
+}
+
+export interface PlaceboResult {
+  realEffect: number;
+  placeboEffects: Record<number, number>;
+  rank: number;
+  nPlacebos: number;
+  pValue: number;
+}
+
+export interface PretrendResult {
+  slopeGap: number;
+  slopePvalue: number;
+  passes: boolean;
+  alpha: number;
+}

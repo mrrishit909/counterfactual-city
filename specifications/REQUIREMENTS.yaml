@@ -38,8 +38,15 @@ requirements:
     behavior: "select treated zone"
     owner: "data-ai-engineer + frontend-engineer"
     verification: ["unit:treated-group reassignment", "e2e:cty_treated_zone"]
-    status: unstarted
-    evidence_paths: []
+    status: implemented
+    evidence_paths: ["src/App.tsx", "src/engine/ScenarioContext.tsx", "e2e/controls.spec.ts"]
+    note: "A real select control (#treated-zone) updates scenario.treatedZone, which both diffInDiff
+    and syntheticControl recompute against immediately. Verified live in a real browser (real
+    recomputation confirmed via a direct DOM-level before/after ATT comparison) and with a
+    Playwright e2e test using selectOption (native <select> does not respond to synthetic
+    keyboard events in headless Chromium, the same tooling gap CASCADIA's own suite documents;
+    selectOption drives the browser's real selection model, not a React-level hack). Reset Scenario
+    restores baseline. Not yet independently verified by a separate reviewer."
   - id: CTY-INT-003
     project: "COUNTERFACTUAL CITY"
     priority: P0
@@ -50,8 +57,16 @@ requirements:
     behavior: "pick control pool"
     owner: "data-ai-engineer + frontend-engineer"
     verification: ["unit:donor-pool re-estimation", "e2e:cty_control_pool"]
-    status: unstarted
-    evidence_paths: []
+    status: implemented
+    evidence_paths: ["src/App.tsx", "src/engine/ScenarioContext.tsx", "e2e/controls.spec.ts", "LIMITATIONS.md"]
+    note: "A checkbox grid (one per non-treated zone) drives scenario.controlPool, an explicit
+    allow-list (empty = every non-treated zone; checking any zone switches to using only the
+    checked zones), disclosed in the control's own hint text and in LIMITATIONS.md. Both diffInDiff
+    and syntheticControl recompute against the resolved pool. Verified with keyboard-reachable
+    checkboxes, a real-browser before/after ATT check, a Playwright test covering check/uncheck
+    round-trip back to the 'use all zones' baseline, and a dedicated touch-emulated-context test
+    (hasTouch: true) confirming tap operability. Not yet independently verified by a separate
+    reviewer."
   - id: CTY-INT-004
     project: "COUNTERFACTUAL CITY"
     priority: P0
@@ -62,8 +77,21 @@ requirements:
     behavior: "adjust weights"
     owner: "data-ai-engineer + frontend-engineer"
     verification: ["unit:synthetic-control reconstruction", "e2e:cty_adjust_weights"]
-    status: unstarted
-    evidence_paths: []
+    status: implemented
+    evidence_paths: ["src/engine/estimators.ts", "src/engine/syntheticControl.test.ts", "src/App.tsx", "src/engine/ScenarioContext.tsx", "e2e/controls.spec.ts", "LIMITATIONS.md"]
+    note: "syntheticControl (CTY-MATH-001's TS port, parity-tested against the Python oracle) is
+    wired to an 'Apply weights' staged-edit flow: per-donor sliders stage a pendingWeights vector,
+    Apply validates it (non-negative, sums to 1 within WEIGHT_SUM_TOLERANCE) and, if invalid,
+    surfaces a visible error (sc-error) rather than crashing or silently miscomputing, confirmed
+    with a real Playwright test for both a valid exact-split application and an invalid
+    does-not-sum-to-1 vector. A real bug was found and fixed during this build: the weights-array
+    construction incorrectly skipped applying custom weights whenever the control pool was at its
+    default 'use all zones' value (undefined), because the guard required a defined explicit pool;
+    fixed by resolving the same effective pool the estimator defaults to internally before mapping
+    weights onto it. A second, narrower finding (rapid synchronous edits across 20+ sliders can
+    drop 1-2 updates) is disclosed in LIMITATIONS.md rather than silently worked around only in the
+    test. Reset Scenario restores the original auto-fit. Not yet independently verified by a
+    separate reviewer."
   - id: CTY-INT-005
     project: "COUNTERFACTUAL CITY"
     priority: P0
@@ -74,8 +102,14 @@ requirements:
     behavior: "run placebo"
     owner: "data-ai-engineer + frontend-engineer"
     verification: ["unit:placebo null-distribution", "e2e:cty_run_placebo"]
-    status: unstarted
-    evidence_paths: []
+    status: implemented
+    evidence_paths: ["src/engine/estimators.ts", "src/engine/syntheticControl.test.ts", "src/App.tsx", "e2e/controls.spec.ts"]
+    note: "runPlaceboTest (TS port, parity-tested against the Python oracle on rank/count) is wired
+    to an explicit 'Run placebo test' button (the dossier frames this control as user-launched, not
+    continuously auto-recomputed), showing the real effect's rank and permutation p-value among the
+    full placebo distribution. An infeasible case (pool narrowed below the 2-unit minimum) shows a
+    visible error (placebo-error) rather than crashing, verified live. Not yet independently
+    verified by a separate reviewer."
   - id: CTY-INT-006
     project: "COUNTERFACTUAL CITY"
     priority: P0
@@ -86,8 +120,13 @@ requirements:
     behavior: "change outcome"
     owner: "data-ai-engineer + frontend-engineer"
     verification: ["unit:outcome-series compatibility", "e2e:cty_change_outcome"]
-    status: unstarted
-    evidence_paths: []
+    status: implemented
+    evidence_paths: ["src/App.tsx", "src/engine/ScenarioContext.tsx", "e2e/controls.spec.ts"]
+    note: "A select control switches scenario.outcome among the panel's 3 compatible series
+    (trip_volume, avg_speed_kmh, transit_ridership); diffInDiff and syntheticControl both recompute
+    against the newly selected series. Verified with a Playwright test confirming not just that the
+    number changed but that it moved to a plausible, different-order-of-magnitude range (ruling out
+    a re-labeled-but-unchanged value). Not yet independently verified by a separate reviewer."
   - id: CTY-DATA-001
     project: "COUNTERFACTUAL CITY"
     priority: P0
@@ -142,8 +181,19 @@ requirements:
     behavior: "Six working controls + keyboard/touch/reset, recorded e2e tests."
     owner: "frontend-engineer (build) + qa-engineer (independent review)"
     verification: ["e2e:all six CTY-INT-* specs", "manual:a11y-audit skill output"]
-    status: unstarted
-    evidence_paths: []
+    status: implemented
+    evidence_paths: ["e2e/smoke.spec.ts", "e2e/controls.spec.ts", "e2e/a11y.spec.ts"]
+    note: "All 6 controls (CTY-INT-001..006) implemented with e2e coverage (17/17 Playwright passing:
+    keyboard operability for the range/select controls, a dedicated touch-emulated-context test for
+    the checkbox/button controls, Reset Scenario restoring every control not just one, sequential
+    multi-control composition not losing state, and zero console errors/failed requests across a
+    full interaction pass). axe-core (e2e/a11y.spec.ts, 3/3 passing): zero violations on the
+    baseline page AND after interacting with all 6 controls. Two real a11y findings were found and
+    fixed during this pass: no landmark region wrapping the page content (added a <main>), and the
+    dossier's own accent red (#D65343) failing WCAG AA contrast (3.56:1) against the dossier's own
+    paper background for body text, fixed with a darkened text-only variant (--accent-red-text,
+    6.49:1), keeping the original accent for decorative, non-text uses. Not yet independently
+    verified by a separate reviewer."
   - id: CTY-MOTION-001
     project: "COUNTERFACTUAL CITY"
     priority: P0

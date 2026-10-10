@@ -1,0 +1,20 @@
+[
+  {
+    "outcome": "trip_volume",
+    "attPostMean": -195.9630966909902,
+    "preRmspe": 76.3329697863597,
+    "weightSum": 1.0
+  },
+  {
+    "outcome": "avg_speed_kmh",
+    "attPostMean": 2.9350148147391653,
+    "preRmspe": 0.9984360342795827,
+    "weightSum": 0.9999999999999999
+  },
+  {
+    "outcome": "transit_ridership",
+    "attPostMean": 217.88008088013274,
+    "preRmspe": 78.77191731279805,
+    "weightSum": 1.0
+  }
+]

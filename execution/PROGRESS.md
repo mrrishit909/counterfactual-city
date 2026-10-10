@@ -2,18 +2,18 @@
 
 ## Current milestone
 
-M0 (environment audit), M1 (creative research), M2 (analytical specification) done. M3 (architecture
-foundation) IN PROGRESS: the scenario-state architecture exists and one control (CTY-INT-001, change
-intervention date) is wired end to end against a real TypeScript port of the Python estimator, with
-parity tests, unit tests, and a real-browser Playwright e2e test, all green, on the production build.
-M4 onward (the other 5 controls, 6 chapters, cinematic intro, art direction/motion, 3D where
-justified, responsive compositions, accessibility, performance, independent review, final acceptance,
-publication) NOT started.
+M0 (environment audit), M1 (creative research), M2 (analytical specification), M3/M4 (architecture
+foundation + all 6 controls) DONE. All 6 required interactions (CTY-INT-001 through 006) are wired
+end to end against TypeScript ports of the Python oracle, with parity tests, unit tests, a11y tests,
+and real-browser Playwright e2e tests, all green, on the production build.
+
+Per the directive's own staged sequencing (Stage 1: architecture acceptance before expanding the
+visual system), the next step is a focused independent review of this architecture BEFORE starting
+Stage 2 (the cinematic vertical slice). Chapters, intro, art direction, 3D, and motion are explicitly
+NOT started, by design, not oversight.
 
 This is an honest in-progress state, not a completion claim. The Atlas's own complexity estimate for
-this project is 9/10 overall with a rough effort of 106-232 focused person-hours (docs/PROJECT_SPEC.md);
-this session has done real, tested, committed work through the start of M3, and stopped at a clean,
-fully-green checkpoint rather than rush the remaining majority of scope.
+this project is 9/10 overall with a rough effort of 106-232 focused person-hours (docs/PROJECT_SPEC.md).
 
 ## Latest verified commit
 
@@ -22,45 +22,50 @@ same commit as the work it describes, so the latest commit IS the latest verifie
 
 ## Completed requirements (specifications/REQUIREMENTS.yaml)
 
-- `CTY-DATA-001`: **implemented**. Data strategy decided and documented (fully synthetic panel,
-  declared treatment; a real NYC TLC + external-control series was evaluated and explicitly deferred,
-  not silently swapped in or hidden). Schema, fixture checksum, and a reference calculator test
-  pipeline are in place.
-- `CTY-MATH-001`: **implemented**. 25/25 pytest passing: ground-truth ATT recovery for both DiD and
-  synthetic control, an independent two-method cross-check, placebo and pretrend diagnostics, and 11
-  boundary/infeasible-input cases. See `analysis/validation/test_estimators.py`.
+- `CTY-DATA-001`: **implemented**. Fully synthetic panel, declared treatment (a real NYC TLC +
+  external-control series was evaluated and explicitly deferred, not silently swapped in).
+- `CTY-MATH-001`: **implemented**. 25/25 pytest: ground-truth ATT recovery (DiD + synthetic control),
+  an independent two-method cross-check, placebo/pretrend diagnostics, 11 boundary/infeasible cases.
+- `CTY-INT-001` (change intervention date): **implemented**.
+- `CTY-INT-002` (select treated zone): **implemented**.
+- `CTY-INT-003` (pick control pool): **implemented** as an explicit allow-list (not an exclude-list,
+  see LIMITATIONS.md).
+- `CTY-INT-004` (adjust synthetic-control weights): **implemented**. A real bug was found and fixed
+  during this build: applying custom weights silently no-opped whenever the control pool was at its
+  default "use all zones" value, because the weights-array construction guard required a defined
+  explicit pool. Fixed by resolving the same effective pool the estimator defaults to internally.
+- `CTY-INT-005` (run placebo test): **implemented**, an explicit user-triggered action per the
+  dossier's own framing ("launch placebo"), not continuously auto-recomputed.
+- `CTY-INT-006` (change outcome variable): **implemented**.
+- `CTY-UX-001` (6 controls + keyboard/touch/reset, e2e-recorded): **implemented**. 17/17 Playwright,
+  3/3 axe-core (zero violations). Two real a11y findings fixed: no landmark region wrapping the page
+  (added `<main>`), and the dossier's own accent red failing WCAG AA text contrast (3.56:1), fixed
+  with a darkened text-only variant (6.49:1).
 
-None of the 3 implemented gates is yet `independently verified`, that requires a separate reviewer
-pass per this project's own (CASCADIA-derived) discipline, scheduled for M9, not before the rest of
-the frontend/motion work exists to review alongside it.
+None of the 6 implemented gates/controls is yet `independently verified`, that requires a separate
+reviewer pass per this project's own (CASCADIA-derived) discipline and per the current directive's
+own Stage 1 ("Commission a focused independent review before expanding the visual system").
 
 ## Unfinished requirements
 
-- `CTY-INT-001`: **implemented** (see above). Reset/keyboard/invalid-input/visible-explanation all
-  covered; not yet styled.
-- `CTY-INT-002` through `CTY-INT-006`: all `unstarted`. The pattern CTY-INT-001 establishes (a TS
-  port of the matching Python estimator function, parity-tested, wired into `ScenarioState` via
-  `ScenarioContext.tsx`, one new control component in `App.tsx` or its eventual chapter) is the
-  template to repeat for each. `synthetic_control`, `run_placebo_test`, and `pretrend_diagnostic`
-  still need their own TS ports (only `diff_in_diff` is ported so far); the NNLS donor-weight solve
-  in particular needs either a small TS NNLS implementation or a decision to keep that one
-  computation server-precomputed as a versioned fixture grid instead of live in-browser, not yet
-  decided.
-- `CTY-UX-001`, `CTY-MOTION-001`, `CTY-RELEASE-001`: all `unstarted`, depend on the remaining
-  controls, the 6 chapters, and the art-direction/motion work.
+- `CTY-MOTION-001`, `CTY-RELEASE-001`: `unstarted`, depend on the chapters/intro/motion work (Stage
+  2-3) and deployment (Stage 6).
 
 ## Passing tests
 
 - `analysis/validation/test_estimators.py`: 25/25 (`source .venv/bin/activate && python3 -m pytest
   analysis/validation/ -v`).
-- `src/**/*.test.{ts,tsx}` (Vitest): 15/15 (`npx vitest run`), including 9 TS/Python DiD parity cases
-  agreeing to 1e-6 and 4 boundary cases, plus a real component test of the wired control.
-- `e2e/smoke.spec.ts` (Playwright, against the production build): 5/5 (`npx vite build && npx
-  playwright test`), including a real-keyboard CTY-INT-001 test and 3 responsive-viewport screenshots
-  (desktop/tablet/mobile, `verification/SCREENSHOTS/`, visually opened and confirmed non-blank).
+- `src/**/*.test.{ts,tsx}` (Vitest): 27/27 (`npx vitest run`), including DiD parity (9 cases, 1e-6),
+  synthetic-control/placebo/pretrend parity (looser tolerance, different NNLS algorithm, documented
+  in the test file and LIMITATIONS.md), and boundary/infeasible cases for all 4 estimator functions.
+- `e2e/smoke.spec.ts` + `e2e/controls.spec.ts` + `e2e/a11y.spec.ts` (Playwright, production build):
+  17/17 (`npx vite build && npx playwright test`). Covers all 6 controls' real recomputation, Reset
+  Scenario restoring every control (not just one), sequential multi-control composition, keyboard
+  operability (range/select), a dedicated touch-emulated-context test, zero console errors/failed
+  requests across a full interaction pass, and zero axe-core violations before and after interacting
+  with every control.
 - `npx tsc -b`: clean. `npx oxlint`: clean (one non-blocking fast-refresh-only warning in
-  `ScenarioContext.tsx` from combining a Provider and a hook in one file, a deliberate, common
-  pattern, not a defect).
+  `ScenarioContext.tsx` from combining a Provider and a hook in one file, a deliberate pattern).
 
 ## Failing tests
 
@@ -68,46 +73,56 @@ None.
 
 ## Open P0/P1 issues
 
-None yet opened; too early in the build for defect tracking to be meaningful. `execution/KNOWN_ISSUES.md`
-will be created once there is a UI to find issues in.
+None open. See `LIMITATIONS.md` for disclosed, non-blocking findings (a rapid-synchronous-slider-
+burst edge case found only via an unrealistic test harness pattern, the control-pool's allow-list-
+not-exclude-list semantics).
 
 ## Performance status
 
-Not applicable yet, no frontend build exists.
+Not yet measured; no motion/3D work exists yet to budget against. Will be measured starting Stage 4.
 
 ## Active workstreams
 
-None currently running; this session's work ended at a clean commit boundary.
+None currently running; this session's work ended at a clean, fully green commit boundary.
 
 ## Next critical-path task
 
-**M3/M4, continuing.** Steps 1-3 of the original M3 plan are DONE (decision made: TS port, not a
-fixture grid; scenario-state architecture built in `ScenarioContext.tsx`; CTY-INT-001 wired end to
-end with parity/unit/e2e tests, all green). Next, in order:
-1. Port `synthetic_control` (with the NNLS donor-weight solve), `run_placebo_test`, and
-   `pretrend_diagnostic` from `analysis/models/estimators.py` to `src/engine/estimators.ts`, each
-   parity-tested against fresh golden cases from the Python oracle, the same pattern `diffInDiff`
-   already establishes. A TS NNLS is a small, well-known algorithm (no new dependency needed); if it
-   proves awkward, the documented fallback is a precomputed fixture grid for just the weight-fit step.
-2. Wire the remaining 5 controls (CTY-INT-002 through 006) against those ports, each with its own
-   parity + unit + e2e test, before any chapter choreography or art direction, per Part 21's M4
-   guidance ("Independently verify the slice. Do not build the entire cinematic experience on an
-   unverified architecture").
-3. Only then: design system (`docs/ART_DIRECTION.md`, `docs/DESIGN_SYSTEM.md`,
-   `docs/MOTION_SPECIFICATION.md`, `docs/RESPONSIVE_COMPOSITIONS.md`), informed by
-   `docs/VISUAL_REFERENCE_RESEARCH.md` (already written) and the dossier's palette/metaphor (already
-   partially applied to `src/App.css`'s color tokens, not yet to layout/typography/motion).
-4. The 6 chapters, the cinematic intro, and the flagship interaction (two urban timelines diverging)
-   come after all 6 controls are real, not before, so motion work has real data to choreograph rather
-   than placeholder numbers.
+**Stage 1: architecture acceptance**, per the current directive. Before any chapter/intro/art-
+direction work:
+1. Verify the analytical and browser architecture end to end (state ownership, async calculation
+   correctness, responsive controls, reset behavior), largely already demonstrated by the e2e suite
+   above, but the directive asks for this as an explicit, separate checkpoint.
+2. Commission a focused independent review (a fresh agent/session with no access to this session's
+   own notes) of this architecture specifically: the scenario-state design in
+   `src/engine/ScenarioContext.tsx`, the estimator ports in `src/engine/estimators.ts`, and whether
+   the 6-control implementation genuinely satisfies each CTY-INT-* requirement's given/when/then, not
+   just "a button exists."
+3. Fix any release-blocking findings from that review before Stage 2.
+
+**Stage 2: cinematic vertical slice** (after Stage 1 passes): one integrated sequence with a real
+3D/spatial city environment, continuous camera movement, GSAP scroll choreography, a functional
+intervention control, real counterfactual computation, a data-driven visual change, reverse-scroll
+restoration, and responsive/reduced-motion alternatives, art-directed per
+`docs/VISUAL_REFERENCE_RESEARCH.md` and the dossier's palette (`#F3F0E8`/`#D65343`/`#4B84C5`). Do NOT
+build all 6 chapters until this slice is independently verified (directive's own explicit instruction).
+
+**Stages 3-6** (full chapters, production optimization, independent adversarial review, final release
+acceptance) follow in that order, per the directive.
 
 ## Decision log (append here, do not re-litigate once recorded)
 
-- **Data source: fully synthetic, not NYC TLC.** See `specifications/DATA_CONTRACT.yaml` for the full
-  reasoning. Revisit only if a verified compatible real data source becomes available; the estimator
-  code is already data-source-agnostic.
-- **Donor-weight solver: NNLS relaxation, not SLSQP.** SLSQP reproducibly failed to converge on this
-  panel's near-collinear donor matrix (a real failure, confirmed by re-running, not assumed). NNLS
-  with an augmented sum-to-one row is the standard lightweight relaxation and is used instead. If a
-  stricter exact-QP solver is ever needed, `cvxpy` or `quadprog` are the natural upgrades, not
-  revisiting SLSQP.
+- **Data source: fully synthetic, not NYC TLC.** See `specifications/DATA_CONTRACT.yaml`.
+- **Donor-weight solver, Python side: NNLS relaxation, not SLSQP.** SLSQP reproducibly failed to
+  converge on this panel's near-collinear donor matrix. NNLS with an augmented sum-to-one row is used
+  instead.
+- **Donor-weight solver, TypeScript side: projected gradient descent, not a port of scipy's NNLS.**
+  Both solve the same convex NNLS problem via different, independently-convergent algorithms; parity
+  is checked at the level of the recovered estimate, not bit-identical weights. See the comment on
+  `nnlsProjectedGradient` in `src/engine/estimators.ts` and LIMITATIONS.md.
+- **CTY-INT-003's control pool is an explicit allow-list, not an exclude-list.** Checking one zone
+  with none previously checked means "use only this zone." Disclosed in the control's own hint text
+  and in LIMITATIONS.md; worth reconsidering during the design-system pass if real UX testing wants
+  exclude-list semantics instead, not revisited without that evidence.
+- **CTY-INT-005 (placebo) is an explicit user-triggered action, not auto-recomputed on every scenario
+  change,** both because the dossier frames it that way ("launch placebo") and because a full placebo
+  sweep is materially more expensive than the other 5 controls' single-fit cost.
