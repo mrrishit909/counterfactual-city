@@ -85,8 +85,15 @@ requirements:
     behavior: "Source/license review; schema; fixture checksum; reference calculator test."
     owner: "data-engineer + data-ai-engineer"
     verification: ["manual:dataset-verification skill output", "unit:fixture checksum"]
-    status: unstarted
-    evidence_paths: []
+    status: implemented
+    evidence_paths: ["specifications/DATA_CONTRACT.yaml", "analysis/data/synthetic_panel.py", "analysis/data/manifest.json"]
+    note: "Data strategy decided (fully synthetic panel, declared treatment) per the dossier's own
+    explicit fallback; a real NYC TLC + verified external control series was not completed this
+    session, documented as a rejected alternative with reasoning in DATA_CONTRACT.yaml rather than
+    silently substituted. Schema published (DATA_CONTRACT.yaml). Fixture checksum versioned
+    (analysis/data/manifest.json, SHA-256 of the generated panel, seed 20261010). Reference
+    calculator test: see CTY-MATH-001, the same fixture is what the estimator tests run against.
+    Not yet independently verified by a separate reviewer."
   - id: CTY-MATH-001
     project: "COUNTERFACTUAL CITY"
     priority: P0
@@ -97,8 +104,21 @@ requirements:
     behavior: "Independent numerical baseline, boundary and infeasible-case agreement."
     owner: "data-ai-engineer (build) + qa-engineer (independent check)"
     verification: ["unit:reference-model parity", "unit:boundary/infeasible cases"]
-    status: unstarted
-    evidence_paths: []
+    status: implemented
+    evidence_paths: ["analysis/models/estimators.py", "analysis/validation/test_estimators.py"]
+    note: "25/25 pytest passing (python3 -m pytest analysis/validation/ -v): ground-truth ATT
+    recovery within a declared tolerance for DiD and synthetic control across all 3 outcomes, an
+    independent cross-check (closed-form cell-means DiD vs. an OLS regression estimator, agreeing to
+    1e-6), a zero-noise near-exact recovery sanity check, placebo-test internal consistency,
+    pretrend-diagnostic pass/fail behavior (both on the by-construction-parallel panel and on a
+    deliberately broken one), and 11 boundary/infeasible cases (empty panel, unknown outcome/zone,
+    out-of-range intervention day, empty control pool, insufficient donor pool, non-convex weights,
+    wrong weight count, insufficient placebo units, insufficient pre-period observations for a
+    trend fit). The synthetic-control donor-weight solver was switched from SLSQP to an augmented
+    NNLS relaxation after SLSQP reported spurious non-convergence on this panel's near-collinear
+    donor matrix (a real, reproduced failure, not assumed); NNLS is an active-set method with a
+    convergence guarantee and recovered the same ground truth. Not yet independently verified by a
+    separate reviewer."
   - id: CTY-UX-001
     project: "COUNTERFACTUAL CITY"
     priority: P0

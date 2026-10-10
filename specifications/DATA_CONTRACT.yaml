@@ -1,0 +1,69 @@
+# THE COUNTERFACTUAL CITY, data contract
+# Declares types, units, provenance, and tolerances per ENGINEERING_STANDARDS.md's required
+# repository structure. See CTY-DATA-001.
+
+data_strategy:
+  chosen: "fully synthetic panel, declared treatment"
+  rejected_alternative: "NYC TLC Parquet taxi activity + verified compatible external control series"
+  reason: >
+    The dossier (docs/PROJECT_SPEC.md) explicitly permits this fallback ("NYC TLC Parquet taxi
+    activity, compatible geography/time external controls if verified; otherwise explicit simulated
+    policy series"). Verifying a real, license-clean, compatible external control series was not
+    completed in this session; rather than silently substitute one data strategy for the other, the
+    dossier's own honest fallback is used and labeled as such everywhere a number is shown. If a
+    verified real series becomes available later, the generator in analysis/data/synthetic_panel.py
+    is the only place that needs replacing; analysis/models/estimators.py is data-source-agnostic
+    (it operates on any long-format zone/day panel with the same column contract).
+  generator: "analysis/data/synthetic_panel.py"
+  manifest: "analysis/data/manifest.json (written by the generator; includes a SHA-256 checksum)"
+  seed: 20261010
+
+schema:
+  panel:
+    description: "Long-format zone-by-day panel, one row per (zone, day)."
+    columns:
+      zone:
+        type: int
+        description: "Zone identifier, 0 to N_ZONES-1."
+      day:
+        type: int
+        description: "Day index, 0-indexed from the panel's start date. Not a calendar date (synthetic)."
+      trip_volume:
+        type: float
+        unit: "trips/day"
+        description: "Synthetic daily trip count for the zone."
+      avg_speed_kmh:
+        type: float
+        unit: "km/h"
+        description: "Synthetic average vehicle speed for the zone."
+      transit_ridership:
+        type: float
+        unit: "riders/day"
+        description: "Synthetic daily transit ridership for the zone."
+      treated:
+        type: bool
+        description: "True only for the single declared treated zone (TREATED_ZONE)."
+      post:
+        type: bool
+        description: "True for day >= INTERVENTION_DAY."
+
+labels:
+  # Every number surfaced in the UI must use one of these four labels, per CLAUDE.md's hard rule
+  # ("Distinguish historical measurement, fitted estimate, counterfactual inference, and hypothetical
+  # simulation in every label that presents a number").
+  historical_measurement: "Not applicable in this build (no real-world measurement is used). Any
+    future real-data integration must use this label only for values read directly from source data,
+    never for a fitted or simulated value."
+  fitted_estimate: "A synthetic-control or DiD coefficient fit to the (synthetic) panel data, e.g.
+    the ATT, donor weights, or a pretrend slope."
+  counterfactual_inference: "The synthetic control's predicted path for the treated zone had
+    treatment not occurred (the 'synthetic' series itself, as opposed to the fitted gap)."
+  hypothetical_simulation: "The TRUE_ATT ground-truth values baked into the data generator
+    (analysis/data/synthetic_panel.py). These are a validation fixture, never presented to an end
+    user as a finding; the UI only ever shows ESTIMATED effects, and this file documents that the
+    estimators' job is to recover (not already know) this number."
+
+tolerances:
+  att_ground_truth_recovery: 25.0  # absolute units; see analysis/validation/test_estimators.py
+  weight_sum: 1.0e-6
+  did_cross_check_agreement: 1.0e-6  # two independent DiD computations must agree this tightly

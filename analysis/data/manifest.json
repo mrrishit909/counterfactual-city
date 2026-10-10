@@ -1,0 +1,19 @@
+{
+  "seed": 20261010,
+  "n_zones": 24,
+  "n_days": 180,
+  "intervention_day": 120,
+  "treated_zone": 7,
+  "outcomes": [
+    "trip_volume",
+    "avg_speed_kmh",
+    "transit_ridership"
+  ],
+  "true_att": {
+    "trip_volume": -180.0,
+    "avg_speed_kmh": 3.2,
+    "transit_ridership": 240.0
+  },
+  "checksum_sha256": "77a5091c8394c60b333b5444944843540d73189816fce6b60134b3f88a533d95",
+  "data_strategy": "fully synthetic, declared treatment, not NYC TLC or any real measurement; see specifications/DATA_CONTRACT.yaml"
+}
