@@ -431,5 +431,16 @@ requirements:
     behavior: "Production build, Pages base path, deployed smoke test, honest limitations."
     owner: "orchestrator + qa-engineer"
     verification: ["manual:deployment-verification skill output", "curl: live URL smoke test"]
-    status: unstarted
+    status: implemented
+    note: >
+      Production build succeeds, base path (/counterfactual-city/) resolves correctly (fetch
+      paths already used import.meta.env.BASE_URL, needed no other change), deployed via
+      GitHub Actions (actions/deploy-pages@v4) to https://mrrishit909.github.io/counterfactual-city/,
+      confirmed live via curl and a 17-test live-URL-only Playwright pass (verification/
+      LIVE_VERIFICATION/LIVE_VERIFICATION_REPORT.md) plus live Lighthouse (100/100/100/90
+      desktop+mobile). A real 0.79 CLS defect was found and fixed before deployment, not after.
+      Held at "implemented" rather than "independently verified" pending the worktree-isolated
+      public-URL-only review commissioned this session; will be updated to "independently
+      verified" once that review returns with no P0 findings, per this project's own standing
+      rule (LIMITATIONS.md) that self-reported verification is not sufficient.
     evidence_paths: []
