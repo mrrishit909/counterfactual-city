@@ -165,16 +165,27 @@ re-skin.
    on the first pass, reusing chapters 2/3's own `.chapter-stage-wrap`/`.chapter-controls` CSS
    unchanged. 7/7 new Playwright (`e2e/chapter5.spec.ts`). Full suite after chapters 2-5: 65/65
    Playwright (stable across 5 repeated full runs), 35/35 Vitest, tsc clean, oxlint clean.
-7. Still owed: chapter 6 (limitations: CTY-INT-006 [change outcome] + explicit
-   methodology/limitations copy, the dossier's own "editorial, text-led" archetype), its own e2e
-   coverage matching chapters 2-5's own pattern, and the real visual-design pass from step 2 above
-   (not yet done).
+7. **DONE (chapter 6 of 6, Stage 3 complete)**: built chapter 6 ("limitations", the "editorial,
+   text-led" archetype, `src/scenes/Chapter6Limitations.tsx`), hosting CTY-INT-006 (`OutcomeControl`
+   moved to `src/controls/OutcomeControl.tsx`), paired with the dossier's own mandatory "explicit
+   high-risk limitation" copy: parallel trends, no interference between zones, and no anticipation
+   effects, named explicitly and tied to what chapter 5's pretrend diagnostic DOES and does NOT
+   prove. Desktop: prose left, a small grid + the outcome control right; mobile/tablet: grid first,
+   then prose, matching `docs/ART_DIRECTION.md` section 6's own responsive table exactly, confirmed
+   live by screenshot and a dedicated e2e assertion. No new bugs found; built clean on the first
+   pass. 7/7 new Playwright (`e2e/chapter6.spec.ts`). Full suite after chapters 2-6: **72/72
+   Playwright (stable across 5 repeated full runs), 35/35 Vitest, tsc clean, oxlint clean, zero
+   axe-core violations with all 6 chapters mounted.** All 6 interaction controls (CTY-INT-001
+   through 006) now live in their own chapter; none remain in a plain Lab panel. **Stage 3 (full
+   6-chapter build) is complete.**
+8. Still owed (Stage 3 follow-up, not yet done): the real visual-design pass from step 2 above
+   (varied block treatment, asymmetric composition, texture/depth cues beyond the palette re-skin).
 
-**Stage 6-9**: laboratory integration inside the full cinematic experience (once all 6 chapters
-exist, decide what if anything remains in a standalone "lab" section), performance engineering
-(measured, not invented), independent adversarial review of the complete build (including a fresh
-look at Stage 2's remediated intro and chapter 2, not just the newest chapters), final release
-acceptance. Not started.
+**Stage 4-9**: laboratory integration inside the full cinematic experience (decide what, if
+anything, remains in the standalone "lab" `<main>` section now that all 6 chapters host their own
+controls and the DiD result is the only thing left there), performance engineering (measured, not
+invented), independent adversarial review of the complete build (a fresh look at every chapter, not
+just the newest ones), final release acceptance. Not started.
 
 ## Decision log (append here, do not re-litigate once recorded)
 

@@ -174,7 +174,21 @@ requirements:
     against the newly selected series. Verified with a Playwright test confirming not just that the
     number changed but that it moved to a plausible, different-order-of-magnitude range (ruling out
     a re-labeled-but-unchanged value). Independently verified (Stage 1 architecture review,
-    verification/STAGE1_ARCHITECTURE_REVIEW.md)."
+    verification/STAGE1_ARCHITECTURE_REVIEW.md).
+    Stage 3: this control now lives in chapter 6 ('limitations', src/scenes/Chapter6Limitations.tsx),
+    the dossier's 'editorial, text-led' archetype, moved to src/controls/OutcomeControl.tsx. Paired
+    in the same chapter with the dossier's own mandatory 'explicit high-risk limitation' copy
+    (docs/PROJECT_SPEC.md: 'Do not claim causality when identification assumptions fail ... apply
+    scientific disclaimer adjacent to results'): parallel trends, no interference between zones, and
+    no anticipation effects, each named explicitly and tied to what IS checked here (the pretrend
+    diagnostic, chapter 5) versus what is NOT provable by the app. Desktop layout: prose left, a
+    small grid + the outcome control right; mobile/tablet: grid first, then prose, per
+    docs/ART_DIRECTION.md section 6's own responsive table, confirmed live and by a dedicated e2e
+    assertion (ch6-city-stage renders above #ch6-heading in document position at the mobile
+    breakpoint). This closes the full 6-chapter cinematic structure: all 6 interaction controls
+    (CTY-INT-001 through 006) now live in their own chapter, none left in a plain Lab panel.
+    Covered by e2e/chapter6.spec.ts (7 tests: layout, disclaimer content, real recompute, shared
+    state, 3-breakpoint responsiveness, mobile grid-first ordering)."
   - id: CTY-DATA-001
     project: "COUNTERFACTUAL CITY"
     priority: P0

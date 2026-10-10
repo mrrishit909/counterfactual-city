@@ -95,6 +95,9 @@ REQUIREMENTS.yaml` for per-requirement status.
 
 ## Not yet built
 
-Chapter 6 (limitations, per `docs/ART_DIRECTION.md`'s chapter plan), 3D/spatial rendering (if
-justified by measurement), responsive compositions per-chapter beyond chapters 1-5's own 3
-breakpoints, and performance budgets.
+All 6 chapters now exist. Still not built: the real visual-design pass (varied block treatment,
+asymmetric composition, texture/depth cues beyond the palette re-skin), 3D/spatial rendering (if
+justified by measurement), responsive compositions per-chapter beyond chapters 1-6's own 3
+breakpoints, and performance budgets. The plain Lab `<main>` section below chapter 6 still shows the
+raw DiD result; whether it should be trimmed now that every control has its own chapter home is an
+open Stage 4 question, not yet decided.

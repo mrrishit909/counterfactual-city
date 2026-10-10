@@ -3,38 +3,10 @@ import { Chapter2Treatment } from "./scenes/Chapter2Treatment";
 import { Chapter3MatchedControls } from "./scenes/Chapter3MatchedControls";
 import { Chapter4Counterfactual } from "./scenes/Chapter4Counterfactual";
 import { Chapter5Diagnostics } from "./scenes/Chapter5Diagnostics";
+import { Chapter6Limitations } from "./scenes/Chapter6Limitations";
 import { IntroSequence } from "./scenes/IntroSequence";
-import type { Outcome } from "./engine/types";
 import "./App.css";
 import "./scenes/scenes.css";
-
-const OUTCOME_LABELS: Record<Outcome, string> = {
-  trip_volume: "Trip volume (trips/day)",
-  avg_speed_kmh: "Average speed (km/h)",
-  transit_ridership: "Transit ridership (riders/day)",
-};
-
-function OutcomeControl() {
-  const { load, scenario, setOutcome } = useScenario();
-  if (load.status !== "ready") return null;
-  return (
-    <fieldset>
-      <legend>6. Outcome variable</legend>
-      <label htmlFor="outcome-select">Outcome series</label>
-      <select
-        id="outcome-select"
-        value={scenario.outcome}
-        onChange={(e) => setOutcome(e.target.value as Outcome)}
-      >
-        {load.panel.meta.outcomes.map((o) => (
-          <option key={o} value={o}>
-            {OUTCOME_LABELS[o]}
-          </option>
-        ))}
-      </select>
-    </fieldset>
-  );
-}
 
 export function Lab() {
   const { load, did, didError, reset } = useScenario();
@@ -60,12 +32,10 @@ export function Lab() {
       <p className="disclaimer">
         Difference-in-differences and synthetic-control estimates against a fully synthetic panel
         with a declared treatment (not real-world data); see{" "}
-        <code>specifications/DATA_CONTRACT.yaml</code>. All six controls on this page (five above,
-        in chapters 2-5's own sections, one below) trigger a real recomputation, never a cosmetic
-        change.
+        <code>specifications/DATA_CONTRACT.yaml</code>. All six controls on this page now live in
+        chapters 2-6's own sections above; see chapter 6 for the full identification-assumptions
+        disclaimer adjacent to these results.
       </p>
-
-      <OutcomeControl />
 
       <button type="button" onClick={reset} aria-label="Reset scenario to baseline" className="reset-button">
         Reset Scenario
@@ -103,6 +73,7 @@ function App() {
         <Chapter3MatchedControls />
         <Chapter4Counterfactual />
         <Chapter5Diagnostics />
+        <Chapter6Limitations />
         <Lab />
       </IntroSequence>
     </ScenarioProvider>
