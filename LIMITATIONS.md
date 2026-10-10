@@ -106,17 +106,21 @@ REQUIREMENTS.yaml` for per-requirement status.
   the primary flagship moment); whether the scroll motion itself still needs to be more pronounced
   is a lower-stakes open visual-QA question than before.
 
-## Cross-chapter visual distinctiveness (first increment done, full pass still owed)
+## Cross-chapter visual distinctiveness (chapter 3 now genuinely distinct; chapter 5 still thin)
 
-Chapters 2, 3, and 5 originally shared the same grid-left/controls-right composition and CSS classes
-(`.chapter-stage-wrap`/`.chapter-controls`), differing in content but not in layout skeleton, exactly
-the failure mode CLAUDE.md's own mandatory-visual-QA section warns about by name. A first increment
-is done: chapter 3 (literally adjacent to chapter 2) now mirrors the composition (grid right instead
-of left, via actual element reordering so DOM/tab order still matches visual order) with a subtle
-accent-blue wash; chapter 5 gets a bordered "inspector" panel treatment. This was NOT judged by an
-independent reviewer, only by this session's own self-review of real screenshots
-(`verification/SCREENSHOTS/ch3-desktop-start.png`, `ch5-desktop-start.png`); treat it as a real but
-partial improvement, not confirmation that the full release-gate bar is met.
+Chapters 2, 3, and 5 originally shared the same grid-left/controls-right composition and CSS classes,
+differing in content but not in layout skeleton. A first self-review fix (mirroring chapter 3's
+layout with an accent-blue wash) was correctly judged insufficient by an independent reviewer, in
+its own words: "a different color on the same shape," not the dossier's own specified "comparative
+view" archetype. Chapter 3 now has a real comparative-trajectories strip
+(`src/scenes/Sparkline.tsx`): up to 3 zones from the current control pool, each plotted against the
+treated zone's own series on a shared y-domain, above the existing spatial grid. This is a genuinely
+different content type from chapters 2 and 5 (charts, not just a recolored grid), not merely a
+mirrored layout. Chapter 5 still only has the bordered "inspector" panel treatment as its own
+differentiator from chapter 2's skeleton; this is real but thinner than chapter 3's fix, and was
+flagged by the same independent review as the project's own weakest remaining distinctiveness gap.
+A later review pass should judge chapter 3's new fix and reassess whether chapter 5 needs the same
+treatment (e.g. its own small-multiples element, not just a border).
 
 ## Mobile content overflow (found and fixed during the evidence sweep)
 

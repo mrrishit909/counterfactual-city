@@ -185,6 +185,52 @@
   color: var(--hint);
 }
 
+/* Chapter 3's real comparative-trajectories strip (docs/ART_DIRECTION.md's own "comparative view"
+   archetype: "three-column comparative, one per candidate control zone, shared axis"), added after
+   an independent visual QA review correctly flagged that a mirrored/recolored copy of chapter 2's
+   own grid-plus-panel skeleton did not actually deliver this archetype, just a different color on
+   the same shape. */
+.ch3-right-col {
+  flex: 1 1 60%;
+  max-width: 60%;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.comparative-strip {
+  display: flex;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+}
+
+.comparative-card {
+  flex: 1 1 140px;
+  border: 1px solid var(--hairline);
+  padding: 0.5rem;
+}
+
+.comparative-card-label {
+  margin: 0 0 0.25rem;
+  font-size: 0.75rem;
+  color: var(--hint);
+}
+
+.comparative-card-chart {
+  position: relative;
+}
+
+.comparative-card-chart .sparkline {
+  width: 100%;
+  height: auto;
+  display: block;
+}
+
+.comparative-card-chart .sparkline:last-child {
+  position: absolute;
+  inset: 0;
+}
+
 @media (max-width: 1023px) {
   .chapter-sticky {
     flex-direction: column;
@@ -198,10 +244,21 @@
        own mobile captures (verification/SCREENSHOTS/ch2-mobile-start.png,
        ch3-mobile-start.png) before this fix. */
     overflow-y: auto;
-    /* Clearance for the fixed bottom chapter-nav bar (~50-56px tall including its own offset from
-       the viewport edge), found live: without this, the bottom of each panel's own scrollable
-       content sits directly under the bar. */
-    padding-bottom: 4.25rem;
+    /* An independent visual QA review caught that a `padding-bottom` alone (the first attempt at
+       this fix) was not enough: padding only adds extra SCROLLABLE room past the content, it
+       doesn't stop content from naturally laying out into the fixed bottom chapter-nav bar's own
+       screen region on the very first, unscrolled view. Confirmed directly: chapter 2's
+       "Zone 7" <select> rendered at y 829-848 while the nav bar occupied y 790-832 at 390x844, a
+       real overlap, not merely "below the fold." The real fix is to make the sticky panel itself
+       shorter than 100vh by the nav bar's own footprint, so content reflows within that shorter
+       box and nothing can lay out into the reserved strip in the first place; remaining overflow
+       is still reachable via the `overflow-y: auto` above. A second real bug surfaced fixing this:
+       there is no global `box-sizing: border-box` reset in this project, so `height` here excludes
+       the element's own 1.5rem padding, and the rendered box was measured at 820px against a
+       772px CSS height (772 + 2*24px padding = 820, confirmed directly), scoped to this rule
+       rather than a global reset, to avoid touching every other element's box model this late. */
+    box-sizing: border-box;
+    height: calc(100vh - 4.5rem);
   }
   .chapter-stage-wrap,
   .chapter-controls {
@@ -211,6 +268,13 @@
   .chapter-stage-wrap {
     width: 100%;
     height: 45vh;
+  }
+  .ch3-right-col {
+    max-width: 100%;
+    flex: 0 0 auto;
+  }
+  .comparative-card {
+    flex-basis: 100px;
   }
 }
 
@@ -367,6 +431,17 @@
 @media (max-width: 1023px) {
   .flagship-split {
     flex-direction: column;
+    /* An independent visual QA review flagged the stage grids as hard to read at mobile width;
+       investigating why found a real layout regression: the trajectory chart (added after that
+       problem was first sized) pushed total chapter-4 content height past the panel's own
+       available space, and .flagship-split's flex-basis (which deliberately shrinks via
+       min-height:0 to share space fairly) was squeezed down to a near-zero rendered height,
+       collapsing both stage SVGs to ~1px tall, confirmed directly via getBoundingClientRect. A
+       fixed minimum keeps the two stages legible; the rest of the panel (chart, controls) remains
+       reachable via the panel's own overflow-y: auto scroll, same tradeoff already made for
+       chapters whose mobile content exceeds the viewport. */
+    min-height: 280px;
+    flex-shrink: 0;
   }
   .flagship-timeline .city-stage-wrap {
     max-width: 220px;

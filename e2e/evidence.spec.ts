@@ -82,3 +82,22 @@ for (const vp of viewports) {
     await page.screenshot({ path: path.join(DIR, `ch4-${vp.name}-reduced-motion.png`) });
   });
 }
+
+// An independent visual QA review flagged a real evidence gap: every ch5 capture showed only the
+// placebo button's pre-click state, so the actual "evidence bands" result (CTY-INT-005's own
+// `then` clause) was never independently confirmable from the screenshots provided. One desktop
+// post-click capture closes that gap (not a full breakpoint matrix: the result's own content
+// doesn't change shape across breakpoints, only the surrounding layout does, already covered by
+// ch5's own start/midscroll captures above).
+test("ch5 placebo-result evidence (post-click state) at desktop", async ({ page }) => {
+  await page.setViewportSize({ width: 1440, height: 900 });
+  await page.goto("/");
+  await expect(page.getByTestId("did-result")).toBeVisible();
+  await waitForLayoutSettle(page);
+  const top = await page.locator("#ch5").evaluate((el) => el.getBoundingClientRect().top + window.scrollY);
+  await page.evaluate((y) => window.scrollTo({ top: y, behavior: "auto" }), top);
+  await page.getByTestId("run-placebo").click();
+  await expect(page.getByTestId("placebo-result")).toBeVisible();
+  await page.waitForTimeout(200);
+  await page.screenshot({ path: path.join(DIR, "ch5-desktop-placebo-result.png") });
+});

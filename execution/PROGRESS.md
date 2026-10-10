@@ -306,19 +306,62 @@ re-skin.
       Reworded in place rather than left standing.
     98/98 Playwright across repeated full runs, zero axe-core violations, tsc/oxlint clean.
 
+12. **DONE: a genuinely independent visual QA review ran** (a fresh subagent with NO access to this
+    file, git log, or any of this session's own notes, per CLAUDE.md's own mandatory requirement:
+    "a separate QA pass genuinely independent of whoever built the feature"), reading only
+    docs/PROJECT_SPEC.md, docs/ART_DIRECTION.md sections 5-6, REQUIREMENTS.yaml's `given/when/then`
+    rows (explicitly NOT the `note` fields, this session's own commentary), and the real
+    screenshots. It confirmed most of the self-reviews' own findings and gates (intro, ch4, ch6
+    genuinely distinctive; UX nav PASS; functionality PASS; AI/analytical PASS, strong) and found
+    several MORE real, specific defects neither self-review round had caught:
+    - **Chapter 3's "distinctiveness" fix was not enough.** Mirroring the layout and tinting it blue
+      is, in the reviewer's own words, "a different color on the same shape," not the dossier's own
+      specified "comparative view" archetype ("three-column comparative, one per candidate control
+      zone, shared axis," `docs/ART_DIRECTION.md` section 5). **Fixed for real this time**: added
+      `src/scenes/Sparkline.tsx` and a comparative-trajectories strip to chapter 3 (up to 3 zones
+      from the current control pool, each plotted against the treated zone's own series on a
+      SHARED y-domain computed once across all 3 cards, not independently auto-scaled per card, so
+      the comparison is honest), above the existing spatial grid (kept, not replaced: it's real and
+      useful). This is the literal archetype now, not a recolor.
+    - **A real pixel-measured bug the first "fix" missed**: the `padding-bottom` clearance added
+      for chapter 2's mobile `<select>` only added extra SCROLLABLE room, it did not stop content
+      from naturally laying out INTO the fixed bottom nav bar's own screen region on the very
+      first, unscrolled view. Confirmed directly (`<select>` at y 829-848 vs. the nav bar at y
+      790-832, a real overlap). Root fix: the sticky panel's own height is now constrained to
+      `calc(100vh - 4.5rem)` at the mobile breakpoint so content physically cannot reach the
+      reserved strip. A SECOND bug surfaced fixing the first: this project has no global
+      `box-sizing: border-box` reset, so `height` alone excluded the panel's own padding (772px
+      height + 48px padding rendered as 820px, confirmed directly); added `box-sizing: border-box`
+      scoped to this rule. New regression test (`e2e/chapterNav.spec.ts`) checks the real pixel
+      rects for overlap, not just reachability.
+    - **Chapter 4's "divergence" was confirmed imperceptible** (±6% of a ~320px stage is under
+      10px of actual movement); increased to ±22%, a real, deliberate separation.
+    - **A real regression caught while fixing the item above**: constraining ALL `.chapter-sticky`
+      panels' mobile height (the fix for the nav-overlap bug) combined with the trajectory chart's
+      own added height SQUEEZED chapter 4's own two stage grids down to ~1px tall on mobile
+      (confirmed via `getBoundingClientRect`, not assumed from the reviewer's own "~115px"
+      estimate, which undersold how bad it actually was). Fixed with an explicit `min-height` on
+      `.flagship-split` so the stages can never be squeezed below a legible size; the rest of the
+      panel remains reachable via its own scroll.
+    - **A real evidence gap**: every chapter 5 capture showed only the placebo button's pre-click
+      state, so the "evidence bands" result was never independently confirmable. Added one
+      post-click desktop capture; confirmed it shows a real rank, p-value, and the correct
+      diagnostic-kind caveat.
+    - Nav dot tap targets widened to a real 24x24px minimum (the reviewer's screenshots couldn't
+      measure this precisely; confirmed via the CSS itself, ~14px before).
+    100/100 Playwright across repeated full runs, zero axe-core violations, tsc/oxlint clean.
+
 **Still owed before Stage 3 can be called done against the release gate** (not yet done):
-- **The rest of the visual-design pass**: chapter 3/5's distinguishing treatments are a first
-  increment, not the full pass (varied block treatment, asymmetric composition, texture/depth cues
-  beyond the palette re-skin, still not done). The trajectory chart now gives chapter 4 a much
-  stronger flagship moment than the scroll-divergence alone; whether the scroll divergence itself
-  still needs to be more pronounced is now a secondary, lower-stakes open question.
+- **The rest of the visual-design pass**: chapter 5 still shares chapter 2's own basic grid-left/
+  panel-right skeleton (now a bordered "inspector" treatment, which is a real but smaller
+  differentiation than chapter 3's new comparative strip); varied block treatment, asymmetric
+  composition, and texture/depth cues beyond the palette re-skin are still not done project-wide.
 - **Reverse-scroll and reduced-motion evidence for most chapters, plus the scroll-recording,
-  contact-sheet, and frame-pacing deliverables** (`CTY-MOTION-001`'s full requirement; see the
-  corrected entry above).
-- **An independent visual QA reviewer has not yet looked at any of this evidence**; two rounds of
-  this session's own self-review (including one deliberately asked to find the first round's own
-  blind spots) are not a substitute for CLAUDE.md's own "genuinely independent" requirement. The
-  next step before this can move toward release is spawning that independent review.
+  contact-sheet, and frame-pacing deliverables** (`CTY-MOTION-001`'s full requirement).
+- **A second independent-review pass has not yet looked at THIS round's fixes** (the comparative
+  strip, the ±22% divergence, the height-constraint fixes). The pattern so far has been: every
+  review pass, including independent ones, finds something the previous pass missed. Treat this
+  build as "materially improved, not exhaustively verified" until a review pass comes back clean.
 
 **Stage 4-9**: laboratory integration inside the full cinematic experience (decide what, if
 anything, remains in the standalone "lab" `<main>` section now that all 6 chapters host their own

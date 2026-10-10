@@ -35,10 +35,17 @@ export function Chapter4Counterfactual() {
       const counterfactual = counterfactualRef.current;
       if (!observed || !counterfactual) return;
 
+      // An independent visual QA review caught this: a ±6% shift on a ~320px-wide stage is under
+      // 10px of actual on-screen movement, imperceptible for the dossier's own billing ("two urban
+      // timelines diverge," the signature flagship beat). ±22% reads as a real, deliberate
+      // divergence (confirmed live: roughly 70px of movement per side at the stage's own max-width)
+      // while staying well inside the two-column layout's own gap, no overlap or viewport overflow.
+      const DIVERGE_PERCENT = 22;
+
       if (reducedMotion) {
         g.set([observed, counterfactual], { x: 0 });
-        g.set(observed, { xPercent: -6 });
-        g.set(counterfactual, { xPercent: 6 });
+        g.set(observed, { xPercent: -DIVERGE_PERCENT });
+        g.set(counterfactual, { xPercent: DIVERGE_PERCENT });
         return;
       }
 
@@ -52,8 +59,8 @@ export function Chapter4Counterfactual() {
           scrub: 1,
         },
       })
-        .to(observed, { xPercent: -6, duration: 1, ease: "none" }, 0)
-        .to(counterfactual, { xPercent: 6, duration: 1, ease: "none" }, 0);
+        .to(observed, { xPercent: -DIVERGE_PERCENT, duration: 1, ease: "none" }, 0)
+        .to(counterfactual, { xPercent: DIVERGE_PERCENT, duration: 1, ease: "none" }, 0);
     },
     // A real bug was found live building this chapter: this trigger's FIRST measurement pass
     // (synchronous at mount, before the async scenario fetch resolves) landed its start position

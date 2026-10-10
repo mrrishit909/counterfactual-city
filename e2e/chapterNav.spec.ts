@@ -71,4 +71,33 @@ test.describe("responsive viewports", () => {
     await checkbox.click();
     await expect(checkbox).toBeChecked();
   });
+
+  test("chapter 2's treated-zone select is reachable and usable at mobile, not visually collided with the nav bar", async ({
+    page,
+  }) => {
+    // Regression test for a real bug an independent visual QA review found: a `padding-bottom`-only
+    // fix on .chapter-sticky added extra scroll room past the content but didn't stop the content
+    // from laying out INTO the fixed bottom nav bar's own screen region on the very first,
+    // unscrolled view (confirmed directly: the <select> rendered at y 829-848 while the nav bar
+    // occupied y 790-832 at 390x844, a real pixel overlap). The real fix constrains the sticky
+    // panel's own height (and, a second bug found fixing the first, needed `box-sizing: border-box`
+    // too, since this project has no global border-box reset and `height` alone excluded padding).
+    await page.setViewportSize({ width: 390, height: 844 });
+    await page.goto("/");
+    await expect(page.getByTestId("did-result")).toBeVisible();
+
+    await page.getByTestId("nav-ch2").click();
+    const select = page.locator("#treated-zone");
+    await select.scrollIntoViewIfNeeded();
+
+    const overlap = await page.evaluate(() => {
+      const selectRect = document.querySelector("#treated-zone")!.getBoundingClientRect();
+      const navRect = document.querySelector(".chapter-nav")!.getBoundingClientRect();
+      return selectRect.bottom > navRect.top && selectRect.top < navRect.bottom;
+    });
+    expect(overlap).toBe(false);
+
+    await select.selectOption("3");
+    await expect(page.locator('[data-testid="ch2-city-zone-3"]')).toHaveAttribute("data-treated", "true");
+  });
 });
