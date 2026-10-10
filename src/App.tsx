@@ -7,11 +7,13 @@ import { Chapter6Limitations } from "./scenes/Chapter6Limitations";
 import { ChapterNav } from "./scenes/ChapterNav";
 import { IntroSequence } from "./scenes/IntroSequence";
 import { ResultCaveat } from "./scenes/ResultCaveat";
+import { unitForOutcome } from "./scenes/resultVisualEncoding";
 import "./App.css";
 import "./scenes/scenes.css";
 
 export function Lab() {
-  const { load, did, didError } = useScenario();
+  const { load, did, didError, scenario } = useScenario();
+  const unit = load.status === "ready" ? unitForOutcome(scenario.outcome) : "";
 
   if (load.status === "loading") {
     return (
@@ -49,14 +51,16 @@ export function Lab() {
       {did && (
         <dl className="result" data-testid="did-result">
           <dt>Difference-in-differences estimate (ATT)</dt>
-          <dd data-testid="att-value">{did.att.toFixed(1)}</dd>
+          <dd data-testid="att-value">
+            {did.att.toFixed(1)} {unit}
+          </dd>
           <dt>Treated zone, pre to post</dt>
           <dd>
-            {did.preTreatedMean.toFixed(1)} {"→"} {did.postTreatedMean.toFixed(1)}
+            {did.preTreatedMean.toFixed(1)} {"→"} {did.postTreatedMean.toFixed(1)} {unit}
           </dd>
           <dt>Control zones, pre to post</dt>
           <dd>
-            {did.preControlMean.toFixed(1)} {"→"} {did.postControlMean.toFixed(1)}
+            {did.preControlMean.toFixed(1)} {"→"} {did.postControlMean.toFixed(1)} {unit}
           </dd>
         </dl>
       )}

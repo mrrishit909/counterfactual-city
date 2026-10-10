@@ -33,7 +33,7 @@ export function PlaceboControl() {
           <dd>{placebo.result.pValue.toFixed(3)}</dd>
         </dl>
       )}
-      {placebo.status === "done" && <ResultCaveat />}
+      {placebo.status === "done" && <ResultCaveat kind="permutation-diagnostic" />}
     </fieldset>
   );
 }

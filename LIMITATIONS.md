@@ -81,6 +81,13 @@ REQUIREMENTS.yaml` for per-requirement status.
 
 ## Chapter 4 (counterfactual, the flagship interaction)
 
+- **The flagship chart now exists**: `src/scenes/TrajectoryChart.tsx` plots the treated zone's real
+  observed outcome series against the real synthetic-control reconstruction for the same days
+  (derived from `SyntheticControlResult.gapByDay`, `src/engine/estimators.ts`), with an
+  intervention-day marker, redrawing when donor weights change. This is the dossier's own literal
+  "two urban timelines diverge as estimator assumptions are manipulated," not just the scroll-driven
+  stage divergence (which was the ONLY mechanism before a second self-review caught the gap and
+  this chart was built to close it).
 - **Two independent `CityStage` mounts, not a single shared camera cross-fading between an
   "observed" and "synthetic" state.** This matches the project's own resolved "one persistent
   visual language, not one DOM node" architecture decision (`docs/ART_DIRECTION.md` section 7 item
@@ -92,13 +99,12 @@ REQUIREMENTS.yaml` for per-requirement status.
   distribution.** A gap near the scale's own calibration point reads as fully saturated red/blue;
   very large or very small real gaps will clip or barely register visually even though the numeric
   "Gap (observed minus synthetic):" readout next to it is always the exact, uncapped
-  `sc.attPostMean`. A one-line note next to the readout now states explicitly that the color/pulse
+  `sc.attPostMean`. A one-line note next to the readout states explicitly that the color/pulse
   encodes the gap's size and direction, not a predicted value for the synthetic timeline on its own.
-- **The divergence motion (±6% horizontal shift on ~320px-wide stages) is real but subtle on a 1440px
-  desktop viewport.** Whether this reads clearly as the dossier's own flagship "two timelines
-  diverge" moment, or needs a larger shift/different treatment, is an open visual-QA question the
-  mandatory independent visual review (CLAUDE.md) should judge against real screenshots, not
-  something this build pass judged on its own.
+- **The scroll-driven divergence motion (±6% horizontal shift on ~320px-wide stages) is real but
+  still subtle on a 1440px desktop viewport.** Now a secondary effect (the trajectory chart above is
+  the primary flagship moment); whether the scroll motion itself still needs to be more pronounced
+  is a lower-stakes open visual-QA question than before.
 
 ## Cross-chapter visual distinctiveness (first increment done, full pass still owed)
 

@@ -223,8 +223,14 @@ re-skin.
     CPU-contention flake class documented earlier in this file, roughly 1 in 20+ runs, not a new
     regression), 35/35 Vitest (one existing unit test updated for the Reset Scenario move), tsc
     clean, oxlint clean.
-10. **DONE: full chapter evidence sweep + real self-review of the images (not just green tests)**,
-    closing `CTY-MOTION-001`'s own "intro and all six chapters captured at every breakpoint" gap.
+10. **DONE (partial): chapter evidence sweep + real self-review of the images (not just green
+    tests)**. NOT a full close of `CTY-MOTION-001` (corrected after a second self-review caught
+    this exact overclaim pattern repeating): that gate also requires reverse-scroll and
+    reduced-motion variants for ALL SIX chapters, plus a scroll recording, contact sheets, and
+    frame pacing per CLAUDE.md. This pass only added start/mid-scroll captures per chapter per
+    breakpoint, plus ONE reduced-motion capture (chapter 4 only, not all six). Still owed:
+    reverse-scroll tests for the chapters that scroll-scrub (2 and 4), reduced-motion captures for
+    chapters 2, 3, 5, 6, and the scroll-recording/contact-sheet/frame-pacing deliverables.
     `e2e/evidence.spec.ts` extended from intro-only to all of chapters 2-6 (start + mid-scroll state
     per chapter per breakpoint, plus a reduced-motion capture for chapter 4). Per CLAUDE.md's own
     mandatory rule ("Read the resulting images yourself... before calling anything done"), every
@@ -251,16 +257,68 @@ re-skin.
     Re-verified after both fixes: 95/95 Playwright across repeated full runs (same pre-existing
     chapter 2 CPU-contention flake class, unrelated), zero axe-core violations, tsc/oxlint clean.
 
+11. **DONE: a second self-review (deliberately asked to be adversarial about the first review's own
+    blind spots) found and fixed several more real defects**, the most significant being that the
+    dossier's own literal flagship request was never actually built:
+    - **The flagship chart didn't exist.** The dossier's own words are "two urban timelines diverge
+      AS ESTIMATOR ASSUMPTIONS ARE MANIPULATED." The build had two city stages that diverge on
+      SCROLL, with no time axis and no redraw when donor weights change, i.e. the scroll effect,
+      not the estimator-driven one the dossier actually asks for. Built the real thing:
+      `src/scenes/TrajectoryChart.tsx`, a hand-rolled SVG line chart (no charting library; two
+      polylines, an axis, and a few labels is well within "write it by hand") plotting the treated
+      zone's REAL observed outcome series against the REAL synthetic-control reconstruction for the
+      same days (`synthetic[day] = observed[day] - gapByDay[day]`, the estimator's own existing
+      per-day gap field, `src/engine/estimators.ts`, which was already computed and exported but
+      never rendered anywhere), with an intervention-day marker, redrawing whenever donor weights
+      change. This is the actual flagship interaction now, not the scroll divergence alone (which
+      stays, as a real but secondary effect). 2 new Playwright tests confirm the chart renders a
+      real multi-point path (not empty/placeholder) and that the synthetic path's own `d` attribute
+      changes when weights are reapplied.
+    - **Every `ResultCaveat` said "Fitted estimate" regardless of what kind of number it sat next
+      to**, violating CLAUDE.md's own rule to "distinguish historical measurement, fitted estimate,
+      counterfactual inference, and hypothetical simulation in every label that presents a number."
+      The synthetic-control gap is a counterfactual inference, not a fitted point estimate the same
+      way DiD's ATT is; the placebo rank/p-value is a permutation-test diagnostic, not an estimate
+      of anything. `ResultCaveat` now takes a `kind` prop with accurate wording for each.
+    - **No number on the page showed units.** Added `unitForOutcome()`
+      (`src/scenes/resultVisualEncoding.ts`) and applied it to the Lab's ATT/pre-post means and
+      chapter 4's Gap readout.
+    - **Chapters 3, 5, and 6 each had roughly 150vh of dead pinned scroll** (no scroll-linked
+      animation, but still inheriting the scrubbing chapters' own 250vh height), confirmed by
+      diffing each chapter's own start/midscroll evidence captures (pixel-identical). Shortened to
+      130vh for these three specifically.
+    - **Mobile chapter-nav bar occluded the bottom of each panel's own scrollable content**
+      (confirmed with a real `click()`, which Playwright refuses when something else is on top, not
+      just `isVisible()`, which doesn't check occlusion): added `padding-bottom` clearance on
+      `.chapter-sticky` at the mobile breakpoint, with a new e2e test using a real click to prove
+      reachability, not just visibility.
+    - **Nav dot tap targets were ~14px**, under the 24x24px minimum touch-target size; widened via
+      padding and `min-width`/`min-height`.
+    - **The nav's smooth-scroll animation ignored `prefers-reduced-motion`**, the one place in the
+      app that did (every GSAP scene already branches on it via `useScene`'s own flag); gated on
+      `matchMedia`.
+    - Checked and found NOT a bug: the intro's own caveat text (added in the hardening-pass commit)
+      does not overlap the city grid on mobile, confirmed directly against
+      `intro-mobile-midbeat.png`.
+    - **Corrected an overclaim**: the prior evidence-sweep entry above said it "closes
+      `CTY-MOTION-001`"; it does not (reverse-scroll and reduced-motion variants are still owed for
+      most chapters, along with the scroll-recording/contact-sheet/frame-pacing deliverables).
+      Reworded in place rather than left standing.
+    98/98 Playwright across repeated full runs, zero axe-core violations, tsc/oxlint clean.
+
 **Still owed before Stage 3 can be called done against the release gate** (not yet done):
-- **The rest of the visual-design pass**: chapter 3/5's new distinguishing treatments are a first
+- **The rest of the visual-design pass**: chapter 3/5's distinguishing treatments are a first
   increment, not the full pass (varied block treatment, asymmetric composition, texture/depth cues
-  beyond the palette re-skin, still not done). Chapter 4's divergence motion is also real but subtle
-  (xPercent ±6 on ~320px-wide stages); whether it needs to be more pronounced to read as the
-  dossier's flagship moment is an open visual-QA question, not yet judged by an independent reviewer.
-- **An independent visual QA reviewer has not yet looked at the evidence** generated this pass
-  (`verification/SCREENSHOTS/ch2..ch6-{desktop,tablet,mobile}-{start,midscroll}.png` plus the
-  chapter-4 reduced-motion set); this session's own self-review is not a substitute for CLAUDE.md's
-  own "genuinely independent" requirement.
+  beyond the palette re-skin, still not done). The trajectory chart now gives chapter 4 a much
+  stronger flagship moment than the scroll-divergence alone; whether the scroll divergence itself
+  still needs to be more pronounced is now a secondary, lower-stakes open question.
+- **Reverse-scroll and reduced-motion evidence for most chapters, plus the scroll-recording,
+  contact-sheet, and frame-pacing deliverables** (`CTY-MOTION-001`'s full requirement; see the
+  corrected entry above).
+- **An independent visual QA reviewer has not yet looked at any of this evidence**; two rounds of
+  this session's own self-review (including one deliberately asked to find the first round's own
+  blind spots) are not a substitute for CLAUDE.md's own "genuinely independent" requirement. The
+  next step before this can move toward release is spawning that independent review.
 
 **Stage 4-9**: laboratory integration inside the full cinematic experience (decide what, if
 anything, remains in the standalone "lab" `<main>` section now that all 6 chapters host their own

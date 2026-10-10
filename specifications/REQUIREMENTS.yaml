@@ -128,8 +128,17 @@ requirements:
     resolved, permanently trapping the scrub at its end state even when scrolled to the chapter's
     true top (fixed by adding scenario.treatedZone to the scene's dependency array, the same
     re-measurement trigger chapter 2's own identical pattern already relied on, confirmed via
-    git-stash repro against the pre-fix code and a stable 6-of-6 full-suite rerun after). Covered by
-    e2e/chapter4.spec.ts (9 tests: layout, real gap readout, scroll divergence, weight-driven
+    git-stash repro against the pre-fix code and a stable 6-of-6 full-suite rerun after).
+    A second self-review found the dossier's own literal request ('two urban timelines diverge AS
+    ESTIMATOR ASSUMPTIONS ARE MANIPULATED') was not actually built: the two stages only diverged on
+    SCROLL, with no time axis and no redraw on weight changes. Fixed by adding
+    src/scenes/TrajectoryChart.tsx, a hand-rolled SVG line chart plotting the treated zone's real
+    observed series against the real synthetic-control reconstruction (derived from the estimator's
+    own existing gapByDay field, already computed but never rendered) for the same days, with an
+    intervention-day marker, redrawing whenever donor weights are reapplied. This is now the primary
+    flagship interaction; the scroll-driven stage divergence remains as a secondary effect. Covered
+    by e2e/chapter4.spec.ts (11 tests: layout, real gap readout with units, scroll divergence,
+    trajectory chart renders a real path, trajectory chart redraws on weight change, weight-driven
     recompute, lab state sharing, reduced motion, 3-breakpoint responsiveness)."
   - id: CTY-INT-005
     project: "COUNTERFACTUAL CITY"

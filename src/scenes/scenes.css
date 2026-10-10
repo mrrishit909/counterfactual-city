@@ -128,6 +128,19 @@
   height: 250vh;
 }
 
+/* Chapters 3, 5, and 6 have no scroll-scrubbed animation (a deliberate choice per each chapter's
+   own comment: the whole grid stays in frame, there is nothing for a scrub timeline to drive). The
+   default 250vh height was inherited from the scrubbing chapters without reconsidering it for
+   these, leaving roughly 150vh of pinned scroll where nothing visibly moves, confirmed by diffing
+   each one's own start/midscroll evidence captures (verification/SCREENSHOTS/ch3-*-start.png vs
+   ch3-*-midscroll.png, etc: pixel-identical). A shorter dwell here is a real motion-layer fix, not
+   a cosmetic one. */
+.chapter-matched-controls,
+.chapter-diagnostics,
+.chapter-limitations {
+  height: 130vh;
+}
+
 .chapter-sticky {
   position: sticky;
   top: 0;
@@ -185,6 +198,10 @@
        own mobile captures (verification/SCREENSHOTS/ch2-mobile-start.png,
        ch3-mobile-start.png) before this fix. */
     overflow-y: auto;
+    /* Clearance for the fixed bottom chapter-nav bar (~50-56px tall including its own offset from
+       the viewport edge), found live: without this, the bottom of each panel's own scrollable
+       content sits directly under the bar. */
+    padding-bottom: 4.25rem;
   }
   .chapter-stage-wrap,
   .chapter-controls {
@@ -284,6 +301,59 @@
   color: var(--hint);
 }
 
+.flagship-chart {
+  max-width: 480px;
+  margin: 0 auto;
+  width: 100%;
+  text-align: center;
+}
+
+.trajectory-chart {
+  width: 100%;
+  height: auto;
+  display: block;
+}
+
+.trajectory-axis,
+.trajectory-intervention-line {
+  stroke: var(--hairline);
+  stroke-width: 1;
+}
+
+.trajectory-intervention-line {
+  stroke-dasharray: 3 3;
+}
+
+.trajectory-axis-label,
+.trajectory-intervention-label {
+  font-size: 9px;
+  fill: var(--hint);
+  font-family: ui-sans-serif, system-ui, sans-serif;
+}
+
+.trajectory-legend {
+  margin: 0.35rem 0 0;
+  font-size: 0.75rem;
+  color: var(--hint);
+}
+
+.trajectory-legend-swatch {
+  display: inline-block;
+  width: 14px;
+  height: 2px;
+  margin: 0 0.3rem 0 0.75rem;
+  vertical-align: middle;
+}
+
+.trajectory-legend-swatch:first-child {
+  margin-left: 0;
+}
+
+.trajectory-legend-swatch-dashed {
+  background: none;
+  border-top: 2px dashed;
+}
+
 .flagship-controls {
   flex: 0 1 auto;
   min-height: 0;
@@ -375,7 +445,11 @@
   background: none;
   border: none;
   cursor: pointer;
-  padding: 0.15rem;
+  /* A real finding: 0.15rem padding around a 9px mark gave a ~14px tap target, well under the
+     24x24px minimum touch-target size. */
+  padding: 0.5rem;
+  min-width: 24px;
+  min-height: 24px;
 }
 
 .chapter-nav-dot-mark {

@@ -148,9 +148,10 @@ test("CTY-INT-006: changing the outcome variable loads a compatible series and r
     expect(after).not.toBe(before);
     // avg_speed_kmh's true injected effect is a small positive number (~3.2), a different order
     // of magnitude than trip_volume's (~-180), a cheap sanity check that a DIFFERENT series was
-    // actually loaded, not just a re-label of the same numbers.
-    expect(Number(after)).toBeGreaterThan(-20);
-    expect(Number(after)).toBeLessThan(20);
+    // actually loaded, not just a re-label of the same numbers. parseFloat, not Number: the value
+    // now carries a trailing unit (e.g. "3.2 km/h"), which Number() would reject as NaN.
+    expect(parseFloat(after ?? "")).toBeGreaterThan(-20);
+    expect(parseFloat(after ?? "")).toBeLessThan(20);
   }).toPass();
 });
 

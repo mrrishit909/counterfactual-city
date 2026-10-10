@@ -84,6 +84,49 @@ test("scrolling through chapter 4 draws the two timelines apart (real scrub tran
   expect(scrolledCounterfactualTransform).not.toBe(baseObservedTransform);
 });
 
+test("the trajectory chart renders a real observed-vs-synthetic path, not an empty/placeholder chart", async ({
+  page,
+}) => {
+  await page.goto("/");
+  await scrollToChapter4(page);
+
+  const observedPath = page.getByTestId("ch4-trajectory-observed");
+  const syntheticPath = page.getByTestId("ch4-trajectory-synthetic");
+  await expect(observedPath).toBeVisible();
+  await expect(syntheticPath).toBeVisible();
+
+  const observedD = await observedPath.getAttribute("d");
+  const syntheticD = await syntheticPath.getAttribute("d");
+  // A real multi-point line has many "L" commands; an empty/placeholder path would be short or
+  // absent entirely.
+  expect(observedD?.split("L").length ?? 0).toBeGreaterThan(10);
+  expect(syntheticD?.split("L").length ?? 0).toBeGreaterThan(10);
+  // The two series are not identical (the whole point of the chart): different donor weights
+  // produce a different synthetic reconstruction than the observed series.
+  expect(syntheticD).not.toBe(observedD);
+});
+
+test("the trajectory chart's synthetic path redraws when donor weights change", async ({ page }) => {
+  await page.goto("/");
+  await scrollToChapter4(page);
+  await expect(page.getByTestId("ch4-trajectory-synthetic")).toBeVisible();
+
+  const before = await page.getByTestId("ch4-trajectory-synthetic").getAttribute("d");
+
+  const sliders = page.locator('input[aria-label^="Donor weight for zone"]');
+  await setRangeValue(sliders.nth(0), "1");
+  const count = await sliders.count();
+  for (let i = 1; i < count; i++) {
+    await setRangeValue(sliders.nth(i), "0");
+  }
+  await page.getByRole("button", { name: /apply weights/i }).click();
+
+  await expect(async () => {
+    const after = await page.getByTestId("ch4-trajectory-synthetic").getAttribute("d");
+    expect(after).not.toBe(before);
+  }).toPass();
+});
+
 test("adjusting a donor weight in chapter 4 recomputes the synthetic-control gap", async ({ page }) => {
   await page.goto("/");
   await scrollToChapter4(page);

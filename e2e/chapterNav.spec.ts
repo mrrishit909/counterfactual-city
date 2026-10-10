@@ -55,4 +55,20 @@ test.describe("responsive viewports", () => {
       }).toPass();
     });
   }
+
+  test("the fixed bottom nav bar does not occlude a mobile chapter's own content (real click, not just isVisible)", async ({
+    page,
+  }) => {
+    // isVisible() alone doesn't catch occlusion by another fixed-position element; a real,
+    // actionable click (which Playwright refuses if something else is on top) does.
+    await page.setViewportSize({ width: 390, height: 844 });
+    await page.goto("/");
+    await expect(page.getByTestId("did-result")).toBeVisible();
+
+    await page.getByTestId("nav-ch3").click();
+    const checkbox = page.locator(".zone-checkbox input[type=checkbox]").first();
+    await checkbox.scrollIntoViewIfNeeded();
+    await checkbox.click();
+    await expect(checkbox).toBeChecked();
+  });
 });

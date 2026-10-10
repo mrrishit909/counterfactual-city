@@ -14,7 +14,11 @@ function scrollToSection(id: string) {
   const el = document.getElementById(id);
   if (!el) return;
   const top = el.getBoundingClientRect().top + window.scrollY;
-  window.scrollTo({ top, behavior: "smooth" });
+  // A real finding: the smooth-scroll animation ignored prefers-reduced-motion entirely, the one
+  // place in the app that did (every GSAP scene already branches on it via useScene's own
+  // `reducedMotion` flag).
+  const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  window.scrollTo({ top, behavior: reducedMotion ? "auto" : "smooth" });
 }
 
 /**

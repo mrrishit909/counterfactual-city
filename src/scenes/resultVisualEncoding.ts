@@ -35,3 +35,16 @@ const DEFAULT_SCALE_BY_OUTCOME: Record<string, number> = {
 export function defaultScaleForOutcome(outcome: string): number {
   return DEFAULT_SCALE_BY_OUTCOME[outcome] ?? 300;
 }
+
+// Every numeric result on the page shares this outcome's units; a second self-review found none of
+// them actually showed a unit (the ATT, the synthetic-control gap), easy to misread as unitless or
+// to confuse across outcomes.
+const UNIT_BY_OUTCOME: Record<string, string> = {
+  trip_volume: "trips/day",
+  avg_speed_kmh: "km/h",
+  transit_ridership: "riders/day",
+};
+
+export function unitForOutcome(outcome: string): string {
+  return UNIT_BY_OUTCOME[outcome] ?? "";
+}

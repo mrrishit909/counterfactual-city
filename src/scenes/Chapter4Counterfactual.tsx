@@ -1,13 +1,15 @@
-import { useRef } from "react";
+import { useMemo, useRef } from "react";
 import { DonorWeightsControl } from "../controls/DonorWeightsControl";
 import { useScenario } from "../engine/ScenarioContext";
 import { CityStage } from "./CityStage";
-import { defaultScaleForOutcome, encodeResult } from "./resultVisualEncoding";
+import { defaultScaleForOutcome, encodeResult, unitForOutcome } from "./resultVisualEncoding";
 import { ResultCaveat } from "./ResultCaveat";
+import { TrajectoryChart, type TrajectoryPoint } from "./TrajectoryChart";
 import { useScene } from "./useScene";
 
 const SCENE_ID = "ch4";
 const OBSERVED_COLOR = "#D65343"; // --accent-red: the actual, factual treated-zone outcome
+const SYNTHETIC_COLOR = "#4B84C5"; // --accent-blue: the reconstructed counterfactual series
 
 /**
  * Chapter 4: "counterfactual" (dossier naming), the dossier's own signature flagship interaction
@@ -20,7 +22,7 @@ const OBSERVED_COLOR = "#D65343"; // --accent-red: the actual, factual treated-z
  * for, built on the same scrub-bound GSAP timeline pattern chapters 1-2 already established.
  */
 export function Chapter4Counterfactual() {
-  const { sc, scenario } = useScenario();
+  const { sc, scenario, load } = useScenario();
   const sectionRef = useRef<HTMLElement>(null);
   const observedRef = useRef<HTMLDivElement>(null);
   const counterfactualRef = useRef<HTMLDivElement>(null);
@@ -63,6 +65,26 @@ export function Chapter4Counterfactual() {
   );
 
   const visual = sc ? encodeResult(sc.attPostMean, defaultScaleForOutcome(scenario.outcome)) : undefined;
+  const unit = unitForOutcome(scenario.outcome);
+
+  // The literal flagship chart: the treated zone's REAL observed series next to the REAL
+  // synthetic-control reconstruction for the same days (synthetic[day] = observed[day] -
+  // gapByDay[day], the estimator's own per-day gap, src/engine/estimators.ts), redrawing whenever
+  // donor weights change. A second self-review found this chapter was missing a time axis
+  // entirely: the two city stages diverging on scroll shows THAT something differs, not WHAT, and
+  // the dossier's own "as estimator assumptions are manipulated" phrase means the chart should
+  // redraw when the visitor edits weights, not just when they scroll.
+  const { observedSeries, syntheticSeries } = useMemo(() => {
+    if (load.status !== "ready" || !sc) return { observedSeries: [] as TrajectoryPoint[], syntheticSeries: [] as TrajectoryPoint[] };
+    const observed = load.panel.rows
+      .filter((r) => r.zone === scenario.treatedZone)
+      .sort((a, b) => a.day - b.day)
+      .map((r) => ({ day: r.day, value: r[scenario.outcome] }));
+    const synthetic = observed
+      .filter((p) => p.day in sc.gapByDay)
+      .map((p) => ({ day: p.day, value: p.value - sc.gapByDay[p.day] }));
+    return { observedSeries: observed, syntheticSeries: synthetic };
+  }, [load, sc, scenario.treatedZone, scenario.outcome]);
 
   return (
     <section
@@ -79,13 +101,13 @@ export function Chapter4Counterfactual() {
           {sc && (
             <>
               <p className="flagship-gap" data-testid="flagship-gap">
-                Gap (observed minus synthetic): <strong>{sc.attPostMean.toFixed(1)}</strong>
+                Gap (observed minus synthetic): <strong>{sc.attPostMean.toFixed(1)}</strong> {unit}
               </p>
               <p className="hint">
                 The synthetic stage&rsquo;s color/pulse encodes this gap&rsquo;s size and direction,
                 not a predicted value for that timeline on its own.
               </p>
-              <ResultCaveat />
+              <ResultCaveat kind="counterfactual-gap" />
             </>
           )}
         </div>
@@ -110,6 +132,24 @@ export function Chapter4Counterfactual() {
             />
           </div>
         </div>
+        {observedSeries.length > 0 && (
+          <div className="flagship-chart">
+            <TrajectoryChart
+              instanceId="ch4"
+              observed={observedSeries}
+              synthetic={syntheticSeries}
+              interventionDay={scenario.interventionDay}
+              unit={unit}
+              observedColor={OBSERVED_COLOR}
+              syntheticColor={SYNTHETIC_COLOR}
+            />
+            <p className="trajectory-legend">
+              <span className="trajectory-legend-swatch" style={{ background: OBSERVED_COLOR }} /> observed
+              <span className="trajectory-legend-swatch trajectory-legend-swatch-dashed" style={{ borderColor: SYNTHETIC_COLOR }} />{" "}
+              synthetic counterfactual
+            </p>
+          </div>
+        )}
         <div className="flagship-controls">
           <DonorWeightsControl />
         </div>
