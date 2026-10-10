@@ -213,11 +213,20 @@ export function IntroSequence({ children }: { children: React.ReactNode }) {
         // selectors (e.g. [data-state="error"]) further down the DOM; the two are genuinely
         // different states (the intro's own cinematic readiness vs. the lab's data readiness)
         // even when driven by the same underlying load.status value.
-        <div data-state={`intro-${load.status}`} data-testid="intro-not-ready">
-          {load.status === "loading" ? <p>Loading city data{"…"}</p> : null}
-          {/* load.status === "error": no message rendered here, the lab's own error branch
-              (src/App.tsx) shows the real error message immediately below; this avoids showing
-              the same failure twice. */}
+        //
+        // Reuses .intro-section's own 400vh height (not a bespoke placeholder size): a real CLS
+        // measurement (Lighthouse, local preview) found a 0.79 shift here, root-caused to this
+        // placeholder being shorter than the real intro, so children (always rendered below, per
+        // the comment above) sat at the very top of the page until data arrived, then got pushed
+        // down wholesale once the real intro mounted. Reserving the same slot up front means the
+        // swap no longer moves anything below it.
+        <div className="intro-section" data-state={`intro-${load.status}`} data-testid="intro-not-ready">
+          <div className="intro-sticky">
+            {load.status === "loading" ? <p>Loading city data{"…"}</p> : null}
+            {/* load.status === "error": no message rendered here, the lab's own error branch
+                (src/App.tsx) shows the real error message immediately below; this avoids showing
+                the same failure twice. */}
+          </div>
         </div>
       )}
       {/* A real a11y regression found removing the standalone "Lab" <main> (Stage 4 lab

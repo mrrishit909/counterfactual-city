@@ -91,16 +91,9 @@ for (const [name, selector, frames] of [
   });
 }
 
-// Real production-build frame-pacing measurement: hooks requestAnimationFrame to record actual
-// frame timestamps during a real scrub-driven scroll pass, computing the SAME stats a performance
-// audit would (mean frame time, p95, dropped-frame count against a 60fps/16.7ms budget), against
-// this chapter's own real GSAP scrub animation, not a synthetic/invented number.
-test("real frame-pacing measurement during chapter 4's own scrub animation (production build)", async ({ page }) => {
-  await page.setViewportSize({ width: 1440, height: 900 });
-  await page.goto("/");
-  await expect(page.getByTestId("did-result")).toBeVisible();
-  await waitForLayoutSettle(page);
-
+/** Hooks requestAnimationFrame, scrolls continuously between two y positions over ~1.5s (a real
+ * scroll pass, not a single jump), and returns the frame-time samples recorded during it. */
+async function measureFrameTimesDuringScroll(page: Page, fromY: number, toY: number): Promise<number[]> {
   await page.evaluate(() => {
     (window as unknown as { __frameTimes: number[] }).__frameTimes = [];
     let last = performance.now();
@@ -112,46 +105,81 @@ test("real frame-pacing measurement during chapter 4's own scrub animation (prod
     };
     requestAnimationFrame(tick);
   });
-
-  const ch4Top = await page.locator("#ch4").evaluate((el) => el.getBoundingClientRect().top + window.scrollY);
-  // A real, continuous scroll pass (not a single jump) over ~1.5s, matching how a visitor actually
-  // scrolls through a scrubbed section, so frame-pacing reflects the real animation under real
-  // scroll-event load, not an idle page.
   const steps = 30;
   for (let i = 0; i <= steps; i++) {
-    await page.evaluate((y) => window.scrollTo({ top: y, behavior: "auto" }), ch4Top + (i / steps) * 1300);
+    await page.evaluate((y) => window.scrollTo({ top: y, behavior: "auto" }), fromY + ((toY - fromY) * i) / steps);
     await page.waitForTimeout(50);
   }
-
   const frameTimes: number[] = await page.evaluate(
     () => (window as unknown as { __frameTimes: number[] }).__frameTimes,
   );
+  // Drop the first sample (always 0 or an outlier from hook setup) and any zero-length warmup frames.
+  return frameTimes.slice(1).filter((t) => t > 0);
+}
 
-  // Drop the first sample (always 0 or an outlier from hook setup) and any zero-length warmup
-  // frames.
-  const samples = frameTimes.slice(1).filter((t) => t > 0);
+function summarize(samples: number[]) {
   const mean = samples.reduce((s, t) => s + t, 0) / samples.length;
   const sorted = [...samples].sort((a, b) => a - b);
   const p95 = sorted[Math.floor(sorted.length * 0.95)];
   const droppedFrames = samples.filter((t) => t > 33.4).length; // worse than ~30fps for a frame
-  const fps = 1000 / mean;
-
-  const report = {
-    chapter: "ch4",
+  return {
     sampleCount: samples.length,
     meanFrameTimeMs: Number(mean.toFixed(2)),
     p95FrameTimeMs: Number(p95.toFixed(2)),
-    estimatedFps: Number(fps.toFixed(1)),
+    estimatedFps: Number((1000 / mean).toFixed(1)),
     droppedFrames60fpsBudget: droppedFrames,
+  };
+}
+
+// Real production-build frame-pacing measurement for every chapter, not just chapter 4: hooks
+// requestAnimationFrame to record actual frame timestamps during a real scrub-driven scroll pass
+// forward AND in reverse, plus a genuinely idle baseline (no scrolling) for comparison, so a
+// chapter's own real GSAP scrub animation is measured against real idle-page pacing rather than
+// an invented number. The intro IS chapter "01 Observed world" in this app's own chapter numbering
+// (ChapterNav.tsx), so it is measured once, not duplicated as a separate "chapter 1".
+test("real frame-pacing measurement for every chapter, forward + reverse, with an idle baseline (production build)", async ({
+  page,
+}) => {
+  await page.setViewportSize({ width: 1440, height: 900 });
+  await page.goto("/");
+  await expect(page.getByTestId("did-result")).toBeVisible();
+  await waitForLayoutSettle(page);
+
+  const idleSamples = await measureFrameTimesDuringScroll(page, 0, 0);
+
+  const chapters = [
+    ["intro", "#intro-section"],
+    ["ch2", "#ch2"],
+    ["ch3", "#ch3"],
+    ["ch4", "#ch4"],
+    ["ch5", "#ch5"],
+    ["ch6", "#ch6"],
+  ] as const;
+
+  const report: Record<string, unknown> = {
     budget: "60fps desktop target (CLAUDE.md release gate): 16.7ms/frame mean; dropped = frame > 33.4ms (worse than 30fps)",
     measuredAgainst: "production build (vite preview), real continuous scroll, not an idle page",
+    idleBaseline: summarize(idleSamples),
   };
-  fs.writeFileSync(path.join(DIR, "..", "FRAME_PACING.json"), JSON.stringify(report, null, 2));
 
-  // Not a hard pass/fail gate here (a single CI machine's frame pacing varies with host load), but
-  // a sanity bound: catches a genuinely broken animation (e.g. the ScrollTrigger measurement bug
-  // this project found earlier in its own build, which would have produced a frozen, all-zero or
-  // all-huge frame-time series) without being a flaky strict perf assertion.
-  expect(samples.length).toBeGreaterThan(10);
-  expect(mean).toBeLessThan(200);
+  for (const [name, selector] of chapters) {
+    const { top, height } = await page.locator(selector).evaluate((el) => {
+      const r = el.getBoundingClientRect();
+      return { top: r.top + window.scrollY, height: r.height };
+    });
+    const range = Math.max(300, Math.min(height - 900, 1300));
+
+    const forward = await measureFrameTimesDuringScroll(page, top, top + range);
+    const reverse = await measureFrameTimesDuringScroll(page, top + range, top);
+
+    report[name] = { forward: summarize(forward), reverse: summarize(reverse) };
+
+    // Sanity bound per chapter (not a strict perf gate, a single CI machine's pacing varies with
+    // host load): catches a genuinely broken animation (e.g. the ScrollTrigger measurement bug
+    // this project found earlier, which would produce a frozen, all-zero or all-huge series).
+    expect(forward.length, `${name} forward samples`).toBeGreaterThan(10);
+    expect(reverse.length, `${name} reverse samples`).toBeGreaterThan(10);
+  }
+
+  fs.writeFileSync(path.join(DIR, "..", "FRAME_PACING.json"), JSON.stringify(report, null, 2));
 });

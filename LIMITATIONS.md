@@ -162,8 +162,8 @@ defect outstanding, though a further review round would likely still find someth
 this project so far has. Still not built: the rest of the real visual-design
 pass (varied block treatment, asymmetric composition, texture/depth cues beyond the palette re-skin
 and the cross-chapter-distinctiveness work in chapters 3 and 5 above), 3D/spatial rendering (if
-justified by measurement), responsive compositions per-chapter beyond chapters 1-6's own 3
-breakpoints, and formal performance budgets beyond the one real frame-pacing measurement taken
-(`verification/FRAME_PACING.json`, chapter 4 only, desktop only; not yet measured for every
-chapter/breakpoint or against Lighthouse's own perf/a11y score thresholds the release gate also
-names).
+justified by measurement), and responsive compositions per-chapter beyond chapters 1-6's own 3
+breakpoints. Frame-pacing is now measured for every chapter, forward and reverse, against an idle
+baseline, desktop only (`verification/FRAME_PACING.json`); mobile/tablet frame-pacing and a
+Lighthouse perf/a11y score are covered separately (see `verification/LIVE_VERIFICATION/` once
+published, or `DEPLOYMENT.md`'s pre-deployment checklist before that).

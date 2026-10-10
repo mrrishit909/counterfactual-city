@@ -3,6 +3,11 @@ import { defineConfig } from 'vitest/config'
 
 // https://vite.dev/config/
 export default defineConfig({
+  // GitHub Pages project page (DEPLOYMENT.md): served at mrrishit909.github.io/counterfactual-city/,
+  // matching this account's other project repos (cascadia). The panel-data fetch
+  // (src/engine/loadPanel.ts) already builds its URL from import.meta.env.BASE_URL, so no other path
+  // needed changing to support this.
+  base: '/counterfactual-city/',
   plugins: [react()],
   test: {
     environment: 'jsdom',

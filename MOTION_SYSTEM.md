@@ -63,7 +63,10 @@ gated: `behavior: reducedMotion ? "auto" : "smooth"`.
 ## Measured frame pacing
 
 `e2e/evidence-harness.spec.ts` hooks `requestAnimationFrame` during a real, continuous scroll pass
-through chapter 4's own scrub animation, against the production preview build (not a dev server, not
-an idle page). Latest measurement (`verification/FRAME_PACING.json`): mean frame time 16.64ms
-(~60.1fps), p95 18.4ms, 0 frames worse than a 30fps threshold. Measured on one chapter, one
-breakpoint, one local machine; not yet a full per-chapter/per-breakpoint budget (see `LIMITATIONS.md`).
+through every chapter's own scroll/scrub behavior, forward AND in reverse, plus a genuinely idle
+(no-scroll) baseline for comparison, against the production preview build (not a dev server).
+Latest measurement (`verification/FRAME_PACING.json`): every chapter, both directions, and the idle
+baseline land at ~16.65ms mean (~60fps), 0 frames worse than a 30fps threshold, consistent with the
+idle baseline, meaning no measured scroll/scrub pass drops frames relative to doing nothing.
+Desktop, one local machine; mobile/tablet frame-pacing is not yet separately measured (see
+`LIMITATIONS.md`).

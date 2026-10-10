@@ -1,10 +1,107 @@
 {
-  "chapter": "ch4",
-  "sampleCount": 98,
-  "meanFrameTimeMs": 16.67,
-  "p95FrameTimeMs": 17.5,
-  "estimatedFps": 60,
-  "droppedFrames60fpsBudget": 0,
   "budget": "60fps desktop target (CLAUDE.md release gate): 16.7ms/frame mean; dropped = frame > 33.4ms (worse than 30fps)",
-  "measuredAgainst": "production build (vite preview), real continuous scroll, not an idle page"
+  "measuredAgainst": "production build (vite preview), real continuous scroll, not an idle page",
+  "idleBaseline": {
+    "sampleCount": 99,
+    "meanFrameTimeMs": 16.66,
+    "p95FrameTimeMs": 17.8,
+    "estimatedFps": 60,
+    "droppedFrames60fpsBudget": 0
+  },
+  "intro": {
+    "forward": {
+      "sampleCount": 197,
+      "meanFrameTimeMs": 16.62,
+      "p95FrameTimeMs": 17.7,
+      "estimatedFps": 60.2,
+      "droppedFrames60fpsBudget": 0
+    },
+    "reverse": {
+      "sampleCount": 296,
+      "meanFrameTimeMs": 16.66,
+      "p95FrameTimeMs": 17.5,
+      "estimatedFps": 60,
+      "droppedFrames60fpsBudget": 0
+    }
+  },
+  "ch2": {
+    "forward": {
+      "sampleCount": 395,
+      "meanFrameTimeMs": 16.65,
+      "p95FrameTimeMs": 18.1,
+      "estimatedFps": 60.1,
+      "droppedFrames60fpsBudget": 0
+    },
+    "reverse": {
+      "sampleCount": 494,
+      "meanFrameTimeMs": 16.64,
+      "p95FrameTimeMs": 18,
+      "estimatedFps": 60.1,
+      "droppedFrames60fpsBudget": 0
+    }
+  },
+  "ch3": {
+    "forward": {
+      "sampleCount": 593,
+      "meanFrameTimeMs": 16.66,
+      "p95FrameTimeMs": 17.9,
+      "estimatedFps": 60,
+      "droppedFrames60fpsBudget": 0
+    },
+    "reverse": {
+      "sampleCount": 692,
+      "meanFrameTimeMs": 16.67,
+      "p95FrameTimeMs": 17.8,
+      "estimatedFps": 60,
+      "droppedFrames60fpsBudget": 0
+    }
+  },
+  "ch4": {
+    "forward": {
+      "sampleCount": 791,
+      "meanFrameTimeMs": 16.66,
+      "p95FrameTimeMs": 18,
+      "estimatedFps": 60,
+      "droppedFrames60fpsBudget": 0
+    },
+    "reverse": {
+      "sampleCount": 908,
+      "meanFrameTimeMs": 16.66,
+      "p95FrameTimeMs": 17.8,
+      "estimatedFps": 60,
+      "droppedFrames60fpsBudget": 0
+    }
+  },
+  "ch5": {
+    "forward": {
+      "sampleCount": 989,
+      "meanFrameTimeMs": 16.66,
+      "p95FrameTimeMs": 17.7,
+      "estimatedFps": 60,
+      "droppedFrames60fpsBudget": 0
+    },
+    "reverse": {
+      "sampleCount": 1088,
+      "meanFrameTimeMs": 16.66,
+      "p95FrameTimeMs": 17.8,
+      "estimatedFps": 60,
+      "droppedFrames60fpsBudget": 0
+    }
+  },
+  "ch6": {
+    "forward": {
+      "sampleCount": 1187,
+      "meanFrameTimeMs": 16.66,
+      "p95FrameTimeMs": 17.9,
+      "estimatedFps": 60,
+      "droppedFrames60fpsBudget": 0
+    },
+    "reverse": {
+      "sampleCount": 1299,
+      "meanFrameTimeMs": 16.66,
+      "p95FrameTimeMs": 17.4,
+      "estimatedFps": 60,
+      "droppedFrames60fpsBudget": 0
+    }
+  }
 }
