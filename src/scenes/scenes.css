@@ -310,3 +310,106 @@
     width: 100%;
   }
 }
+
+/* Chapter nav: fixed index, always reachable, release-gate "clear navigation" + nav-transitions
+   motion layer. Right-anchored dot rail on desktop/tablet; a bottom bar on mobile (a right-edge
+   rail would sit over content at narrow widths). */
+.chapter-nav {
+  position: fixed;
+  top: 50%;
+  right: 1rem;
+  transform: translateY(-50%);
+  z-index: 10;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 0.75rem;
+}
+
+.chapter-nav ol {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+}
+
+.chapter-nav-dot {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 0.5rem;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0.15rem;
+}
+
+.chapter-nav-dot-mark {
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  background: var(--hairline);
+  border: 1px solid var(--ink);
+  transition: background-color 0.2s ease, transform 0.2s ease;
+}
+
+.chapter-nav-dot[data-active="true"] .chapter-nav-dot-mark {
+  background: var(--accent-red);
+  transform: scale(1.3);
+}
+
+.chapter-nav-dot-label {
+  font-size: 0.72rem;
+  white-space: nowrap;
+  color: var(--hint);
+  /* visibility, not opacity: an opacity transition briefly renders text at partial alpha, which
+     axe-core caught live as a real (if momentary) WCAG contrast violation whenever Playwright's
+     own mouse movement happened to hover a dot mid-interaction. visibility has no intermediate
+     value, so there is no instant at which the text is both shown and under-contrast. The
+     translateX reveal motion (not a color blend) stays for the hover/focus/active
+     microinteraction. */
+  visibility: hidden;
+  transform: translateX(4px);
+  transition: transform 0.15s ease;
+}
+
+.chapter-nav-dot:hover .chapter-nav-dot-label,
+.chapter-nav-dot:focus-visible .chapter-nav-dot-label,
+.chapter-nav-dot[data-active="true"] .chapter-nav-dot-label {
+  visibility: visible;
+  transform: translateX(0);
+}
+
+.chapter-nav-reset {
+  font-size: 0.7rem;
+  background: var(--paper);
+  color: var(--ink);
+  border: 1px solid var(--ink);
+  padding: 0.3rem 0.5rem;
+  cursor: pointer;
+}
+
+@media (max-width: 1023px) {
+  .chapter-nav {
+    top: auto;
+    bottom: 0.75rem;
+    right: 0.75rem;
+    left: 0.75rem;
+    transform: none;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    background: var(--paper);
+    border: 1px solid var(--hairline);
+    padding: 0.4rem 0.6rem;
+  }
+  .chapter-nav ol {
+    flex-direction: row;
+    gap: 0.5rem;
+  }
+  .chapter-nav-dot-label {
+    display: none;
+  }
+}

@@ -4,13 +4,14 @@ import { Chapter3MatchedControls } from "./scenes/Chapter3MatchedControls";
 import { Chapter4Counterfactual } from "./scenes/Chapter4Counterfactual";
 import { Chapter5Diagnostics } from "./scenes/Chapter5Diagnostics";
 import { Chapter6Limitations } from "./scenes/Chapter6Limitations";
+import { ChapterNav } from "./scenes/ChapterNav";
 import { IntroSequence } from "./scenes/IntroSequence";
 import { ResultCaveat } from "./scenes/ResultCaveat";
 import "./App.css";
 import "./scenes/scenes.css";
 
 export function Lab() {
-  const { load, did, didError, reset } = useScenario();
+  const { load, did, didError } = useScenario();
 
   if (load.status === "loading") {
     return (
@@ -35,12 +36,9 @@ export function Lab() {
         with a declared treatment (not real-world data); see{" "}
         <code>specifications/DATA_CONTRACT.yaml</code>. All six controls on this page now live in
         chapters 2-6's own sections above; see chapter 6 for the full identification-assumptions
-        disclaimer adjacent to these results.
+        disclaimer adjacent to these results. Reset Scenario is always reachable from the chapter
+        navigation.
       </p>
-
-      <button type="button" onClick={reset} aria-label="Reset scenario to baseline" className="reset-button">
-        Reset Scenario
-      </button>
 
       {didError && (
         <p className="error" role="alert" data-testid="estimator-error">
@@ -70,6 +68,7 @@ export function Lab() {
 function App() {
   return (
     <ScenarioProvider>
+      <ChapterNav />
       <IntroSequence>
         <Chapter2Treatment />
         <Chapter3MatchedControls />

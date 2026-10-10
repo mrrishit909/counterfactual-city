@@ -111,11 +111,11 @@ treat chapter-level visual distinctiveness as NOT yet verified, not as done.
 
 ## Not yet built
 
-All 6 chapters now exist. Still not built: the real visual-design pass (varied block treatment,
-asymmetric composition, texture/depth cues beyond the palette re-skin, and the cross-chapter
-distinctiveness gap noted above), chapter navigation (the release gate's own "clear navigation" +
-nav-transition requirement; Reset Scenario is currently reachable only at the very bottom of the
-page), the full per-chapter evidence-harness sweep (CTY-MOTION-001; `evidence.spec.ts` currently
+All 6 chapters now exist, and a fixed chapter nav (`src/scenes/ChapterNav.tsx`) with an
+always-reachable Reset Scenario now satisfies the release gate's "clear navigation" requirement.
+Still not built: the real visual-design pass (varied block treatment, asymmetric composition,
+texture/depth cues beyond the palette re-skin, and the cross-chapter distinctiveness gap noted
+above), the full per-chapter evidence-harness sweep (CTY-MOTION-001; `evidence.spec.ts` currently
 covers only the intro), 3D/spatial rendering (if
 justified by measurement), responsive compositions per-chapter beyond chapters 1-6's own 3
 breakpoints, and performance budgets. The plain Lab `<main>` section below chapter 6 still shows the

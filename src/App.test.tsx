@@ -4,6 +4,7 @@ import { Lab } from "./App";
 import { InterventionDateControl } from "./controls/TreatmentControls";
 import { ScenarioProvider } from "./engine/ScenarioContext";
 import panelFixture from "./engine/__fixtures__/panel.json";
+import { ChapterNav } from "./scenes/ChapterNav";
 
 // jsdom does not drive a native <input type="range">'s value from synthetic ArrowLeft/ArrowRight
 // key events the way a real browser does (the same class of tooling gap CASCADIA's own e2e suite
@@ -56,8 +57,13 @@ describe("Lab", () => {
   });
 
   it("Reset Scenario restores the baseline intervention day", async () => {
+    // Reset Scenario moved out of Lab into the always-reachable ChapterNav
+    // (src/scenes/ChapterNav.tsx) when chapter navigation was built; rendered alongside here, the
+    // same composition App.tsx uses, without IntroSequence's own GSAP scene (not needed to test
+    // that the shared scenario state correctly connects the two; ChapterNav itself uses no GSAP).
     render(
       <ScenarioProvider>
+        <ChapterNav />
         <InterventionDateControl />
         <Lab />
       </ScenarioProvider>,

@@ -213,9 +213,39 @@ re-skin.
      intro; chapters 2-6 need the same screenshot-at-every-breakpoint-plus-scroll-recording pass
      before an independent visual QA reviewer looks at them, per CLAUDE.md's own mandatory
      independent-visual-QA rule.
-   - **No chapter navigation exists yet** (the release gate's own "clear navigation" + nav-transition
-     motion-layer requirement), and Reset Scenario is reachable only at the very bottom of the page
-     despite every chapter's own control depending on it.
+10. **DONE: chapter navigation** (`src/scenes/ChapterNav.tsx`), closing the release gate's "clear
+    navigation" + nav-transitions motion-layer gap. A fixed chapter index (right-anchored dot rail
+    desktop/tablet, a bottom bar on mobile) built on `useActiveChapter` (`src/scenes/useActiveChapter.ts`,
+    already in the codebase ported from CASCADIA, never previously wired to any UI). Clicking a dot
+    scrolls to that chapter; the active chapter highlights via `IntersectionObserver`. Reset
+    Scenario moved from the very bottom of the page into this always-reachable nav (removed from
+    `Lab`, which caused a strict-mode locator collision across 4 existing e2e tests that all select
+    the button by accessible name alone, fixed by having exactly one Reset Scenario button on the
+    page now, not two).
+    **A real, live axe-core contrast violation was found and fixed**: the nav label reveal used an
+    `opacity` CSS transition, and Playwright's own mouse movement during the a11y test's control
+    interactions sometimes left a label's `opacity` hovering at a genuinely low, legitimately
+    non-compliant value for the single instant axe scanned the page (confirmed directly:
+    `getComputedStyle` showed `opacity: 0.65` on a `--hint`-colored label mid-interaction, not an
+    axe false positive). Fixed by switching the reveal to `visibility` (binary, no intermediate
+    partial-contrast state) and keeping only the decorative `transform` on a CSS transition.
+    5/5 new Playwright (`e2e/chapterNav.spec.ts`). Full suite: 77/77 Playwright (stable across 3
+    repeated full runs; chapter 2's own camera-reframe test still shows the same pre-existing
+    CPU-contention flake class documented earlier in this file, roughly 1 in 20+ runs, not a new
+    regression), 35/35 Vitest (one existing unit test updated for the Reset Scenario move), tsc
+    clean, oxlint clean.
+
+**Still owed before Stage 3 can be called done against the release gate** (not yet done):
+- **The mandatory visual-design pass**: chapters 2, 3, and 5 currently share the identical
+  grid-left/controls-right composition and CSS classes, which is exactly the "technically
+  functional but visually ordinary" failure mode CLAUDE.md's own SIGNALROOM story warns against.
+  Chapter 4's divergence motion is also real but subtle (xPercent ±6 on ~320px-wide stages); whether
+  it needs to be more pronounced to read as the dossier's flagship moment is an open visual-QA
+  question, not yet judged by a reviewer.
+- **The full chapter evidence sweep** (`CTY-MOTION-001`): `evidence.spec.ts` only captures the
+  intro; chapters 2-6 need the same screenshot-at-every-breakpoint-plus-scroll-recording pass before
+  an independent visual QA reviewer looks at them, per CLAUDE.md's own mandatory
+  independent-visual-QA rule.
 
 **Stage 4-9**: laboratory integration inside the full cinematic experience (decide what, if
 anything, remains in the standalone "lab" `<main>` section now that all 6 chapters host their own
