@@ -1,4 +1,4 @@
-import { ScenarioProvider, useScenario } from "./engine/ScenarioContext";
+import { ScenarioProvider } from "./engine/ScenarioContext";
 import { Chapter2Treatment } from "./scenes/Chapter2Treatment";
 import { Chapter3MatchedControls } from "./scenes/Chapter3MatchedControls";
 import { Chapter4Counterfactual } from "./scenes/Chapter4Counterfactual";
@@ -6,69 +6,16 @@ import { Chapter5Diagnostics } from "./scenes/Chapter5Diagnostics";
 import { Chapter6Limitations } from "./scenes/Chapter6Limitations";
 import { ChapterNav } from "./scenes/ChapterNav";
 import { IntroSequence } from "./scenes/IntroSequence";
-import { ResultCaveat } from "./scenes/ResultCaveat";
-import { unitForOutcome } from "./scenes/resultVisualEncoding";
 import "./App.css";
 import "./scenes/scenes.css";
 
-export function Lab() {
-  const { load, did, didError, scenario } = useScenario();
-  const unit = load.status === "ready" ? unitForOutcome(scenario.outcome) : "";
-
-  if (load.status === "loading") {
-    return (
-      <main className="panel" data-state="loading">
-        Loading panel data{"…"}
-      </main>
-    );
-  }
-  if (load.status === "error") {
-    return (
-      <main className="panel" data-state="error">
-        Failed to load the scenario data: {load.message}
-      </main>
-    );
-  }
-
-  return (
-    <main className="panel" data-state="ready">
-      <h1>The Counterfactual City</h1>
-      <p className="disclaimer">
-        Difference-in-differences and synthetic-control estimates against a fully synthetic panel
-        with a declared treatment (not real-world data); see{" "}
-        <code>specifications/DATA_CONTRACT.yaml</code>. All six controls on this page now live in
-        chapters 2-6's own sections above; see chapter 6 for the full identification-assumptions
-        disclaimer adjacent to these results. Reset Scenario is always reachable from the chapter
-        navigation.
-      </p>
-
-      {didError && (
-        <p className="error" role="alert" data-testid="estimator-error">
-          {didError}
-        </p>
-      )}
-
-      {did && (
-        <dl className="result" data-testid="did-result">
-          <dt>Difference-in-differences estimate (ATT)</dt>
-          <dd data-testid="att-value">
-            {did.att.toFixed(1)} {unit}
-          </dd>
-          <dt>Treated zone, pre to post</dt>
-          <dd>
-            {did.preTreatedMean.toFixed(1)} {"→"} {did.postTreatedMean.toFixed(1)} {unit}
-          </dd>
-          <dt>Control zones, pre to post</dt>
-          <dd>
-            {did.preControlMean.toFixed(1)} {"→"} {did.postControlMean.toFixed(1)} {unit}
-          </dd>
-        </dl>
-      )}
-      {did && <ResultCaveat />}
-    </main>
-  );
-}
-
+// Stage 4: the standalone "Lab" <main> section that used to live below chapter 6 is gone. It held
+// exactly one real thing (the DiD result + the panel's own load/error states), now
+// DiDResultPanel.tsx, rendered inside chapter 2 next to CTY-INT-001/002, the controls that drive
+// it (see DiDResultPanel.tsx's own header comment for why). Everything else it held (a page <h1>
+// duplicating the intro's own, a synthetic-panel disclaimer paragraph duplicating chapter 6's own
+// methodology prose almost verbatim) was redundant presentation, confirmed nothing else referenced
+// it before removing it.
 function App() {
   return (
     <ScenarioProvider>
@@ -79,7 +26,6 @@ function App() {
         <Chapter4Counterfactual />
         <Chapter5Diagnostics />
         <Chapter6Limitations />
-        <Lab />
       </IntroSequence>
     </ScenarioProvider>
   );

@@ -63,18 +63,24 @@ test("chapter 2's own camera reframes on scroll, independent of the intro's stag
   expect(scrolledViewBox).not.toBe(baseViewBox);
 });
 
-test("state set in chapter 2 (treated zone) is still reflected further down in the lab", async ({ page }) => {
+test("state set in chapter 2 (treated zone) is reflected in the DiD result right there in chapter 2", async ({
+  page,
+}) => {
+  // Stage 4 lab integration: the DiD result (previously a standalone "Lab" section at the very
+  // bottom of the page) now lives inside chapter 2 itself, next to CTY-INT-001/002, the controls
+  // that drive it (src/scenes/DiDResultPanel.tsx), so this is no longer a "scroll far away and
+  // check it updated" test, it's "the result is right here."
   await page.goto("/");
   await scrollToChapter2(page);
+  const before = await page.getByTestId("att-value").textContent();
+
   await page.locator("#treated-zone").selectOption("3");
 
-  await scrollTo(page, 100000);
   await expect(page.getByTestId("did-result")).toBeInViewport({ ratio: 0 });
-  // The lab's own DiD result reflects the zone 3 selection made in chapter 2 (same shared
-  // scenario state, not a separate copy): confirmed by reading the ATT and independently
-  // recomputing it would be redundant with src/engine/estimators.test.ts's own parity coverage,
-  // so this just confirms a real (non-empty, non-error) result rendered for the changed scenario.
-  await expect(page.getByTestId("att-value")).not.toHaveText("");
+  await expect(async () => {
+    const after = await page.getByTestId("att-value").textContent();
+    expect(after).not.toBe(before);
+  }).toPass();
   await expect(page.getByTestId("estimator-error")).toHaveCount(0);
 });
 

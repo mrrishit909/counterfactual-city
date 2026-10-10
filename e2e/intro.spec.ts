@@ -109,9 +109,10 @@ test("the treated zone's color reflects the real DiD result, and changing the sc
     page.locator('[data-testid="intro-city-zone-7"] .zone-block-treated').evaluate((el) => getComputedStyle(el).fill);
   const before = await getFill();
 
-  // Scroll to the lab and change the outcome, a control that changes the sign of the DiD estimate
-  // for this panel (trip_volume is negative, avg_speed_kmh is positive, see analysis/data/
-  // synthetic_panel.py's TRUE_ATT), which should flip the encoded color.
+  // Scroll to chapter 6 (the outcome select's own home, CTY-INT-006) and change the outcome, a
+  // control that changes the sign of the DiD estimate for this panel (trip_volume is negative,
+  // avg_speed_kmh is positive, see analysis/data/synthetic_panel.py's TRUE_ATT), which should
+  // flip the encoded color.
   await scrollTo(page, 100000);
   await page.locator("#outcome-select").selectOption("avg_speed_kmh");
 
@@ -132,19 +133,29 @@ test.describe("reduced motion", () => {
     expect(Number(titleOpacity)).toBe(1);
   });
 
-  test("the laboratory is reachable by ordinary scrolling (the intro no longer reserves extra scroll distance to skip)", async ({ page }) => {
+  test("the final chapter is reachable by ordinary scrolling (the intro no longer reserves extra scroll distance to skip)", async ({
+    page,
+  }) => {
+    // Stage 4 lab integration: the DiD result now lives inside chapter 2
+    // (src/scenes/DiDResultPanel.tsx), not a standalone "Lab" section at the very bottom, so
+    // "reachable by scrolling all the way down" is now checked against chapter 6 (the last
+    // chapter), not did-result.
     await page.goto("/");
     await expect(page.getByTestId("intro-city-stage")).toBeVisible();
     await scrollTo(page, 100000);
-    await expect(page.getByTestId("did-result")).toBeInViewport({ ratio: 0 });
+    await expect(page.getByTestId("chapter-6")).toBeInViewport({ ratio: 0 });
   });
 });
 
-test("regression: a panel-fetch failure does not trap the lab behind a permanent, reachless loading state", async ({ page }) => {
+test("regression: a panel-fetch failure does not trap the page behind a permanent, reachless loading state", async ({
+  page,
+}) => {
   // An independent review caught this: the intro's own early return handled BOTH "loading" and
-  // "error" status identically, with no message and no way to reach the lab below, which has its
-  // own correct error branch for this exact failure but was never rendered. Routing the fetch to
-  // fail and confirming the lab's own real error message appears (not a permanent spinner).
+  // "error" status identically, with no message and no way to reach the chapters below, which had
+  // their own correct error branch for this exact failure (previously in the standalone "Lab"
+  // section, now in src/scenes/DiDResultPanel.tsx inside chapter 2) but it was never rendered.
+  // Routing the fetch to fail and confirming the real error message appears (not a permanent
+  // spinner).
   await page.route("**/data/panel.json", (route) => route.abort());
   await page.goto("/");
   const errorPanel = page.locator('[data-state="error"]');

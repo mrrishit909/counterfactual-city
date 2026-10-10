@@ -148,7 +148,13 @@ test("adjusting a donor weight in chapter 4 recomputes the synthetic-control gap
   }).toPass();
 });
 
-test("state set in chapter 4 (custom donor weights) is still reflected in the lab further down", async ({ page }) => {
+test("state set in chapter 4 (custom donor weights) does not break the shared DiD result hosted in chapter 2", async ({
+  page,
+}) => {
+  // Stage 4 lab integration: the DiD result now lives inside chapter 2
+  // (src/scenes/DiDResultPanel.tsx), not a standalone "Lab" section at the bottom. Donor weights
+  // only affect the synthetic-control estimate, not DiD, so this confirms applying custom weights
+  // in chapter 4 doesn't somehow break or blank out the unrelated DiD result elsewhere on the page.
   await page.goto("/");
   await scrollToChapter4(page);
 
@@ -161,8 +167,10 @@ test("state set in chapter 4 (custom donor weights) is still reflected in the la
   await page.getByRole("button", { name: /apply weights/i }).click();
   await expect(page.getByRole("button", { name: /use auto-fit weights/i })).toBeVisible();
 
-  await scrollTo(page, 100000);
+  const ch2Top = await page.locator("#ch2").evaluate((el) => el.getBoundingClientRect().top + window.scrollY);
+  await scrollTo(page, ch2Top + 400);
   await expect(page.getByTestId("did-result")).toBeInViewport({ ratio: 0 });
+  await expect(page.getByTestId("att-value")).not.toHaveText("");
 });
 
 test.describe("reduced motion", () => {

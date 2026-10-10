@@ -220,9 +220,14 @@ export function IntroSequence({ children }: { children: React.ReactNode }) {
               the same failure twice. */}
         </div>
       )}
-      <div data-testid="post-intro" data-skipped={skipped}>
+      {/* A real a11y regression found removing the standalone "Lab" <main> (Stage 4 lab
+          integration): axe-core's own "landmark-one-main" rule failed because nothing in the
+          document was a <main> landmark once that element was gone. The chapters themselves are
+          the document's real main content (the intro header is correctly a <header>, not main),
+          so this wrapper is the landmark now. */}
+      <main data-testid="post-intro" data-skipped={skipped}>
         {children}
-      </div>
+      </main>
     </>
   );
 }

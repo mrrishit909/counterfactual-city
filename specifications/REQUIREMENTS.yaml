@@ -31,9 +31,18 @@ requirements:
     confirmed live that state ownership is single-source and async loading is StrictMode-safe.
     Stage 3: migrated out of the flat Lab panel into its own cinematic chapter 2 ('treatment',
     src/scenes/Chapter2Treatment.tsx), with a scroll-scrubbed camera reframe to the chosen treated
-    zone and its own e2e coverage (e2e/chapter2.spec.ts, 8/8 passing). Still shares the same
-    ScenarioContext as the lab, confirmed live that a chapter-2 change is reflected in the lab's
-    own result further down the page."
+    zone and its own e2e coverage (e2e/chapter2.spec.ts).
+    Stage 4 (lab integration): the DiD result itself (previously a standalone 'Lab' <main> section
+    at the very bottom of the page, disconnected from this control) now lives inside chapter 2 too
+    (src/scenes/DiDResultPanel.tsx), directly satisfying this row's own 'the changed quantity is
+    visibly explained' clause at the point of interaction, not several chapters away. The standalone
+    Lab section is removed entirely (App.tsx no longer exports a Lab component); its only other
+    content (a page <h1> duplicating the intro's own, a synthetic-panel disclaimer paragraph
+    duplicating chapter 6's own methodology prose almost verbatim) was redundant presentation,
+    confirmed nothing depended on it before removal. A real a11y regression surfaced removing it
+    (axe-core's landmark-one-main rule failed: nothing in the document was a <main> landmark once
+    the Lab's own <main> was gone) and was fixed by making IntroSequence's own children wrapper the
+    document's <main> landmark instead."
   - id: CTY-INT-002
     project: "COUNTERFACTUAL CITY"
     priority: P0
@@ -56,7 +65,9 @@ requirements:
     verification/STAGE1_ARCHITECTURE_REVIEW.md): confirmed live this control drives a real
     recomputation. Stage 3: migrated into chapter 2 alongside CTY-INT-001 (same file, same e2e
     suite); changing it reframes chapter 2's own camera to the newly selected zone, confirmed live
-    and with a dedicated test asserting the correct zone's data-treated attribute flips."
+    and with a dedicated test asserting the correct zone's data-treated attribute flips.
+    Stage 4: shares DiDResultPanel.tsx with CTY-INT-001 (see that row's own note); the standalone
+    Lab section this control's result used to live in, far below the control itself, is gone."
   - id: CTY-INT-003
     project: "COUNTERFACTUAL CITY"
     priority: P0
@@ -270,7 +281,11 @@ requirements:
     Independently verified (Stage 1 architecture review, verification/STAGE1_ARCHITECTURE_REVIEW.md):
     found and this session fixed one further defect (slider thumb desync after clearing custom
     weights, see CTY-INT-004's note) not caught by the original implementation pass. Verdict:
-    architecture sound to build the cinematic layer on top of."
+    architecture sound to build the cinematic layer on top of.
+    Stage 4: the original <main> landmark (the standalone Lab section) was removed as part of lab
+    integration; re-broke axe-core's landmark-one-main rule, re-fixed by making
+    IntroSequence.tsx's own children wrapper (now holding all 6 chapters) the document's <main>
+    instead. Re-verified: 0 axe-core violations after the fix, same bar as before."
   - id: CTY-MOTION-001
     project: "COUNTERFACTUAL CITY"
     priority: P0

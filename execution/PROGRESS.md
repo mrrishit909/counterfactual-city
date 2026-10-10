@@ -363,11 +363,47 @@ re-skin.
   review pass, including independent ones, finds something the previous pass missed. Treat this
   build as "materially improved, not exhaustively verified" until a review pass comes back clean.
 
-**Stage 4-9**: laboratory integration inside the full cinematic experience (decide what, if
-anything, remains in the standalone "lab" `<main>` section now that all 6 chapters host their own
-controls and the DiD result is the only thing left there), performance engineering (measured, not
-invented), independent adversarial review of the complete build (a fresh look at every chapter, not
-just the newest ones), final release acceptance. Not started.
+## Stage 4: laboratory integration
+
+**DONE.** The standalone "Lab" `<main>` section (the only thing left outside the 6 chapters) held
+exactly one real thing: the DiD result + the panel's own load/error states. Everything else it held
+was redundant presentation (a page `<h1>` duplicating the intro's own; a synthetic-panel disclaimer
+paragraph duplicating chapter 6's own methodology prose almost verbatim), confirmed nothing
+depended on it before removing it.
+
+- **Moved the DiD result into chapter 2** (`src/scenes/DiDResultPanel.tsx`, rendered inside
+  `Chapter2Treatment.tsx`), directly next to CTY-INT-001/002, the controls that drive it. This isn't
+  cosmetic: those two requirement rows' own `then` clause requires "the changed quantity is visibly
+  explained," which a result 4 chapters and a full scroll away did not satisfy. A visitor changing
+  the intervention date now sees the ATT change right there, not after scrolling past 4 more
+  chapters.
+- **Removed the `Lab` component and the standalone section entirely** from `App.tsx`; removed the
+  now-dead `.panel`/`.panel h1`/`.disclaimer` CSS rules (confirmed unused before deleting).
+- **A real a11y regression surfaced doing this**: axe-core's `landmark-one-main` rule failed because
+  nothing in the document was a `<main>` landmark once the Lab's own `<main>` was gone (neither the
+  intro's `<header>` nor any chapter's `<section>` qualifies). Fixed by making
+  `IntroSequence.tsx`'s own children wrapper (which holds all 6 chapters) the document's `<main>`
+  instead. Re-verified: 0 axe-core violations.
+- **Updated 5 e2e tests** that depended on the DiD result living at the very bottom of the page
+  (`scrollTo(page, 100000)` then checking `did-result` visibility): chapter 2/3/4's own
+  "state reflected in the lab further down" tests now check the result at its real location
+  (inside chapter 2), and the intro's own "laboratory reachable by scrolling" test now checks
+  chapter 6 (the actual last chapter) instead.
+- Updated `src/App.test.tsx` to import and render `DiDResultPanel` directly (the same jsdom-safe
+  isolated-rendering pattern the removed `Lab` component used) instead of the now-gone `Lab`.
+
+100/100 Playwright across 3 repeated full runs, 35/35 Vitest, zero axe-core violations, tsc/oxlint
+clean.
+
+## Stage 4-9 remaining: chapter 5 visual pass, full `CTY-MOTION-001`, independent review, release
+
+Not yet done (in progress this pass): chapter 5's own distinct visual composition (currently a
+bordered "inspector" variant of chapter 2's skeleton, flagged by the independent review as the
+project's weakest remaining distinctiveness gap); `CTY-MOTION-001`'s full requirement (reverse-scroll
+for every chapter, reduced-motion captures at every breakpoint for every chapter, scroll recordings,
+contact sheets, real production-build frame-pacing measurement); a fresh, worktree-isolated,
+independent adversarial review with no access to this session's own notes; a final requirements
+matrix / limitations / case study / performance doc / release acceptance report pass.
 
 ## Decision log (append here, do not re-litigate once recorded)
 

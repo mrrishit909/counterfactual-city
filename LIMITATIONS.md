@@ -138,12 +138,12 @@ feels on a real touch device, only confirmed programmatically reachable.
 ## Not yet built
 
 All 6 chapters now exist, a fixed chapter nav (`src/scenes/ChapterNav.tsx`) with an always-reachable
-Reset Scenario satisfies the release gate's "clear navigation" requirement, and `evidence.spec.ts`
-now captures all 6 chapters (not just the intro) at every breakpoint, with every image actually
-reviewed this pass per CLAUDE.md's own mandatory rule. Still not built: the rest of the real
-visual-design pass (varied block treatment, asymmetric composition, texture/depth cues beyond the
-palette re-skin and the first cross-chapter-distinctiveness increment above), 3D/spatial rendering (if
-justified by measurement), responsive compositions per-chapter beyond chapters 1-6's own 3
-breakpoints, and performance budgets. The plain Lab `<main>` section below chapter 6 still shows the
-raw DiD result; whether it should be trimmed now that every control has its own chapter home is an
-open Stage 4 question, not yet decided.
+Reset Scenario satisfies the release gate's "clear navigation" requirement, `evidence.spec.ts`
+captures all 6 chapters (not just the intro) at every breakpoint, with every image actually
+reviewed per CLAUDE.md's own mandatory rule, and the standalone "Lab" `<main>` section is gone
+(Stage 4: its one real piece of content, the DiD result, now lives inside chapter 2 next to the
+controls that drive it; see `execution/PROGRESS.md`'s own Stage 4 entry). Still not built: the rest
+of the real visual-design pass (varied block treatment, asymmetric composition, texture/depth cues
+beyond the palette re-skin and the first cross-chapter-distinctiveness increment above), 3D/spatial
+rendering (if justified by measurement), responsive compositions per-chapter beyond chapters 1-6's
+own 3 breakpoints, and performance budgets.

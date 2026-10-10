@@ -3,6 +3,7 @@ import { InterventionDateControl, TreatedZoneControl } from "../controls/Treatme
 import { useScenario } from "../engine/ScenarioContext";
 import { CityStage } from "./CityStage";
 import { computeCityLayout, VIEWBOX_HEIGHT, VIEWBOX_WIDTH } from "./cityLayout";
+import { DiDResultPanel } from "./DiDResultPanel";
 import { useScene } from "./useScene";
 
 const SCENE_ID = "ch2";
@@ -82,6 +83,7 @@ export function Chapter2Treatment() {
           </p>
           <InterventionDateControl />
           <TreatedZoneControl />
+          <DiDResultPanel />
         </div>
       </div>
     </section>

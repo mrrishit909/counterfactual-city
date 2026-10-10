@@ -1,10 +1,10 @@
 import { fireEvent, render, screen, waitFor } from "@testing-library/react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
-import { Lab } from "./App";
 import { InterventionDateControl } from "./controls/TreatmentControls";
 import { ScenarioProvider } from "./engine/ScenarioContext";
 import panelFixture from "./engine/__fixtures__/panel.json";
 import { ChapterNav } from "./scenes/ChapterNav";
+import { DiDResultPanel } from "./scenes/DiDResultPanel";
 
 // jsdom does not drive a native <input type="range">'s value from synthetic ArrowLeft/ArrowRight
 // key events the way a real browser does (the same class of tooling gap CASCADIA's own e2e suite
@@ -12,15 +12,16 @@ import { ChapterNav } from "./scenes/ChapterNav";
 // Testing Library's own docs recommend testing range inputs, while the real keyboard path is left
 // to a Playwright e2e test against a real browser (e2e/smoke.spec.ts).
 //
-// Renders <Lab/> directly (the control panel), not the full <App/> (which wraps it in
-// <IntroSequence>, a pinned ScrollTrigger scene): jsdom cannot correctly revert ScrollTrigger's
-// pin-spacer DOM restructuring on unmount (confirmed directly: RTL's automatic cleanup throws
-// "NotFoundError: the node to be removed is not a child of this node" even after explicitly
-// killing every ScrollTrigger in test-setup.ts's afterEach), a jsdom limitation, not a real-browser
-// one, Playwright's e2e suite (e2e/smoke.spec.ts, e2e/intro.spec.ts) exercises the full pinned App
-// in an actual browser instead, which is the correct place to test scroll-pin behavior anyway.
+// Renders <DiDResultPanel/> directly (the result panel, now hosted inside Chapter2Treatment.tsx
+// in the real app), not the full <App/> (which wraps everything in <IntroSequence>, a pinned
+// ScrollTrigger scene): jsdom cannot correctly revert ScrollTrigger's pin-spacer DOM restructuring
+// on unmount (confirmed directly: RTL's automatic cleanup throws "NotFoundError: the node to be
+// removed is not a child of this node" even after explicitly killing every ScrollTrigger in
+// test-setup.ts's afterEach), a jsdom limitation, not a real-browser one, Playwright's e2e suite
+// (e2e/smoke.spec.ts, e2e/intro.spec.ts, e2e/chapter2.spec.ts) exercises the full pinned App in an
+// actual browser instead, which is the correct place to test scroll-pin behavior anyway.
 
-describe("Lab", () => {
+describe("DiDResultPanel", () => {
   beforeEach(() => {
     vi.stubGlobal(
       "fetch",
@@ -32,14 +33,14 @@ describe("Lab", () => {
   });
 
   it("loads the panel, shows a real DiD estimate, and reacts to the intervention-day control", async () => {
-    // InterventionDateControl moved out of Lab into its own module when Chapter 2 was built
-    // (src/scenes/Chapter2Treatment.tsx), so this test renders it alongside Lab directly, the same
-    // composition App.tsx uses, without Chapter2Treatment's own GSAP scene (not needed to test
-    // that the shared scenario state correctly connects the two).
+    // InterventionDateControl and DiDResultPanel both live inside Chapter2Treatment.tsx in the
+    // real app; rendered alongside each other here, the same composition, without
+    // Chapter2Treatment's own GSAP scene (not needed to test that the shared scenario state
+    // correctly connects the two).
     render(
       <ScenarioProvider>
         <InterventionDateControl />
-        <Lab />
+        <DiDResultPanel />
       </ScenarioProvider>,
     );
     await waitFor(() => expect(screen.getByTestId("did-result")).toBeInTheDocument());
@@ -57,15 +58,14 @@ describe("Lab", () => {
   });
 
   it("Reset Scenario restores the baseline intervention day", async () => {
-    // Reset Scenario moved out of Lab into the always-reachable ChapterNav
-    // (src/scenes/ChapterNav.tsx) when chapter navigation was built; rendered alongside here, the
-    // same composition App.tsx uses, without IntroSequence's own GSAP scene (not needed to test
-    // that the shared scenario state correctly connects the two; ChapterNav itself uses no GSAP).
+    // Reset Scenario lives in the always-reachable ChapterNav (src/scenes/ChapterNav.tsx);
+    // rendered alongside here, without IntroSequence's own GSAP scene (not needed to test that the
+    // shared scenario state correctly connects the two; ChapterNav itself uses no GSAP).
     render(
       <ScenarioProvider>
         <ChapterNav />
         <InterventionDateControl />
-        <Lab />
+        <DiDResultPanel />
       </ScenarioProvider>,
     );
     await waitFor(() => expect(screen.getByTestId("did-result")).toBeInTheDocument());

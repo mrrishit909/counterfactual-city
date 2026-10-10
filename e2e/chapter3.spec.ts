@@ -41,14 +41,20 @@ test("checking a control-pool zone highlights it blue on chapter 3's own stage, 
   expect(fill).toBe("rgb(75, 132, 197)"); // --accent-blue, #4B84C5
 });
 
-test("state set in chapter 3 (control pool) is reflected in the lab's DiD estimate further down", async ({ page }) => {
+test("state set in chapter 3 (control pool) is reflected in the shared DiD estimate hosted in chapter 2", async ({
+  page,
+}) => {
+  // Stage 4 lab integration: the DiD result now lives inside chapter 2 (src/scenes/DiDResultPanel.tsx),
+  // not a standalone "Lab" section at the bottom; this confirms chapter 3's own control still
+  // drives the SAME shared scenario state that chapter 2's result panel reads.
   await page.goto("/");
   await scrollToChapter3(page);
   const before = await page.evaluate(() => document.querySelector('[data-testid="att-value"]')?.textContent ?? "");
 
   await page.locator(".zone-checkbox input[type=checkbox]").first().click();
 
-  await scrollTo(page, 100000);
+  const ch2Top = await page.locator("#ch2").evaluate((el) => el.getBoundingClientRect().top + window.scrollY);
+  await scrollTo(page, ch2Top + 400);
   await expect(page.getByTestId("did-result")).toBeInViewport({ ratio: 0 });
   await expect(async () => {
     const after = await page.getByTestId("att-value").textContent();
