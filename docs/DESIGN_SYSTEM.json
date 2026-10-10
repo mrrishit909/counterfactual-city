@@ -1,0 +1,42 @@
+{
+  "$comment": "THE COUNTERFACTUAL CITY design tokens. See docs/ART_DIRECTION.md for rationale. Colors sourced from the Atlas dossier (docs/PROJECT_SPEC.md); all other tokens derived from the existing, already-shipped src/App.css / src/scenes/scenes.css.",
+  "color": {
+    "paper": "#F3F0E8",
+    "ink": "#1C1C1A",
+    "accentRed": "#D65343",
+    "accentRedText": "#9C2F20",
+    "accentBlue": "#4B84C5",
+    "hairline": "#D8D4C8",
+    "hint": "#55534C"
+  },
+  "typography": {
+    "family": "ui-sans-serif, system-ui, sans-serif",
+    "scale": {
+      "h1": "1.75rem",
+      "body": "1rem",
+      "hint": "0.85rem"
+    }
+  },
+  "spacing": {
+    "panelPaddingY": "2rem",
+    "panelPaddingX": "1.5rem",
+    "fieldsetGap": "0.5rem"
+  },
+  "grid": {
+    "cols": 6,
+    "rows": 4,
+    "blockSize": 64,
+    "blockGap": 36,
+    "$source": "src/scenes/cityLayout.ts (GRID_COLS, GRID_ROWS, BLOCK_SIZE, BLOCK_GAP), single source of truth, this file documents the values, does not duplicate authority over them"
+  },
+  "breakpoints": {
+    "mobile": 390,
+    "tablet": 768,
+    "desktop": 1440
+  },
+  "motion": {
+    "scrubSmoothing": 1,
+    "reducedMotion": "instant final state, no scroll-driven transform",
+    "$source": "src/scenes/useScene.ts, src/scenes/IntroSequence.tsx"
+  }
+}
