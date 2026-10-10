@@ -42,6 +42,29 @@ test("running the placebo test in chapter 5 shows a real rank and p-value", asyn
   expect(rankText).toMatch(/\d+ of \d+/);
 });
 
+test("the evidence-bands chart renders a real null distribution with the treated zone marked, not a placeholder", async ({
+  page,
+}) => {
+  // The dossier's own literal phrase for this chapter is "null distribution > evidence bands"
+  // (docs/ART_DIRECTION.md section 5); this confirms the chart (src/scenes/EvidenceBands.tsx)
+  // actually renders one dot per placebo unit plus a distinct treated-zone dot, not an empty SVG.
+  await page.goto("/");
+  await scrollToChapter5(page);
+
+  await page.getByTestId("run-placebo").click();
+  await expect(page.getByTestId("placebo-result")).toBeVisible();
+
+  const chart = page.getByTestId("ch5-evidence-bands");
+  await expect(chart).toBeVisible();
+
+  const placeboDots = chart.locator('[data-testid^="ch5-evidence-dot-"]:not([data-testid*="treated"])');
+  const nPlacebos = Number((await page.getByTestId("placebo-rank").textContent())?.match(/of (\d+)/)?.[1]) - 1;
+  await expect(placeboDots).toHaveCount(nPlacebos);
+
+  const treatedDot = chart.locator('[data-testid^="ch5-evidence-dot-treated-"]');
+  await expect(treatedDot).toHaveCount(1);
+});
+
 test("an infeasible control pool shows a visible placebo error instead of crashing", async ({ page }) => {
   await page.goto("/");
   await scrollToChapter5(page);

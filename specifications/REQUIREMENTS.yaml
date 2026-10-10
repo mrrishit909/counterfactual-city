@@ -175,8 +175,28 @@ requirements:
     Lab, into the same chapter) so the chapter hosts both real diagnostics together rather than
     splitting them across the cinematic experience and the lab. The whole city grid stays in frame
     (no scroll-scrubbed camera), the same deliberate choice chapter 3 already made for its own
-    archetype. Covered by e2e/chapter5.spec.ts (7 tests: layout, real rank/p-value, infeasible-pool
-    error, shared state with other chapters, 3-breakpoint responsiveness)."
+    archetype.
+    Visual redesign: a first 'bordered inspector' treatment was correctly judged by an independent
+    review as still too close to chapter 2's own skeleton to be its own archetype ('a different
+    color on the same shape'). Rebuilt as an asymmetric split (smaller grid, wider console) with an
+    inverted dark 'diagnostic console' panel, the one chapter on the page that isn't paper-on-ink.
+    This row's own 'then' clause requires 'evidence bands are visibly explained,' which was
+    previously satisfied only by text (a rank and a p-value); src/scenes/EvidenceBands.tsx makes the
+    dossier's own literal 'null distribution > evidence bands' phrase real: every placebo unit's
+    effect plotted on a shared axis (PlaceboResult.placeboEffects, already computed by
+    runPlaceboTest but never rendered before this), the treated zone's own real effect highlighted.
+    A real a11y regression was found and fixed building the dark panel: this entire project's
+    src/index.css turned out to be leftover, never-reviewed Vite scaffold CSS silently coloring
+    every chapter heading near-black (#08060d, indistinguishable from this app's own --ink on a
+    light background, but a real contrast failure once a dark panel existed); the file's own
+    @media (prefers-color-scheme: dark) block and h1/h2 color rule were removed, keeping only the
+    structural rules (#root width, chapter 6's own <code> styling) this project's layout actually
+    depends on. Also fixed: --accent-red itself (used for the chapter kicker label) was only 4.2:1
+    against the new dark background, below WCAG AA's 4.5:1; reused the same lightened red already
+    needed for error text on this background (7.4:1). Covered by e2e/chapter5.spec.ts (8 tests:
+    layout, real rank/p-value, a real evidence-bands chart with one dot per placebo unit plus a
+    distinct treated-zone dot, infeasible-pool error, shared state with other chapters,
+    3-breakpoint responsiveness)."
   - id: CTY-INT-006
     project: "COUNTERFACTUAL CITY"
     priority: P0

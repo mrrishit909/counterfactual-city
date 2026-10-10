@@ -299,15 +299,88 @@
   background: color-mix(in srgb, var(--accent-blue) 6%, var(--paper));
 }
 
+/* Chapter 5, a real redesign (not a border): a "diagnostic console" look, since an independent
+   visual QA review correctly judged the first "bordered inspector" treatment as still too close
+   to chapter 2's own skeleton to be its own archetype. An asymmetric split (smaller grid, wider
+   console, vs. chapters 2/3's balanced ~60/40) plus an inverted dark panel (the ONE chapter on the
+   page that isn't paper-on-ink, a deliberate "instrument panel" contrast moment) with monospace
+   numeric readouts for the evidence-bands chart and its own rank/p-value. */
 .chapter-diagnostics .chapter-sticky {
-  border-top: 1px solid var(--hairline);
-  border-bottom: 1px solid var(--hairline);
+  gap: 2.5rem;
+}
+
+.chapter-diagnostics .chapter-stage-wrap {
+  flex: 1 1 36%;
+  max-width: 36%;
 }
 
 .chapter-diagnostics .chapter-controls {
-  border: 1px solid var(--hairline);
-  padding: 1.25rem;
+  flex: 1 1 64%;
+  max-width: 560px;
+  background: var(--ink);
+  color: var(--paper);
+  padding: 1.5rem;
+}
+
+.chapter-diagnostics .chapter-controls .chapter-kicker {
+  /* --accent-red itself is only 4.2:1 against this chapter's dark panel background (a real
+     axe-core finding), below WCAG AA's 4.5:1 for this text size; reusing the same lightened red
+     already used for .error text on this same dark background (7.4:1). */
+  color: #ff8a73;
+}
+
+.chapter-diagnostics .chapter-controls .chapter-prose,
+.chapter-diagnostics .chapter-controls .hint {
+  color: #c9c6bc;
+}
+
+.chapter-diagnostics .chapter-controls fieldset {
+  border-color: #46453f;
+}
+
+.chapter-diagnostics .chapter-controls legend {
+  color: var(--paper);
+}
+
+.chapter-diagnostics .chapter-controls .result dt {
+  color: #c9c6bc;
+  font-weight: 400;
+}
+
+.chapter-diagnostics .chapter-controls .result dd {
+  font-family: ui-monospace, "SF Mono", Menlo, monospace;
+  font-size: 1.1rem;
+}
+
+.chapter-diagnostics .chapter-controls button {
   background: var(--paper);
+  color: var(--ink);
+  border-color: var(--paper);
+}
+
+.chapter-diagnostics .chapter-controls button:hover {
+  background: var(--accent-blue);
+  border-color: var(--accent-blue);
+  color: var(--paper);
+}
+
+.chapter-diagnostics .chapter-controls .result-caveat {
+  color: #9e9b92;
+}
+
+.chapter-diagnostics .chapter-controls .error {
+  /* --accent-red-text is darkened specifically for text on the --paper background (WCAG AA,
+     see App.css's own comment); on this chapter's inverted dark panel that reads as dark-on-dark,
+     so a lighter red is used here instead, still from the dossier's own red family. */
+  color: #ff8a73;
+}
+
+@media (max-width: 1023px) {
+  .chapter-diagnostics .chapter-stage-wrap,
+  .chapter-diagnostics .chapter-controls {
+    max-width: 100%;
+    flex: 0 0 auto;
+  }
 }
 
 
@@ -593,4 +666,46 @@
   .chapter-nav-dot-label {
     display: none;
   }
+}
+
+/* Chapter 5's evidence-bands chart (src/scenes/EvidenceBands.tsx): styled for the dark console
+   panel it renders inside, not the light paper background every other chapter's charts use. */
+.evidence-bands {
+  width: 100%;
+  height: auto;
+  display: block;
+  margin: 0.5rem 0;
+}
+
+.evidence-bands-axis,
+.evidence-bands-zero-line {
+  stroke: #46453f;
+  stroke-width: 1;
+}
+
+.evidence-bands-zero-line {
+  stroke-dasharray: 2 2;
+}
+
+.evidence-bands-zero-label {
+  font-size: 9px;
+  fill: #9e9b92;
+  font-family: ui-sans-serif, system-ui, sans-serif;
+}
+
+.evidence-bands-placebo-dot {
+  fill: #6b7a8f;
+  opacity: 0.85;
+}
+
+.evidence-bands-treated-dot {
+  fill: var(--accent-red);
+  stroke: var(--paper);
+  stroke-width: 1.5;
+}
+
+.evidence-bands-treated-label {
+  font-size: 10px;
+  fill: var(--paper);
+  font-family: ui-sans-serif, system-ui, sans-serif;
 }

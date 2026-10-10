@@ -26,6 +26,16 @@ function PretrendBadge() {
  * choice chapter 3 already made for its own "comparative view" archetype: a diagnostic looks at
  * the whole panel at once, not a single zoomed-in zone, so there is no scroll-scrubbed camera move
  * here either, only a real control + real result.
+ *
+ * Visual design (rebuilt after an independent review correctly judged the first "bordered
+ * inspector" treatment as still too close to chapter 2's own skeleton): an asymmetric split
+ * (smaller grid, wider console, vs. chapters 2/3's balanced ~60/40) and an inverted dark "console"
+ * panel, the one chapter on the page that isn't paper-on-ink, read as a deliberate instrument-panel
+ * moment for a diagnostics chapter. Hosts the evidence-bands chart (src/scenes/EvidenceBands.tsx),
+ * the dossier's own literal "null distribution > evidence bands" phrase made real: every placebo
+ * unit's effect plotted on a shared axis (PlaceboResult.placeboEffects, already computed by
+ * runPlaceboTest but never rendered before this), the treated zone's own real effect highlighted,
+ * so the rank/p-value numbers below it have a visual to point at.
  */
 export function Chapter5Diagnostics() {
   const { scenario } = useScenario();

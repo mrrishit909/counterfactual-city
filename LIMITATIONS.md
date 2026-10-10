@@ -106,21 +106,24 @@ REQUIREMENTS.yaml` for per-requirement status.
   the primary flagship moment); whether the scroll motion itself still needs to be more pronounced
   is a lower-stakes open visual-QA question than before.
 
-## Cross-chapter visual distinctiveness (chapter 3 now genuinely distinct; chapter 5 still thin)
+## Cross-chapter visual distinctiveness (chapters 2, 3, 5 now each genuinely distinct)
 
 Chapters 2, 3, and 5 originally shared the same grid-left/controls-right composition and CSS classes,
-differing in content but not in layout skeleton. A first self-review fix (mirroring chapter 3's
-layout with an accent-blue wash) was correctly judged insufficient by an independent reviewer, in
-its own words: "a different color on the same shape," not the dossier's own specified "comparative
-view" archetype. Chapter 3 now has a real comparative-trajectories strip
-(`src/scenes/Sparkline.tsx`): up to 3 zones from the current control pool, each plotted against the
-treated zone's own series on a shared y-domain, above the existing spatial grid. This is a genuinely
-different content type from chapters 2 and 5 (charts, not just a recolored grid), not merely a
-mirrored layout. Chapter 5 still only has the bordered "inspector" panel treatment as its own
-differentiator from chapter 2's skeleton; this is real but thinner than chapter 3's fix, and was
-flagged by the same independent review as the project's own weakest remaining distinctiveness gap.
-A later review pass should judge chapter 3's new fix and reassess whether chapter 5 needs the same
-treatment (e.g. its own small-multiples element, not just a border).
+differing in content but not in layout skeleton. A first self-review fix for chapter 3 (mirroring
+the layout with an accent-blue wash) was correctly judged insufficient by an independent reviewer,
+in its own words: "a different color on the same shape," not the dossier's own specified
+"comparative view" archetype; a later fix (`src/scenes/Sparkline.tsx`, a real comparative-trajectories
+strip) addressed it for real. The same reviewer flagged chapter 5's own first fix (a bordered
+"inspector" panel) as the project's remaining weakest distinctiveness gap, still too close to
+chapter 2's skeleton. Chapter 5 has since been rebuilt: an asymmetric split (smaller grid, wider
+console, vs. chapters 2/3's balanced ~60/40) and an inverted dark "diagnostic console" panel, the
+one chapter on the page that isn't paper-on-ink, hosting `src/scenes/EvidenceBands.tsx` (every
+placebo unit's effect plotted on a shared axis, the treated zone's own effect highlighted, the
+dossier's own literal "null distribution > evidence bands" phrase made real rather than stated only
+as rank/p-value text). All three chapters now differ in both layout proportions and content type
+(spatial grid alone / comparative trajectories / a null-distribution chart), not just color. This
+fix has NOT yet been judged by an independent reviewer; treat it as a real, substantial improvement,
+not confirmation that the full release-gate visual-design bar is met for these three chapters.
 
 ## Mobile content overflow (found and fixed during the evidence sweep)
 

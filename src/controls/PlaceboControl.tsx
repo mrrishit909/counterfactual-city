@@ -1,4 +1,5 @@
 import { useScenario } from "../engine/ScenarioContext";
+import { EvidenceBands } from "../scenes/EvidenceBands";
 import { ResultCaveat } from "../scenes/ResultCaveat";
 
 // CTY-INT-005. Split out of App.tsx into its own module (same reasoning as the other
@@ -6,7 +7,7 @@ import { ResultCaveat } from "../scenes/ResultCaveat";
 // circular dependency on App.tsx.
 
 export function PlaceboControl() {
-  const { placebo, runPlacebo } = useScenario();
+  const { placebo, runPlacebo, scenario } = useScenario();
   return (
     <fieldset>
       <legend>5. Placebo test</legend>
@@ -24,14 +25,22 @@ export function PlaceboControl() {
         </p>
       )}
       {placebo.status === "done" && (
-        <dl className="result" data-testid="placebo-result">
-          <dt>Real effect rank among {placebo.result.nPlacebos + 1} units (by |effect|)</dt>
-          <dd data-testid="placebo-rank">
-            {placebo.result.rank} of {placebo.result.nPlacebos + 1}
-          </dd>
-          <dt>Permutation p-value</dt>
-          <dd>{placebo.result.pValue.toFixed(3)}</dd>
-        </dl>
+        <>
+          <EvidenceBands
+            placeboEffects={placebo.result.placeboEffects}
+            realEffect={placebo.result.realEffect}
+            treatedZone={scenario.treatedZone}
+            instanceId="ch5"
+          />
+          <dl className="result" data-testid="placebo-result">
+            <dt>Real effect rank among {placebo.result.nPlacebos + 1} units (by |effect|)</dt>
+            <dd data-testid="placebo-rank">
+              {placebo.result.rank} of {placebo.result.nPlacebos + 1}
+            </dd>
+            <dt>Permutation p-value</dt>
+            <dd>{placebo.result.pValue.toFixed(3)}</dd>
+          </dl>
+        </>
       )}
       {placebo.status === "done" && <ResultCaveat kind="permutation-diagnostic" />}
     </fieldset>

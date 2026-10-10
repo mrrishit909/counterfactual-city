@@ -395,15 +395,47 @@ depended on it before removing it.
 100/100 Playwright across 3 repeated full runs, 35/35 Vitest, zero axe-core violations, tsc/oxlint
 clean.
 
-## Stage 4-9 remaining: chapter 5 visual pass, full `CTY-MOTION-001`, independent review, release
+## Chapter 5 visual redesign
 
-Not yet done (in progress this pass): chapter 5's own distinct visual composition (currently a
-bordered "inspector" variant of chapter 2's skeleton, flagged by the independent review as the
-project's weakest remaining distinctiveness gap); `CTY-MOTION-001`'s full requirement (reverse-scroll
-for every chapter, reduced-motion captures at every breakpoint for every chapter, scroll recordings,
-contact sheets, real production-build frame-pacing measurement); a fresh, worktree-isolated,
-independent adversarial review with no access to this session's own notes; a final requirements
-matrix / limitations / case study / performance doc / release acceptance report pass.
+**DONE.** The independent review's own weakest-remaining-gap finding (chapter 5 was still "a
+bordered variation of chapter 2") is addressed with a real rebuild, not another border:
+
+- **Asymmetric split** (smaller grid ~36%, wider console ~64%, vs. chapters 2/3's balanced ~60/40),
+  a genuinely different composition, not a recolor.
+- **An inverted dark "diagnostic console" panel** (`var(--ink)` background, `var(--paper)` text):
+  the one chapter on the page that isn't paper-on-ink, read as a deliberate instrument-panel moment
+  for a diagnostics chapter. Monospace numeric readouts for the rank/p-value.
+- **`src/scenes/EvidenceBands.tsx`**, the real "null distribution > evidence bands" chart the
+  dossier literally asks for (previously satisfied only by text): every placebo unit's effect
+  plotted as a dot on a shared axis, the treated zone's own real effect highlighted distinctly.
+  Built from `PlaceboResult.placeboEffects`, a field `runPlaceboTest` (`src/engine/estimators.ts`)
+  already computed but never rendered, same pattern as chapter 4's own trajectory chart.
+- **A real a11y regression found and fixed building this**: `src/index.css` turned out to be
+  leftover, never-reviewed Vite scaffold CSS (confirmed via grep: none of its own custom properties
+  or selectors were referenced anywhere in the real app) that had been silently coloring every
+  chapter heading `#08060d` (near-black, visually indistinguishable from this app's own `--ink` on
+  a light background) this entire build, invisible until the new dark panel exposed it as a real
+  1.18:1 contrast failure. Removed the file's own `@media (prefers-color-scheme: dark)` block (an
+  OS-level dark-mode flip this app never designed around) and its `h1, h2 { color }` rule, keeping
+  only the structural rules the project's own layout (`#root` width) and chapter 6's own `<code>`
+  element actually depend on, confirmed nothing else broke. A second, smaller contrast bug surfaced
+  in the same pass: `--accent-red` itself is only 4.2:1 against the new dark panel (below WCAG AA's
+  4.5:1), fixed by reusing the same lightened red already needed for error text on that background
+  (7.4:1).
+- 1 new Playwright test confirms the evidence-bands chart renders a real dot per placebo unit plus
+  a distinct treated-zone dot (not an empty/placeholder SVG). 101/101 Playwright across repeated
+  full runs (one pre-existing CPU-contention flake class, documented earlier, unrelated), 35/35
+  Vitest, zero axe-core violations, tsc/oxlint clean.
+
+This fix has NOT yet been judged by an independent reviewer (see LIMITATIONS.md's own note on this).
+
+## Stage 4-9 remaining: full `CTY-MOTION-001`, independent review, release acceptance
+
+Not yet done: `CTY-MOTION-001`'s full requirement (reverse-scroll for every chapter, reduced-motion
+captures at every breakpoint for every chapter, scroll recordings, contact sheets, real
+production-build frame-pacing measurement); a fresh, worktree-isolated, independent adversarial
+review with no access to this session's own notes; a final requirements matrix / limitations / case
+study / performance doc / release acceptance report pass.
 
 ## Decision log (append here, do not re-litigate once recorded)
 
