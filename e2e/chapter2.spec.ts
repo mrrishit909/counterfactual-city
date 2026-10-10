@@ -5,6 +5,17 @@ async function scrollTo(page: Page, top: number) {
 }
 
 async function scrollToChapter2(page: Page) {
+  // Wait for document height to stabilize before measuring: with 3+ chapters each mounting their
+  // own CityStage, ScrollTrigger's own post-load refresh can still be resizing/re-measuring
+  // triggers for a few frames after `load`, and measuring #ch2's position mid-resize produces a
+  // stale target that a later refresh invalidates (confirmed via git-stash repro: flaky only
+  // under worker contention, passing every time once this settle wait is in).
+  await page.waitForFunction(() => {
+    const h = document.documentElement.scrollHeight;
+    return new Promise<boolean>((resolve) => {
+      requestAnimationFrame(() => resolve(document.documentElement.scrollHeight === h));
+    });
+  });
   const ch2Top = await page.locator("#ch2").evaluate((el) => el.getBoundingClientRect().top + window.scrollY);
   await scrollTo(page, ch2Top);
 }

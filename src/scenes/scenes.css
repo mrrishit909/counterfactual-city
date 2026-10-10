@@ -197,3 +197,79 @@
     position: relative;
   }
 }
+
+/* Chapter 4, the flagship interaction: two city stages that draw apart on scroll. */
+.chapter-sticky-flagship {
+  flex-direction: column;
+  align-items: stretch;
+  gap: 0.75rem;
+  overflow-y: auto;
+}
+
+.flagship-header {
+  text-align: center;
+}
+
+.flagship-header h2 {
+  margin: 0.15rem 0;
+  font-size: 1.5rem;
+}
+
+.flagship-gap {
+  margin: 0;
+  font-size: 1.1rem;
+}
+
+.flagship-split {
+  display: flex;
+  gap: 1.5rem;
+  flex: 1 1 auto;
+  min-height: 0;
+}
+
+.flagship-timeline {
+  flex: 1 1 50%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.35rem;
+  min-width: 0;
+  min-height: 0;
+  overflow: hidden;
+}
+
+.flagship-timeline .city-stage-wrap,
+.flagship-timeline .city-stage {
+  width: 100%;
+  max-width: 320px;
+}
+
+.timeline-label {
+  margin: 0;
+  font-size: 0.8rem;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--hint);
+}
+
+.flagship-controls {
+  flex: 0 1 auto;
+  min-height: 0;
+  max-height: 32vh;
+  overflow-y: auto;
+  max-width: 480px;
+  margin: 0 auto;
+  width: 100%;
+}
+
+@media (max-width: 1023px) {
+  .flagship-split {
+    flex-direction: column;
+  }
+  .flagship-timeline .city-stage-wrap {
+    max-width: 220px;
+  }
+  .flagship-controls {
+    max-height: 26vh;
+  }
+}

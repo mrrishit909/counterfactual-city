@@ -1,6 +1,7 @@
 import { ScenarioProvider, useScenario } from "./engine/ScenarioContext";
 import { Chapter2Treatment } from "./scenes/Chapter2Treatment";
 import { Chapter3MatchedControls } from "./scenes/Chapter3MatchedControls";
+import { Chapter4Counterfactual } from "./scenes/Chapter4Counterfactual";
 import { IntroSequence } from "./scenes/IntroSequence";
 import type { Outcome } from "./engine/types";
 import "./App.css";
@@ -11,69 +12,6 @@ const OUTCOME_LABELS: Record<Outcome, string> = {
   avg_speed_kmh: "Average speed (km/h)",
   transit_ridership: "Transit ridership (riders/day)",
 };
-
-function DonorWeightsControl() {
-  const { sc, scError, scenario, weightsRevision, setDonorWeight, applyDonorWeights, clearDonorWeights } =
-    useScenario();
-  if (scError) {
-    return (
-      <fieldset>
-        <legend>4. Synthetic control weights</legend>
-        <p className="error" role="alert" data-testid="sc-error">
-          {scError}
-        </p>
-      </fieldset>
-    );
-  }
-  if (!sc) return null;
-  const donorZones = Object.keys(sc.weights).map(Number).sort((a, b) => a - b);
-  const isCustom = scenario.donorWeights !== undefined;
-  return (
-    <fieldset>
-      <legend>4. Synthetic control weights</legend>
-      <p className="hint">
-        {isCustom ? "Custom weights applied." : "Auto-fit weights (minimizing pre-period error)."} Pre-period
-        fit error (RMSPE): {sc.preRmspe.toFixed(1)}.
-      </p>
-      <div className="weights-list">
-        {donorZones.map((z) => (
-          // Uncontrolled slider (defaultValue, for smooth drag performance): keyed on
-          // weightsRevision too so applying/clearing/resetting weights forces a real remount, not
-          // just a defaultValue prop change React would otherwise ignore on an existing DOM node.
-          // An independent architecture review caught the thumb visibly drifting from the actual
-          // applied weight without this; see LIMITATIONS.md.
-          <label key={`${z}-${weightsRevision}`} className="weight-row">
-            <span>Zone {z}</span>
-            <input
-              type="range"
-              min={0}
-              max={1}
-              step={0.01}
-              defaultValue={sc.weights[z]}
-              aria-label={`Donor weight for zone ${z}`}
-              onChange={(e) => setDonorWeight(z, Number(e.target.value))}
-            />
-            <span data-testid={`weight-value-${z}`}>{(sc.weights[z] * 100).toFixed(0)}%</span>
-          </label>
-        ))}
-      </div>
-      <div className="button-row">
-        <button type="button" onClick={applyDonorWeights}>
-          Apply weights
-        </button>
-        {isCustom && (
-          <button type="button" onClick={clearDonorWeights}>
-            Use auto-fit weights
-          </button>
-        )}
-      </div>
-      <dl className="result">
-        <dt>Synthetic control gap, post-period average</dt>
-        <dd data-testid="sc-att-value">{sc.attPostMean.toFixed(1)}</dd>
-      </dl>
-    </fieldset>
-  );
-}
 
 function PlaceboControl() {
   const { placebo, runPlacebo } = useScenario();
@@ -165,12 +103,11 @@ export function Lab() {
       <p className="disclaimer">
         Difference-in-differences and synthetic-control estimates against a fully synthetic panel
         with a declared treatment (not real-world data); see{" "}
-        <code>specifications/DATA_CONTRACT.yaml</code>. All six controls on this page (three above,
-        in chapters 2 and 3's own sections, three below) trigger a real recomputation, never a
-        cosmetic change.
+        <code>specifications/DATA_CONTRACT.yaml</code>. All six controls on this page (four above,
+        in chapters 2-4's own sections, two below) trigger a real recomputation, never a cosmetic
+        change.
       </p>
 
-      <DonorWeightsControl />
       <PlaceboControl />
       <OutcomeControl />
 
@@ -210,6 +147,7 @@ function App() {
       <IntroSequence>
         <Chapter2Treatment />
         <Chapter3MatchedControls />
+        <Chapter4Counterfactual />
         <Lab />
       </IntroSequence>
     </ScenarioProvider>

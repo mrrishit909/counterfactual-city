@@ -79,8 +79,22 @@ REQUIREMENTS.yaml` for per-requirement status.
   shows WHICH zones are selected spatially, which is real and functional, but not the full
   envisioned comparative chart. A further visual enhancement, not a defect in what's shipped.
 
+## Chapter 4 (counterfactual, the flagship interaction)
+
+- **Two independent `CityStage` mounts, not a single shared camera cross-fading between an
+  "observed" and "synthetic" state.** This matches the project's own resolved "one persistent
+  visual language, not one DOM node" architecture decision (`docs/ART_DIRECTION.md` section 7 item
+  1): each chapter gets its own stage mount rather than forcing a shared-node redesign onto chapters
+  2-3's already-verified sticky-section pattern. The visual effect (two timelines, same city,
+  drawing apart) is real; the two stages are two separately-rendered SVGs, not one SVG split in two.
+- **The synthetic-counterfactual stage's color/pulse encoding (`resultVisualEncoding.ts`) uses a
+  fixed per-outcome scale constant, not a scale fit to the live data's own observed effect-size
+  distribution.** A gap near the scale's own calibration point reads as fully saturated red/blue;
+  very large or very small real gaps will clip or barely register visually even though the numeric
+  "Gap:" readout next to it is always the exact, uncapped `sc.attPostMean`.
+
 ## Not yet built
 
-Chapters 4-6 (the flagship "two urban timelines diverge" interaction is chapter 4, per
-`docs/ART_DIRECTION.md`'s chapter plan), 3D/spatial rendering (if justified by measurement),
-responsive compositions per-chapter beyond chapters 1-3's own 3 breakpoints, and performance budgets.
+Chapters 5-6 (diagnostics, limitations, per `docs/ART_DIRECTION.md`'s chapter plan), 3D/spatial
+rendering (if justified by measurement), responsive compositions per-chapter beyond chapters 1-4's
+own 3 breakpoints, and performance budgets.

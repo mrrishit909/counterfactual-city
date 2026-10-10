@@ -114,7 +114,23 @@ requirements:
     fail against the pre-fix code before confirming it passes against the fix), and found the
     parity-test tolerance too loose to catch a real regression (tightened from 40 to 3 units,
     reflecting actual sub-1-unit achieved agreement). No other defects found; state ownership, async
-    load safety, real-recomputation, and invalid-input handling all independently confirmed live."
+    load safety, real-recomputation, and invalid-input handling all independently confirmed live.
+    Stage 3: this control now lives in chapter 4 ('counterfactual', src/scenes/Chapter4Counterfactual.tsx),
+    the dossier's own flagship 'two urban timelines diverge' interaction, moved verbatim out of the
+    plain Lab panel into src/controls/DonorWeightsControl.tsx. Two live CityStage instances sit side
+    by side (observed, fixed dossier red; synthetic counterfactual, colored/pulsing by the real
+    sc.attPostMean via resultVisualEncoding.ts, never a placeholder), visually drawing apart on a
+    scroll-scrubbed GSAP timeline as the visitor scrolls into the chapter. Two real layout bugs were
+    found and fixed building this: (1) the flex-column sticky panel gave the two-stage split zero
+    height because the donor-weights fieldset's own natural content height exceeded the viewport,
+    starving the split of space (fixed by capping .flagship-controls to a scrollable max-height);
+    (2) this chapter's own ScrollTrigger measured its start position before the async scenario fetch
+    resolved, permanently trapping the scrub at its end state even when scrolled to the chapter's
+    true top (fixed by adding scenario.treatedZone to the scene's dependency array, the same
+    re-measurement trigger chapter 2's own identical pattern already relied on, confirmed via
+    git-stash repro against the pre-fix code and a stable 6-of-6 full-suite rerun after). Covered by
+    e2e/chapter4.spec.ts (9 tests: layout, real gap readout, scroll divergence, weight-driven
+    recompute, lab state sharing, reduced motion, 3-breakpoint responsiveness)."
   - id: CTY-INT-005
     project: "COUNTERFACTUAL CITY"
     priority: P0

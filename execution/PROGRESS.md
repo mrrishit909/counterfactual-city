@@ -138,10 +138,28 @@ re-skin.
    `LIMITATIONS.md`. 6/6 new Playwright (`e2e/chapter3.spec.ts`). Full suite after chapters 2+3:
    49/49 Playwright total (includes chapter 2 and 3's own new tests), 35/35 Vitest, 25/25 pytest,
    tsc clean, oxlint clean.
-5. Still owed: chapters 4-6 (counterfactual [flagship], diagnostics, limitations), each wiring in
-   its own 1-2 of the remaining 3 controls (CTY-INT-004 through 006, currently still in the plain
-   Lab panel), each with its own e2e coverage matching chapters 2-3's own pattern, and the real
-   visual-design pass from step 2 above (not yet done).
+5. **DONE (chapter 4 of 5)**: built chapter 4 ("counterfactual", the dossier's own flagship
+   interaction, `src/scenes/Chapter4Counterfactual.tsx`), hosting CTY-INT-004 (`DonorWeightsControl`
+   moved to `src/controls/DonorWeightsControl.tsx`). Two live `CityStage` instances side by side
+   (observed: fixed dossier red; synthetic counterfactual: colored/pulsing by the real
+   `sc.attPostMean` via `resultVisualEncoding.ts`), drawing apart on a scroll-scrubbed GSAP timeline,
+   a real "Gap" readout, donor-weight sliders beneath. Two real bugs found and fixed: (1) the
+   flex-column sticky panel gave the stage split zero height because the donor-weights fieldset's
+   natural content height exceeded the viewport (fixed: capped `.flagship-controls` to a scrollable
+   `max-height`, plus a narrower `.flagship-timeline` stage width and `min-height:0`/`overflow:hidden`
+   fix for an analogous overlap at the mobile breakpoint); (2) this chapter's own `ScrollTrigger`
+   measured its start position before the async scenario fetch resolved, permanently trapping the
+   scrub at its end state even when scrolled to the chapter's true top (fixed: added
+   `scenario.treatedZone` to the scene's dependency array, matching chapter 2's own already-verified
+   pattern; reproduced via `git stash` against the pre-fix code, confirmed stable across 6 full-suite
+   reruns after). 9/9 new Playwright (`e2e/chapter4.spec.ts`). Also fixed a pre-existing flaky
+   `chapter2.spec.ts` test exposed by chapter 4's extra mounted content (a `ScrollTrigger`
+   resize-debounce race during the test's own position measurement; fixed with a scroll-height
+   settle wait, same pattern applied to chapter 4's own test helper). Full suite after chapters 2-4:
+   58/58 Playwright (stable across repeated full runs), 35/35 Vitest, tsc clean, oxlint clean.
+6. Still owed: chapters 5-6 (diagnostics, limitations), each wiring in its own remaining control
+   (CTY-INT-005/006, currently still in the plain Lab panel), each with its own e2e coverage matching
+   chapters 2-4's own pattern, and the real visual-design pass from step 2 above (not yet done).
 
 **Stage 6-9**: laboratory integration inside the full cinematic experience (once all 6 chapters
 exist, decide what if anything remains in a standalone "lab" section), performance engineering
