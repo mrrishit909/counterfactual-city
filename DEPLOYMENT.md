@@ -1,9 +1,10 @@
 # Deployment
 
-**Status: NOT deployed.** This project has not been pushed externally or published anywhere, per the
-build's own standing authorization constraint ("do not deploy or push externally without
-authorization"). The steps below are the verified, reproducible path for whoever authorizes
-deployment, not a record of something already done.
+**Status: deployed.** Live at https://mrrishit909.github.io/counterfactual-city/ via GitHub Actions
+(`.github/workflows/deploy.yml`), authorized and completed 2026-10-10. See
+`verification/COUNTERFACTUAL_CITY_PUBLICATION_REPORT.md` for the full record (commits, workflow,
+live smoke-test and Lighthouse results, independent review). The steps below remain accurate as
+the process actually used, kept as the reference for any future redeploy.
 
 ## Production build
 
@@ -19,26 +20,15 @@ itself a real build-correctness check, run and confirmed clean multiple times.
 
 ## Static hosting (GitHub Pages) base path
 
-`vite.config.ts` currently has **no `base` option set**, which defaults to `/` (correct for a
-root-domain deploy, e.g. `username.github.io`). If this project is deployed as a PROJECT page instead
-(e.g. `username.github.io/counterfactual-city/`), `vite.config.ts` needs:
-
-```ts
-export default defineConfig({
-  base: "/counterfactual-city/", // must match the actual repo/path name exactly
-  // ...existing config
-});
-```
-
-Left unset deliberately: the exact target path depends on how this project is slotted into the
-broader portfolio structure, a decision outside this session's own scope to make unilaterally.
-Whoever authorizes deployment should set this to match the real target path, rebuild, and re-verify
-with `npm run preview` that every asset (the panel-data JSON fixture in particular) resolves
-correctly under that base path before publishing.
+`vite.config.ts` sets `base: "/counterfactual-city/"`, matching the actual deployed GitHub Pages
+project-page URL. The panel-data fetch (`src/engine/loadPanel.ts`) already builds its URL from
+`import.meta.env.BASE_URL`, so no other code path needed to change to support this. `vite preview`
+locally honors the same base: requesting `/` 302-redirects to `/counterfactual-city/`, which a real
+browser (and Playwright's `page.goto("/")`) follows transparently.
 
 ## Pre-deployment checklist
 
-- [ ] `base` in `vite.config.ts` matches the real target path (see above).
+- [x] `base` in `vite.config.ts` matches the real target path (see above).
 - [ ] `npm run build` succeeds with no errors.
 - [ ] `npm run preview` serves the build correctly: the intro plays, at least one control produces a
       real recomputed result, and the browser console shows no errors.
