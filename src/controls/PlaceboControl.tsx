@@ -1,4 +1,5 @@
 import { useScenario } from "../engine/ScenarioContext";
+import { ResultCaveat } from "../scenes/ResultCaveat";
 
 // CTY-INT-005. Split out of App.tsx into its own module (same reasoning as the other
 // controls/*.tsx modules) so chapter 5 (src/scenes/Chapter5Diagnostics.tsx) can import it without a
@@ -32,6 +33,7 @@ export function PlaceboControl() {
           <dd>{placebo.result.pValue.toFixed(3)}</dd>
         </dl>
       )}
+      {placebo.status === "done" && <ResultCaveat />}
     </fieldset>
   );
 }

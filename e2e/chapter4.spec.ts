@@ -27,10 +27,6 @@ async function scrollToChapter4(page: Page) {
   });
   const ch4Top = await page.locator("#ch4").evaluate((el) => el.getBoundingClientRect().top + window.scrollY);
   await scrollTo(page, ch4Top);
-  // GSAP's own ScrollTrigger resize/refresh debounce (~200ms) can still land after the settle
-  // check above; without this, a refresh mid-test shifts the trigger's start position under us and
-  // a "baseline" read taken too early already shows a nonzero scrub.
-  await page.waitForTimeout(250);
 }
 
 test("chapter 4 hosts CTY-INT-004, the flagship 'counterfactual' interaction, with no console errors", async ({
@@ -70,6 +66,12 @@ test("scrolling through chapter 4 draws the two timelines apart (real scrub tran
   const counterfactual = page.getByTestId("counterfactual-timeline");
 
   const baseObservedTransform = await observed.evaluate((el) => getComputedStyle(el).transform);
+  // Regression guard for a real bug found live: this chapter's ScrollTrigger once measured its
+  // start position before the async scenario fetch resolved, landing this trigger already fully
+  // scrubbed to its END state even at the chapter's true top (see IntroSequence.tsx's own
+  // ScrollTrigger.refresh() fix). Scrolled to the chapter's own top, the scrub must be at its
+  // UNSTARTED state, not just "some state different from whatever comes after scrolling further".
+  expect(baseObservedTransform).toMatch(/^(none|matrix\(1, 0, 0, 1, 0, 0\))$/);
 
   const ch4Top = await page.locator("#ch4").evaluate((el) => el.getBoundingClientRect().top + window.scrollY);
   await scrollTo(page, ch4Top + 400);

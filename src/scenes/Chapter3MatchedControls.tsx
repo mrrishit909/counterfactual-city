@@ -57,7 +57,7 @@ export function Chapter3MatchedControls() {
           <CityStage ref={stageRef} instanceId="ch3" nZones={24} treatedZone={scenario.treatedZone} zoneColors={zoneColors} />
         </div>
         <div className="chapter-controls">
-          <p className="chapter-kicker">03 &mdash; Matched controls</p>
+          <p className="chapter-kicker">03 - Matched controls</p>
           <h2 id="ch3-heading">Choose what the treated zone is compared against</h2>
           <p className="chapter-prose">
             Every zone highlighted blue below is in the current comparison group. The estimate

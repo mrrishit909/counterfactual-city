@@ -56,7 +56,7 @@ export function Chapter5Diagnostics() {
           <CityStage ref={stageRef} instanceId="ch5" nZones={24} treatedZone={scenario.treatedZone} />
         </div>
         <div className="chapter-controls">
-          <p className="chapter-kicker">05 &mdash; Diagnostics</p>
+          <p className="chapter-kicker">05 - Diagnostics</p>
           <h2 id="ch5-heading">How much should you trust this estimate?</h2>
           <p className="chapter-prose">
             A placebo test re-runs the same synthetic-control procedure on every untreated zone, as

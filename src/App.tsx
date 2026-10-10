@@ -5,6 +5,7 @@ import { Chapter4Counterfactual } from "./scenes/Chapter4Counterfactual";
 import { Chapter5Diagnostics } from "./scenes/Chapter5Diagnostics";
 import { Chapter6Limitations } from "./scenes/Chapter6Limitations";
 import { IntroSequence } from "./scenes/IntroSequence";
+import { ResultCaveat } from "./scenes/ResultCaveat";
 import "./App.css";
 import "./scenes/scenes.css";
 
@@ -61,6 +62,7 @@ export function Lab() {
           </dd>
         </dl>
       )}
+      {did && <ResultCaveat />}
     </main>
   );
 }

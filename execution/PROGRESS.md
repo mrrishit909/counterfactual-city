@@ -157,7 +157,7 @@ re-skin.
    resize-debounce race during the test's own position measurement; fixed with a scroll-height
    settle wait, same pattern applied to chapter 4's own test helper). Full suite after chapters 2-4:
    58/58 Playwright (stable across repeated full runs), 35/35 Vitest, tsc clean, oxlint clean.
-6. **DONE (chapter 5 of 5... well, 5 of 6)**: built chapter 5 ("diagnostics", the "focused
+6. **DONE (chapter 5 of 6)**: built chapter 5 ("diagnostics", the "focused
    inspector" archetype, `src/scenes/Chapter5Diagnostics.tsx`), hosting CTY-INT-005 (`PlaceboControl`
    moved to `src/controls/PlaceboControl.tsx`), paired with the pretrend-diagnostic badge (also moved
    out of the plain Lab panel into this chapter). No scroll-scrubbed camera, matching chapter 3's own
@@ -165,7 +165,7 @@ re-skin.
    on the first pass, reusing chapters 2/3's own `.chapter-stage-wrap`/`.chapter-controls` CSS
    unchanged. 7/7 new Playwright (`e2e/chapter5.spec.ts`). Full suite after chapters 2-5: 65/65
    Playwright (stable across 5 repeated full runs), 35/35 Vitest, tsc clean, oxlint clean.
-7. **DONE (chapter 6 of 6, Stage 3 complete)**: built chapter 6 ("limitations", the "editorial,
+7. **DONE (chapter 6 of 6)**: built chapter 6 ("limitations", the "editorial,
    text-led" archetype, `src/scenes/Chapter6Limitations.tsx`), hosting CTY-INT-006 (`OutcomeControl`
    moved to `src/controls/OutcomeControl.tsx`), paired with the dossier's own mandatory "explicit
    high-risk limitation" copy: parallel trends, no interference between zones, and no anticipation
@@ -173,13 +173,49 @@ re-skin.
    prove. Desktop: prose left, a small grid + the outcome control right; mobile/tablet: grid first,
    then prose, matching `docs/ART_DIRECTION.md` section 6's own responsive table exactly, confirmed
    live by screenshot and a dedicated e2e assertion. No new bugs found; built clean on the first
-   pass. 7/7 new Playwright (`e2e/chapter6.spec.ts`). Full suite after chapters 2-6: **72/72
-   Playwright (stable across 5 repeated full runs), 35/35 Vitest, tsc clean, oxlint clean, zero
-   axe-core violations with all 6 chapters mounted.** All 6 interaction controls (CTY-INT-001
-   through 006) now live in their own chapter; none remain in a plain Lab panel. **Stage 3 (full
-   6-chapter build) is complete.**
-8. Still owed (Stage 3 follow-up, not yet done): the real visual-design pass from step 2 above
-   (varied block treatment, asymmetric composition, texture/depth cues beyond the palette re-skin).
+   pass. 7/7 new Playwright (`e2e/chapter6.spec.ts`). All 6 interaction controls (CTY-INT-001
+   through 006) now live in their own chapter; none remain in a plain Lab panel.
+8. **DONE: hardening pass after a self-review caught real gaps before calling Stage 3 done.**
+   - **Root-caused the chapter 4 ScrollTrigger bug properly**, rather than relying on the
+     coincidental fix (chapter 4's temporary `[scenario.treatedZone]` dependency, which only worked
+     because chapter 2's own unrelated reframe-on-change dependency happened to force the same
+     re-measurement; this breaks the instant a real scenario's treated zone IS 0). Real fix: one
+     explicit `ScrollTrigger.refresh()` in `IntroSequence.tsx` when `load.status` becomes `"ready"`,
+     the single place every chapter's trigger measurement needs re-validating against the final
+     page layout. Verified directly: dumped every live trigger's measured `start` against its
+     element's real document offset before and after the fix (diff 0 for all three after). Chapter
+     4's dependency array reverted to `[]`. The chapter 2/4 e2e settle-waits added as workarounds
+     were re-tested with the extra 250ms removed and are stable across 8 repeated full-suite runs,
+     confirming they're no longer load-bearing for that specific race (the scroll-height-stability
+     wait itself stays, as ordinary good practice, not a bug workaround).
+   - **Added a shared `ResultCaveat` component** (`src/scenes/ResultCaveat.tsx`) placed adjacent to
+     every result this page shows (intro title, chapter 4's Gap readout, chapter 5's placebo
+     result, the Lab's DiD estimate), per the dossier's own hard rule ("apply scientific disclaimer
+     adjacent to results rather than burying it in the footer") that chapter 6 alone did not
+     satisfy, a results-adjacent one-line caveat was missing everywhere else a causal-flavored
+     number appears.
+   - **Clarified chapter 4's color-encoding semantics**: added a line stating the synthetic stage's
+     color/pulse encodes the gap's size and direction, not a predicted value for that timeline on
+     its own, and relabeled "Gap:" to "Gap (observed minus synthetic):".
+   - **Removed every em dash from file contents and commit messages** per the session's own
+     punctuation rule, which three prior commits in this chapter-building pass violated (chapter
+     kicker labels used the `&mdash;` entity; commit subjects used the unicode character itself).
+     Not amending prior commits per the project's own git discipline; fixed going forward and in
+     all current file contents.
+9. Still owed before Stage 3 can be called done against the release gate (not yet done):
+   - **The mandatory visual-design pass** (step 2 above): chapters 2, 3, and 5 currently share the
+     identical grid-left/controls-right composition and CSS classes (chapter 5's own commit says so
+     directly), which is exactly the "technically functional but visually ordinary" failure mode
+     CLAUDE.md's own SIGNALROOM story warns against. Chapter 4's divergence motion is also real but
+     subtle (xPercent ±6 on ~320px-wide stages); whether it needs to be more pronounced to read as
+     the dossier's flagship moment is an open visual-QA question, not yet judged by a reviewer.
+   - **The full chapter evidence sweep** (`CTY-MOTION-001`): `evidence.spec.ts` only captures the
+     intro; chapters 2-6 need the same screenshot-at-every-breakpoint-plus-scroll-recording pass
+     before an independent visual QA reviewer looks at them, per CLAUDE.md's own mandatory
+     independent-visual-QA rule.
+   - **No chapter navigation exists yet** (the release gate's own "clear navigation" + nav-transition
+     motion-layer requirement), and Reset Scenario is reachable only at the very bottom of the page
+     despite every chapter's own control depending on it.
 
 **Stage 4-9**: laboratory integration inside the full cinematic experience (decide what, if
 anything, remains in the standalone "lab" `<main>` section now that all 6 chapters host their own

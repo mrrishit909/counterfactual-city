@@ -91,12 +91,32 @@ REQUIREMENTS.yaml` for per-requirement status.
   fixed per-outcome scale constant, not a scale fit to the live data's own observed effect-size
   distribution.** A gap near the scale's own calibration point reads as fully saturated red/blue;
   very large or very small real gaps will clip or barely register visually even though the numeric
-  "Gap:" readout next to it is always the exact, uncapped `sc.attPostMean`.
+  "Gap (observed minus synthetic):" readout next to it is always the exact, uncapped
+  `sc.attPostMean`. A one-line note next to the readout now states explicitly that the color/pulse
+  encodes the gap's size and direction, not a predicted value for the synthetic timeline on its own.
+- **The divergence motion (±6% horizontal shift on ~320px-wide stages) is real but subtle on a 1440px
+  desktop viewport.** Whether this reads clearly as the dossier's own flagship "two timelines
+  diverge" moment, or needs a larger shift/different treatment, is an open visual-QA question the
+  mandatory independent visual review (CLAUDE.md) should judge against real screenshots, not
+  something this build pass judged on its own.
+
+## Cross-chapter visual distinctiveness (flagged for the mandatory visual QA pass)
+
+Chapters 2, 3, and 5 currently share the same grid-left/controls-right composition and CSS classes
+(`.chapter-stage-wrap`/`.chapter-controls`), differing in content (what the control does, whether the
+grid highlights zones) but not in layout skeleton. This is exactly the failure mode CLAUDE.md's own
+mandatory-visual-QA section warns about by name. The still-owed "real visual-design pass" below is
+meant to address this; until an independent visual QA pass with real screenshots confirms otherwise,
+treat chapter-level visual distinctiveness as NOT yet verified, not as done.
 
 ## Not yet built
 
 All 6 chapters now exist. Still not built: the real visual-design pass (varied block treatment,
-asymmetric composition, texture/depth cues beyond the palette re-skin), 3D/spatial rendering (if
+asymmetric composition, texture/depth cues beyond the palette re-skin, and the cross-chapter
+distinctiveness gap noted above), chapter navigation (the release gate's own "clear navigation" +
+nav-transition requirement; Reset Scenario is currently reachable only at the very bottom of the
+page), the full per-chapter evidence-harness sweep (CTY-MOTION-001; `evidence.spec.ts` currently
+covers only the intro), 3D/spatial rendering (if
 justified by measurement), responsive compositions per-chapter beyond chapters 1-6's own 3
 breakpoints, and performance budgets. The plain Lab `<main>` section below chapter 6 still shows the
 raw DiD result; whether it should be trimmed now that every control has its own chapter home is an

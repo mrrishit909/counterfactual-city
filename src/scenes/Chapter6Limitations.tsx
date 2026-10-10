@@ -43,7 +43,7 @@ export function Chapter6Limitations() {
     >
       <div className="chapter-sticky">
         <div className="chapter-prose-col">
-          <p className="chapter-kicker">06 &mdash; Limitations</p>
+          <p className="chapter-kicker">06 - Limitations</p>
           <h2 id="ch6-heading">What this estimate can and cannot tell you</h2>
           <p className="chapter-prose">
             Every number on this page is a difference-in-differences or synthetic-control estimate

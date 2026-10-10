@@ -88,6 +88,17 @@ legend {
   margin: 0;
 }
 
+.result-caveat {
+  font-size: 0.78rem;
+  font-style: italic;
+  color: var(--hint);
+  margin: 0.25rem 0 0;
+}
+
+.result-caveat a {
+  color: inherit;
+}
+
 .zone-grid {
   display: flex;
   flex-wrap: wrap;

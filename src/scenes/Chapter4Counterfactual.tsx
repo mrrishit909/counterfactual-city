@@ -3,6 +3,7 @@ import { DonorWeightsControl } from "../controls/DonorWeightsControl";
 import { useScenario } from "../engine/ScenarioContext";
 import { CityStage } from "./CityStage";
 import { defaultScaleForOutcome, encodeResult } from "./resultVisualEncoding";
+import { ResultCaveat } from "./ResultCaveat";
 import { useScene } from "./useScene";
 
 const SCENE_ID = "ch4";
@@ -52,15 +53,13 @@ export function Chapter4Counterfactual() {
         .to(observed, { xPercent: -6, duration: 1, ease: "none" }, 0)
         .to(counterfactual, { xPercent: 6, duration: 1, ease: "none" }, 0);
     },
-    // Re-run once scenario data actually loads (not just on initial mount): chapters 2/3 mount
-    // ahead of chapter 4 in the DOM, and the FIRST ScrollTrigger measurement pass (which happens
-    // synchronously at mount, before the async scenario fetch resolves) was found live to measure
-    // this trigger's start position well short of its real document offset, trapping the scrub
-    // permanently at its end state even when scrolled to the true top of the chapter. Chapter2's
-    // own identical scroll-driven scene already depends on `scenario.treatedZone` for its own
-    // (unrelated) reframe-on-change behavior, which incidentally forces exactly this re-measurement
-    // once data loads; chapter 4 needs the same re-run deliberately.
-    [scenario.treatedZone],
+    // A real bug was found live building this chapter: this trigger's FIRST measurement pass
+    // (synchronous at mount, before the async scenario fetch resolves) landed its start position
+    // well short of this section's real document offset, trapping the scrub permanently at its end
+    // state even when scrolled to the chapter's true top. Root-caused and fixed once, for every
+    // chapter, in IntroSequence.tsx (an explicit ScrollTrigger.refresh() when scenario data finishes
+    // loading) rather than papering over it per-chapter with an unrelated dependency.
+    [],
   );
 
   const visual = sc ? encodeResult(sc.attPostMean, defaultScaleForOutcome(scenario.outcome)) : undefined;
@@ -75,12 +74,19 @@ export function Chapter4Counterfactual() {
     >
       <div className="chapter-sticky chapter-sticky-flagship">
         <div className="flagship-header">
-          <p className="chapter-kicker">04 &mdash; Counterfactual</p>
+          <p className="chapter-kicker">04 - Counterfactual</p>
           <h2 id="ch4-heading">One city. Two timelines.</h2>
           {sc && (
-            <p className="flagship-gap" data-testid="flagship-gap">
-              Gap: <strong>{sc.attPostMean.toFixed(1)}</strong>
-            </p>
+            <>
+              <p className="flagship-gap" data-testid="flagship-gap">
+                Gap (observed minus synthetic): <strong>{sc.attPostMean.toFixed(1)}</strong>
+              </p>
+              <p className="hint">
+                The synthetic stage&rsquo;s color/pulse encodes this gap&rsquo;s size and direction,
+                not a predicted value for that timeline on its own.
+              </p>
+              <ResultCaveat />
+            </>
           )}
         </div>
         <div className="flagship-split">

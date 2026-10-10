@@ -1,7 +1,9 @@
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { CityStage } from "./CityStage";
 import { computeCityLayout, VIEWBOX_HEIGHT, VIEWBOX_WIDTH } from "./cityLayout";
+import { ScrollTrigger } from "./gsapSetup";
 import { defaultScaleForOutcome, encodeResult } from "./resultVisualEncoding";
+import { ResultCaveat } from "./ResultCaveat";
 import { useScene } from "./useScene";
 import { useScenario } from "../engine/ScenarioContext";
 
@@ -42,6 +44,19 @@ export function IntroSequence({ children }: { children: React.ReactNode }) {
   const stageRef = useRef<SVGSVGElement>(null);
   const titleRef = useRef<HTMLDivElement>(null);
   const [skipped, setSkipped] = useState(false);
+
+  // Root-cause fix for a real bug found live while building chapter 4: every chapter mounts (and
+  // its own ScrollTrigger measures its start/end document offsets) synchronously on first render,
+  // BEFORE this async scenario fetch resolves. Nothing else in the app ever tells ScrollTrigger the
+  // page's layout is now final, so any trigger whose measurement happened to land before a later
+  // layout shift stays wrong for the rest of the session. (Chapter 2 only ever worked by accident:
+  // its own unrelated `[scenario.treatedZone]` dependency happens to force a re-measurement once
+  // `treatedZone` flips from its 0 placeholder to the loaded value, a coincidence that breaks the
+  // moment a scenario's real treated zone IS 0.) The real fix is one explicit refresh once loading
+  // finishes, independent of any single chapter's own unrelated dependency array.
+  useEffect(() => {
+    if (load.status === "ready") ScrollTrigger.refresh();
+  }, [load.status]);
 
   useScene(
     SCENE_ID,
@@ -170,6 +185,7 @@ export function IntroSequence({ children }: { children: React.ReactNode }) {
             <div className="intro-title" ref={titleRef}>
               <h1>The Counterfactual City</h1>
               <p>One city. Infinite consequences.</p>
+              <ResultCaveat />
             </div>
             <button
               type="button"

@@ -74,7 +74,7 @@ export function Chapter2Treatment() {
           <CityStage ref={stageRef} instanceId="ch2" nZones={24} treatedZone={scenario.treatedZone} />
         </div>
         <div className="chapter-controls">
-          <p className="chapter-kicker">02 &mdash; Treatment</p>
+          <p className="chapter-kicker">02 - Treatment</p>
           <h2 id="ch2-heading">Define what&rsquo;s treated, and when</h2>
           <p className="chapter-prose">
             Every causal estimate starts with a choice: which zone received the intervention, and on
