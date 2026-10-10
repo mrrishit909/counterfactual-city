@@ -108,13 +108,15 @@ tracked work, not silently dropped. Design-system docs written ahead of Stage 3
 `RESPONSIVE_COMPOSITIONS.md`), including the 6-chapter-to-control mapping and the flagged palette
 re-skin.
 
-**Stage 3-5: full 6-chapter build.** In order:
-1. Re-skin the persistent city stage from Stage 2's dark placeholder palette to the dossier's real
-   light palette (`#F3F0E8`/`#D65343`/`#4B84C5`, already used elsewhere in `src/App.css`), per
-   `docs/ART_DIRECTION.md` section 1, FIRST, not after chapters are built on the wrong palette.
-2. Do a real visual-design pass on the city grid itself (varied block treatment, asymmetric
-   composition, texture/depth cues), not just a color swap, per the Stage 2 review's own honest
-   assessment that the current grid is too uniform/generic to clear the portfolio-wide release gate.
+**Stage 3-5: full 6-chapter build.**
+1. **DONE**: re-skinned the persistent city stage from Stage 2's dark placeholder palette to the
+   dossier's real light palette (`src/scenes/scenes.css`: `--paper` background, white zone blocks,
+   `--hairline` roads, `--ink` labels), per `docs/ART_DIRECTION.md` section 1. Confirmed live and
+   in `verification/SCREENSHOTS/intro-*.png`; 35/35 tests still green after the change.
+2. Still owed: a real visual-design pass on the city grid itself (varied block treatment,
+   asymmetric composition, texture/depth cues), not just the color swap in step 1, per the Stage 2
+   review's own honest assessment that the current grid is too uniform/generic to clear the
+   portfolio-wide release gate.
 3. Build chapters 2-6 per `docs/ART_DIRECTION.md` section 5's mapping (treatment, matched controls,
    counterfactual [flagship], diagnostics, limitations), wiring in the remaining 5 controls
    (currently only CTY-INT-001 is integrated into the cinematic layer; the other 5 live in the

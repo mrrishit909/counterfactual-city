@@ -55,14 +55,16 @@ REQUIREMENTS.yaml` for per-requirement status.
 
 ## Cinematic intro (Stage 2)
 
-- **Visual quality does not yet meet the "distinctive, polished, art-directed" bar.** An
-  independent review's own words: the current intro "reads as a wireframe, not a finished
-  cinematic city... a uniform grid of identical flat gray rounded rectangles... no skyline, no
-  depth, no texture." This is accurate. Three real functional defects found by the same review
-  (an error-state dead end, a reduced-motion Skip Intro no-op, and a camera-targeting bug) were
-  fixed and verified (`verification/STAGE2_INDEPENDENT_REVIEW.md`); the visual-design gap was not
-  fixed in that pass, it is carried forward as explicit Stage 3 work (`docs/ART_DIRECTION.md`
-  section 1), not silently dropped.
+- **Visual quality does not yet fully meet the "distinctive, polished, art-directed" bar.** An
+  independent review's own words: the (then dark-palette) intro "reads as a wireframe, not a
+  finished cinematic city... a uniform grid of identical flat gray rounded rectangles... no
+  skyline, no depth, no texture." Three real functional defects found by the same review (an
+  error-state dead end, a reduced-motion Skip Intro no-op, and a camera-targeting bug) were fixed
+  and verified (`verification/STAGE2_INDEPENDENT_REVIEW.md`). The palette half of the visual
+  finding is now fixed (re-skinned to the dossier's real `#F3F0E8`/`#D65343`/`#4B84C5` palette,
+  `src/scenes/scenes.css`, confirmed live and in screenshots). The other half, varied block
+  treatment, asymmetric composition, texture/depth beyond a uniform grid, is still owed and
+  remains explicit Stage 3 work, not silently dropped.
 - **This fix pass has not itself been re-reviewed by a fresh, separate reviewer.** Self-verified
   thoroughly (reproduce-before-fix evidence for all 3 blocking defects, full suite green,
   live-screenshot confirmation), but `CTY-MOTION-001` stays at `implemented`, not

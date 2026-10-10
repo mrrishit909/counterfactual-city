@@ -24,14 +24,17 @@ already occupies the "engraved dark plate" territory this project deliberately d
 
 ## 1. What's already built (Stage 2) and what this board governs going forward
 
-Stage 2 shipped a first-pass intro (`src/scenes/IntroSequence.tsx`, `CityStage.tsx`): a dark
-(`#1c1c1a`) scene with a 24-block grid city. That dark background was a reasonable placeholder to
-prove the scroll/camera/real-result architecture (and it did: Stage 1 and Stage 2 both passed
-independent review), but it does NOT yet reflect this board's governing idea above, which calls for
-the dossier's own light paper palette, not a dark DeFi-adjacent one. **This board's first load-bearing
-instruction for Stage 3: re-skin the persistent city stage to the light palette below before or
-while building chapter content**, not after six chapters have already been built on the wrong
-palette.
+Stage 2 shipped a first-pass intro (`src/scenes/IntroSequence.tsx`, `CityStage.tsx`). It originally
+used a dark (`#1c1c1a`) scene as a placeholder to prove the scroll/camera/real-result architecture;
+that was flagged here and in the Stage 2 independent review as not reflecting this board's governing
+idea (the dossier's own light paper palette, not a dark DeFi-adjacent one), and has since been
+**re-skinned to the real palette** (`src/scenes/scenes.css`: `--paper` background, white zone blocks,
+`--hairline` roads, `--ink` text, `--accent-red`/`--accent-blue` reserved for the real-result
+encoding). Confirmed live and in `verification/SCREENSHOTS/intro-*.png`.
+
+This re-skin addresses the PALETTE half of the Stage 2 review's visual-quality finding. The other
+half (a real design pass: varied block treatment, asymmetric composition, texture/depth, not just
+correct colors) is still owed and remains explicit Stage 3 work, see `LIMITATIONS.md`.
 
 ---
 

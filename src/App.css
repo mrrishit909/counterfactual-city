@@ -8,6 +8,8 @@
      axe-core finding from e2e/a11y.spec.ts). Decorative, non-text uses (slider accent-color) keep
      --accent-red; any error/alert TEXT uses this. */
   --accent-red-text: #9c2f20;
+  --hint: #55534c;
+  --hairline: #d8d4c8;
 }
 
 body {
@@ -33,7 +35,7 @@ body {
 
 .disclaimer {
   font-size: 0.85rem;
-  color: #55534c;
+  color: var(--hint);
 }
 
 input[type="range"] {
@@ -68,7 +70,7 @@ button:hover {
 }
 
 fieldset {
-  border: 1px solid #d8d4c8;
+  border: 1px solid var(--hairline);
   padding: 0.75rem 1rem 1rem;
   display: flex;
   flex-direction: column;
@@ -82,7 +84,7 @@ legend {
 
 .hint {
   font-size: 0.85rem;
-  color: #55534c;
+  color: var(--hint);
   margin: 0;
 }
 

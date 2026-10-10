@@ -12,7 +12,13 @@
   top: 0;
   height: 100vh;
   overflow: hidden;
-  background: #1c1c1a;
+  /* Re-skinned from Stage 2's dark placeholder to the dossier's own palette (docs/PROJECT_SPEC.md,
+     "Visual identity: #F3F0E8 / #D65343 / #4B84C5 ... architectural editorial; map grids"), per
+     docs/ART_DIRECTION.md section 1: a dark background was a reasonable placeholder to prove the
+     scroll/camera/real-result architecture, but it's the wrong mood for this project (that's
+     CASCADIA's territory), and an independent review's own visual-quality finding flagged exactly
+     this before any chapter work builds on top of it. */
+  background: var(--paper);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -25,7 +31,7 @@
   transform: translateX(-50%);
   z-index: 3;
   text-align: center;
-  color: var(--paper);
+  color: var(--ink);
 }
 
 .intro-title h1 {
@@ -35,7 +41,7 @@
 
 .intro-title p {
   margin: 0.25rem 0 0;
-  color: #cfcabb;
+  color: var(--hint);
 }
 
 .skip-intro {
@@ -43,9 +49,9 @@
   top: 1rem;
   right: 1rem;
   z-index: 4;
-  background: transparent;
-  color: var(--paper);
-  border-color: var(--paper);
+  background: var(--paper);
+  color: var(--ink);
+  border-color: var(--ink);
 }
 
 .city-stage-wrap {
@@ -60,13 +66,13 @@
 }
 
 .road {
-  stroke: #3a3a35;
+  stroke: var(--hairline);
   stroke-width: 6;
 }
 
 .zone-block {
-  fill: #4a4a44;
-  stroke: #6b6b62;
+  fill: #ffffff;
+  stroke: var(--hairline);
   stroke-width: 1;
 }
 
@@ -76,7 +82,7 @@
 }
 
 .zone-label {
-  fill: #e8e5db;
+  fill: var(--ink);
   font-size: 18px;
   font-family: ui-sans-serif, system-ui, sans-serif;
   pointer-events: none;
