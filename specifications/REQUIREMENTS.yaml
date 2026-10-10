@@ -1,0 +1,137 @@
+# THE COUNTERFACTUAL CITY, requirement contracts
+# Source: Creative Engineering Atlas, dossier 02 (Build Book p.10) + executable contract (p.90), namespace CTY.
+# Pattern follows CASCADIA's own specifications/REQUIREMENTS.yaml (11 rows: 6 interactions + 5 gates).
+
+requirements:
+  - id: CTY-INT-001
+    project: "COUNTERFACTUAL CITY"
+    priority: P0
+    source: "Creative Engineering Atlas executable contract p.90, CTY-INT-001; dossier p.10 control 1 (change intervention date > rebuild post-period > treatment graph)"
+    given: "the baseline scenario loaded"
+    when: "the visitor changes the intervention date"
+    then: "validated state updates, a real DiD/synthetic-control recomputation runs (or a traceable matched fixture is selected), the changed quantity is visibly explained, invalid dates are handled, and Reset Scenario restores baseline"
+    behavior: "Change intervention date"
+    owner: "data-ai-engineer (computation) + frontend-engineer (control, state)"
+    verification: ["unit:estimator reference parity", "e2e:cty_intervention_date"]
+    status: unstarted
+    evidence_paths: []
+  - id: CTY-INT-002
+    project: "COUNTERFACTUAL CITY"
+    priority: P0
+    source: "Creative Engineering Atlas executable contract p.90, CTY-INT-002; dossier p.10 control 2 (select treatment area > update group > map)"
+    given: "the baseline scenario loaded"
+    when: "the visitor selects a treated zone"
+    then: "validated state updates, a real recomputation runs against the new treated group, the changed quantity is visibly explained, invalid/empty selections are handled, and Reset Scenario restores baseline"
+    behavior: "select treated zone"
+    owner: "data-ai-engineer + frontend-engineer"
+    verification: ["unit:treated-group reassignment", "e2e:cty_treated_zone"]
+    status: unstarted
+    evidence_paths: []
+  - id: CTY-INT-003
+    project: "COUNTERFACTUAL CITY"
+    priority: P0
+    source: "Creative Engineering Atlas executable contract p.90, CTY-INT-003; dossier p.10 control 3 (choose control pool > re-estimate > comparative trajectories)"
+    given: "the baseline scenario loaded"
+    when: "the visitor picks a different control pool"
+    then: "validated state updates, the estimator re-runs against the new donor pool, the changed quantity is visibly explained, an empty/insufficient pool is handled, and Reset Scenario restores baseline"
+    behavior: "pick control pool"
+    owner: "data-ai-engineer + frontend-engineer"
+    verification: ["unit:donor-pool re-estimation", "e2e:cty_control_pool"]
+    status: unstarted
+    evidence_paths: []
+  - id: CTY-INT-004
+    project: "COUNTERFACTUAL CITY"
+    priority: P0
+    source: "Creative Engineering Atlas executable contract p.90, CTY-INT-004; dossier p.10 control 4 (set weights > synthetic reconstruction > gap)"
+    given: "the baseline scenario loaded"
+    when: "the visitor adjusts synthetic-control donor weights"
+    then: "validated state updates, the synthetic control is reconstructed with the new weights, the gap/outcome quantity is visibly explained, infeasible weights (e.g. not summing to 1, negative where disallowed) are handled, and Reset Scenario restores baseline"
+    behavior: "adjust weights"
+    owner: "data-ai-engineer + frontend-engineer"
+    verification: ["unit:synthetic-control reconstruction", "e2e:cty_adjust_weights"]
+    status: unstarted
+    evidence_paths: []
+  - id: CTY-INT-005
+    project: "COUNTERFACTUAL CITY"
+    priority: P0
+    source: "Creative Engineering Atlas executable contract p.90, CTY-INT-005; dossier p.10 control 5 (launch placebo > null distribution > evidence bands)"
+    given: "the baseline scenario loaded"
+    when: "the visitor runs a placebo test"
+    then: "validated state updates, a real placebo/null-distribution computation runs, evidence bands are visibly explained, an interrupted/unavailable computation is handled, and Reset Scenario restores baseline"
+    behavior: "run placebo"
+    owner: "data-ai-engineer + frontend-engineer"
+    verification: ["unit:placebo null-distribution", "e2e:cty_run_placebo"]
+    status: unstarted
+    evidence_paths: []
+  - id: CTY-INT-006
+    project: "COUNTERFACTUAL CITY"
+    priority: P0
+    source: "Creative Engineering Atlas executable contract p.90, CTY-INT-006; dossier p.10 control 6 (change outcome > reload compatible series > effect estimate)"
+    given: "the baseline scenario loaded"
+    when: "the visitor changes the outcome variable"
+    then: "validated state updates, a compatible outcome series loads and the estimator re-runs, the new effect estimate is visibly explained, an unsupported/missing outcome is handled, and Reset Scenario restores baseline"
+    behavior: "change outcome"
+    owner: "data-ai-engineer + frontend-engineer"
+    verification: ["unit:outcome-series compatibility", "e2e:cty_change_outcome"]
+    status: unstarted
+    evidence_paths: []
+  - id: CTY-DATA-001
+    project: "COUNTERFACTUAL CITY"
+    priority: P0
+    source: "Creative Engineering Atlas executable contract p.90, five release gates"
+    given: "the chosen data source (NYC TLC Parquet activity, or a fully synthetic panel with declared treatment)"
+    when: "dataset-verification runs"
+    then: "source/license is reviewed, schema is published, fixture checksums are versioned, and a reference calculator test passes against the real or synthetic data"
+    behavior: "Source/license review; schema; fixture checksum; reference calculator test."
+    owner: "data-engineer + data-ai-engineer"
+    verification: ["manual:dataset-verification skill output", "unit:fixture checksum"]
+    status: unstarted
+    evidence_paths: []
+  - id: CTY-MATH-001
+    project: "COUNTERFACTUAL CITY"
+    priority: P0
+    source: "Creative Engineering Atlas executable contract p.90, five release gates"
+    given: "the DiD/synthetic-control/placebo implementation"
+    when: "math-validation runs"
+    then: "an independent numerical baseline agrees within a stated tolerance, including boundary and infeasible cases (zero/empty data, invalid parameter, missing fixture, interrupted computation)"
+    behavior: "Independent numerical baseline, boundary and infeasible-case agreement."
+    owner: "data-ai-engineer (build) + qa-engineer (independent check)"
+    verification: ["unit:reference-model parity", "unit:boundary/infeasible cases"]
+    status: unstarted
+    evidence_paths: []
+  - id: CTY-UX-001
+    project: "COUNTERFACTUAL CITY"
+    priority: P0
+    source: "Creative Engineering Atlas executable contract p.90, five release gates"
+    given: "the production build"
+    when: "browser-design-review + a11y-audit run"
+    then: "all six controls work with keyboard/touch/reset, recorded in e2e tests"
+    behavior: "Six working controls + keyboard/touch/reset, recorded e2e tests."
+    owner: "frontend-engineer (build) + qa-engineer (independent review)"
+    verification: ["e2e:all six CTY-INT-* specs", "manual:a11y-audit skill output"]
+    status: unstarted
+    evidence_paths: []
+  - id: CTY-MOTION-001
+    project: "COUNTERFACTUAL CITY"
+    priority: P0
+    source: "Creative Engineering Atlas executable contract p.90, five release gates"
+    given: "the production build"
+    when: "browser-design-review runs"
+    then: "the intro and all six chapters are captured at every required breakpoint, with reverse-scroll and reduced-motion variants tested"
+    behavior: "Intro and all six chapter captures, reverse-scroll and reduced-motion tests."
+    owner: "motion-engineer (build) + qa-engineer/creative-director (independent review)"
+    verification: ["manual:browser-design-review skill output", "visual:verification/SCREENSHOTS"]
+    status: unstarted
+    evidence_paths: []
+  - id: CTY-RELEASE-001
+    project: "COUNTERFACTUAL CITY"
+    priority: P0
+    source: "Creative Engineering Atlas executable contract p.90, five release gates"
+    given: "the full build"
+    when: "deployment-verification runs"
+    then: "the production build succeeds, the Pages base path resolves correctly, a deployed smoke test passes, and LIMITATIONS.md honestly states what's simulated/unverified"
+    behavior: "Production build, Pages base path, deployed smoke test, honest limitations."
+    owner: "orchestrator + qa-engineer"
+    verification: ["manual:deployment-verification skill output", "curl: live URL smoke test"]
+    status: unstarted
+    evidence_paths: []
