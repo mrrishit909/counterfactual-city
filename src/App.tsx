@@ -85,7 +85,8 @@ function ControlPoolControl() {
 }
 
 function DonorWeightsControl() {
-  const { sc, scError, scenario, setDonorWeight, applyDonorWeights, clearDonorWeights } = useScenario();
+  const { sc, scError, scenario, weightsRevision, setDonorWeight, applyDonorWeights, clearDonorWeights } =
+    useScenario();
   if (scError) {
     return (
       <fieldset>
@@ -108,7 +109,12 @@ function DonorWeightsControl() {
       </p>
       <div className="weights-list">
         {donorZones.map((z) => (
-          <label key={z} className="weight-row">
+          // Uncontrolled slider (defaultValue, for smooth drag performance): keyed on
+          // weightsRevision too so applying/clearing/resetting weights forces a real remount, not
+          // just a defaultValue prop change React would otherwise ignore on an existing DOM node.
+          // An independent architecture review caught the thumb visibly drifting from the actual
+          // applied weight without this; see LIMITATIONS.md.
+          <label key={`${z}-${weightsRevision}`} className="weight-row">
             <span>Zone {z}</span>
             <input
               type="range"

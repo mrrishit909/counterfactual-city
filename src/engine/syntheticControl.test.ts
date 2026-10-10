@@ -23,10 +23,16 @@ describe("syntheticControl parity with the Python oracle", () => {
   }>) {
     it(`recovers a comparable ATT and feasible weights for outcome=${c.outcome}`, () => {
       const result = syntheticControl(panel.rows, c.outcome, treatedZone, interventionDay);
-      // Loose tolerance: different NNLS algorithms can land on different (but similarly-fitting)
-      // vertices of a near-degenerate feasible region, same reasoning as the Python SLSQP-vs-NNLS
-      // decision recorded in execution/PROGRESS.md.
-      expect(Math.abs(result.attPostMean - c.attPostMean)).toBeLessThan(40);
+      // Tolerance reflects ACTUAL achieved agreement (sub-1-unit on all 3 outcomes as of this
+      // writing, an independent review measured trip_volume 0.90 / avg_speed_kmh 0.067 /
+      // transit_ridership 0.07), not a loose bound wide enough to hide a real regression. A prior
+      // version of this test used a flat 40-unit tolerance, which for avg_speed_kmh (true effect
+      // ~2.9) would have passed even a catastrophically broken port; the review that caught this
+      // is why the bound is now 3, with headroom above the observed drift (different NNLS
+      // algorithms CAN legitimately land on different vertices of this panel's near-degenerate
+      // feasible region, see the comment on nnlsProjectedGradient in estimators.ts) but tight
+      // enough to actually catch a future TS regression.
+      expect(Math.abs(result.attPostMean - c.attPostMean)).toBeLessThan(3);
       const weightSum = Object.values(result.weights).reduce((s, v) => s + v, 0);
       expect(weightSum).toBeCloseTo(1, 6);
       expect(Object.values(result.weights).every((w) => w >= -1e-9)).toBe(true);

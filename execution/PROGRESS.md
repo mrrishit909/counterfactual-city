@@ -2,15 +2,15 @@
 
 ## Current milestone
 
-M0 (environment audit), M1 (creative research), M2 (analytical specification), M3/M4 (architecture
-foundation + all 6 controls) DONE. All 6 required interactions (CTY-INT-001 through 006) are wired
-end to end against TypeScript ports of the Python oracle, with parity tests, unit tests, a11y tests,
-and real-browser Playwright e2e tests, all green, on the production build.
+M0-M4 and Stage 1 (architecture acceptance) DONE. All 6 required interactions (CTY-INT-001 through
+006), CTY-DATA-001, CTY-MATH-001, and CTY-UX-001 are implemented; all but CTY-DATA-001 are now
+**independently verified** (see `verification/STAGE1_ARCHITECTURE_REVIEW.md`). A fresh reviewer with
+no access to this session's own notes found and this session fixed one real defect (slider thumb
+desync after clearing custom weights) and one test-quality gap (a parity tolerance 40x looser than
+actually needed); verdict was ARCHITECTURE SOUND to proceed.
 
-Per the directive's own staged sequencing (Stage 1: architecture acceptance before expanding the
-visual system), the next step is a focused independent review of this architecture BEFORE starting
-Stage 2 (the cinematic vertical slice). Chapters, intro, art direction, 3D, and motion are explicitly
-NOT started, by design, not oversight.
+Chapters, intro, art direction, 3D, and motion are explicitly NOT started, by design (Stage 2 next),
+not oversight.
 
 This is an honest in-progress state, not a completion claim. The Atlas's own complexity estimate for
 this project is 9/10 overall with a rough effort of 106-232 focused person-hours (docs/PROJECT_SPEC.md).
@@ -42,9 +42,9 @@ same commit as the work it describes, so the latest commit IS the latest verifie
   (added `<main>`), and the dossier's own accent red failing WCAG AA text contrast (3.56:1), fixed
   with a darkened text-only variant (6.49:1).
 
-None of the 6 implemented gates/controls is yet `independently verified`, that requires a separate
-reviewer pass per this project's own (CASCADIA-derived) discipline and per the current directive's
-own Stage 1 ("Commission a focused independent review before expanding the visual system").
+`CTY-INT-001` through `006`, `CTY-MATH-001`, and `CTY-UX-001` are now **independently verified**
+(Stage 1 review, see `verification/STAGE1_ARCHITECTURE_REVIEW.md`). `CTY-DATA-001` remains
+`implemented` only, the review's scope didn't specifically re-check the data-licensing reasoning.
 
 ## Unfinished requirements
 
@@ -59,11 +59,12 @@ own Stage 1 ("Commission a focused independent review before expanding the visua
   synthetic-control/placebo/pretrend parity (looser tolerance, different NNLS algorithm, documented
   in the test file and LIMITATIONS.md), and boundary/infeasible cases for all 4 estimator functions.
 - `e2e/smoke.spec.ts` + `e2e/controls.spec.ts` + `e2e/a11y.spec.ts` (Playwright, production build):
-  17/17 (`npx vite build && npx playwright test`). Covers all 6 controls' real recomputation, Reset
+  18/18 (`npx vite build && npx playwright test`). Covers all 6 controls' real recomputation, Reset
   Scenario restoring every control (not just one), sequential multi-control composition, keyboard
   operability (range/select), a dedicated touch-emulated-context test, zero console errors/failed
-  requests across a full interaction pass, and zero axe-core violations before and after interacting
-  with every control.
+  requests across a full interaction pass, zero axe-core violations before and after interacting
+  with every control, and a regression test for the Stage 1 review's slider-desync finding (confirmed
+  to fail against the pre-fix code before confirming it passes against the fix).
 - `npx tsc -b`: clean. `npx oxlint`: clean (one non-blocking fast-refresh-only warning in
   `ScenarioContext.tsx` from combining a Provider and a hook in one file, a deliberate pattern).
 
@@ -87,19 +88,10 @@ None currently running; this session's work ended at a clean, fully green commit
 
 ## Next critical-path task
 
-**Stage 1: architecture acceptance**, per the current directive. Before any chapter/intro/art-
-direction work:
-1. Verify the analytical and browser architecture end to end (state ownership, async calculation
-   correctness, responsive controls, reset behavior), largely already demonstrated by the e2e suite
-   above, but the directive asks for this as an explicit, separate checkpoint.
-2. Commission a focused independent review (a fresh agent/session with no access to this session's
-   own notes) of this architecture specifically: the scenario-state design in
-   `src/engine/ScenarioContext.tsx`, the estimator ports in `src/engine/estimators.ts`, and whether
-   the 6-control implementation genuinely satisfies each CTY-INT-* requirement's given/when/then, not
-   just "a button exists."
-3. Fix any release-blocking findings from that review before Stage 2.
+**Stage 1 is done** (verdict ARCHITECTURE SOUND, 2 findings fixed, see
+`verification/STAGE1_ARCHITECTURE_REVIEW.md`). Next:
 
-**Stage 2: cinematic vertical slice** (after Stage 1 passes): one integrated sequence with a real
+**Stage 2: cinematic vertical slice.** One integrated sequence with a real
 3D/spatial city environment, continuous camera movement, GSAP scroll choreography, a functional
 intervention control, real counterfactual computation, a data-driven visual change, reverse-scroll
 restoration, and responsive/reduced-motion alternatives, art-directed per
@@ -126,3 +118,13 @@ acceptance) follow in that order, per the directive.
 - **CTY-INT-005 (placebo) is an explicit user-triggered action, not auto-recomputed on every scenario
   change,** both because the dossier frames it that way ("launch placebo") and because a full placebo
   sweep is materially more expensive than the other 5 controls' single-fit cost.
+- **Donor-weight slider rows are keyed on a `weightsRevision` counter, not just the zone id.** Found
+  by the Stage 1 independent review: an uncontrolled `defaultValue` input does not get its rendered
+  value updated by React on a re-render, so the slider thumbs could visibly desync from the actual
+  applied weights after clearing custom weights. Bumping a revision counter on apply/clear/reset and
+  including it in the row's key forces a real remount instead. See LIMITATIONS.md.
+- **Synthetic-control TS/Python parity tolerance is 3 units, not 40.** The looser bound (reasoned as
+  "two different NNLS algorithms can land on different vertices") was real but far wider than the
+  actual achieved agreement (sub-1-unit on all 3 outcomes); the Stage 1 review correctly flagged it
+  as a regression-safety gap, not a currently-wrong result. Tightened with headroom above observed
+  drift.

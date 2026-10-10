@@ -30,6 +30,12 @@ interface ScenarioContextValue {
   didError: string | null;
   sc: SyntheticControlResult | null;
   scError: string | null;
+  /** Bumped on every applyDonorWeights/clearDonorWeights/reset. The donor-weight sliders are
+   * uncontrolled (defaultValue) for drag-performance reasons, so this is the remount key that
+   * forces their rendered thumb position back in sync with sc.weights whenever it changes out
+   * from under them: an independent reviewer caught the sliders visibly drifting from the real
+   * applied weights after "Use auto-fit weights" without it (see LIMITATIONS.md). */
+  weightsRevision: number;
   pretrend: PretrendResult | null;
   placebo: PlaceboState;
   setInterventionDay: (day: number) => void;
@@ -66,6 +72,7 @@ export function ScenarioProvider({ children }: { children: ReactNode }) {
   const [scenario, setScenario] = useState<ScenarioState | null>(null);
   const [pendingWeights, setPendingWeights] = useState<Record<number, number> | null>(null);
   const [placebo, setPlacebo] = useState<PlaceboState>({ status: "idle" });
+  const [weightsRevision, setWeightsRevision] = useState(0);
 
   useEffect(() => {
     let cancelled = false;
@@ -190,11 +197,13 @@ export function ScenarioProvider({ children }: { children: ReactNode }) {
   const applyDonorWeights = useCallback(() => {
     if (!pendingWeights) return;
     setScenario((s) => (s ? { ...s, donorWeights: pendingWeights } : s));
+    setWeightsRevision((r) => r + 1);
   }, [pendingWeights]);
 
   const clearDonorWeights = useCallback(() => {
     setPendingWeights(null);
     setScenario((s) => (s ? { ...s, donorWeights: undefined } : s));
+    setWeightsRevision((r) => r + 1);
   }, []);
 
   const runPlacebo = useCallback(() => {
@@ -223,6 +232,7 @@ export function ScenarioProvider({ children }: { children: ReactNode }) {
       setScenario(defaultScenario(load.panel));
       setPendingWeights(null);
       setPlacebo({ status: "idle" });
+      setWeightsRevision((r) => r + 1);
     }
   }, [load]);
 
@@ -239,6 +249,7 @@ export function ScenarioProvider({ children }: { children: ReactNode }) {
     didError,
     sc,
     scError,
+    weightsRevision,
     pretrend,
     placebo,
     setInterventionDay,

@@ -99,6 +99,29 @@ test("CTY-INT-004: applying custom donor weights recomputes the synthetic-contro
   await expect(page.getByTestId("sc-att-value")).toHaveText(trueBaselineGap ?? "");
 });
 
+test("CTY-INT-004 regression: slider thumb positions stay in sync with the displayed weight percentages after 'Use auto-fit weights' (an independent review caught this drifting)", async ({ page }) => {
+  const sliders = page.locator('input[aria-label^="Donor weight for zone"]');
+  await setRangeValue(sliders.nth(0), "1");
+  const count = await sliders.count();
+  for (let i = 1; i < count; i++) {
+    await setRangeValue(sliders.nth(i), "0");
+  }
+  await page.getByRole("button", { name: /apply weights/i }).click();
+  await expect(page.getByRole("button", { name: /use auto-fit weights/i })).toBeVisible();
+  await page.getByRole("button", { name: /use auto-fit weights/i }).click();
+
+  // Every slider's actual thumb position (its DOM value) must match the percentage label right
+  // next to it, not a stale dragged-to value left over from before the reset.
+  const afterClearSliders = page.locator('input[aria-label^="Donor weight for zone"]');
+  const n = await afterClearSliders.count();
+  for (let i = 0; i < n; i++) {
+    const value = Number(await afterClearSliders.nth(i).inputValue());
+    const labelText = await page.locator('[data-testid^="weight-value-"]').nth(i).textContent();
+    const labelPercent = Number((labelText ?? "").replace("%", "")) / 100;
+    expect(Math.abs(value - labelPercent)).toBeLessThan(0.015); // within the slider's own 0.01 step
+  }
+});
+
 test("CTY-INT-005: running the placebo test shows a real rank and p-value, and an infeasible pool shows an error instead of crashing", async ({ page }) => {
   const button = page.getByTestId("run-placebo");
   await expect(button).toBeVisible();

@@ -23,6 +23,15 @@ REQUIREMENTS.yaml` for per-requirement status.
 
 ## Frontend UI (CTY-INT-004, synthetic control weights)
 
+- **FIXED: slider thumb position could visually desync from the applied weights.** An independent
+  architecture review (Stage 1 of the build) caught this live: after dragging weights and clicking
+  "Use auto-fit weights," the displayed percentage labels correctly updated but the slider THUMBS
+  (uncontrolled `defaultValue` inputs) stayed at their last-dragged position, visibly contradicting
+  the number next to them. Fixed by keying each slider row on a `weightsRevision` counter
+  (`src/engine/ScenarioContext.tsx`) that bumps on apply/clear/reset, forcing a real remount instead
+  of relying on `defaultValue` (which React does not re-apply to an existing DOM node). Regression
+  test: `e2e/controls.spec.ts`, "slider thumb positions stay in sync..."; confirmed to fail against
+  the pre-fix code (thumb/label mismatch of 0.95) before confirming it passes against the fix.
 - **Rapid, fully-synchronous programmatic slider edits can drop an update for 1-2 of ~20+ sliders.**
   Found while writing `e2e/controls.spec.ts`: dispatching `input`/`change` events on all ~23 donor-
   weight sliders back to back in a single synchronous script (no yield between them) occasionally
