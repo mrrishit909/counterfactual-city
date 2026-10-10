@@ -110,3 +110,23 @@ test.describe("responsive viewports", () => {
     });
   }
 });
+
+test("CTY-MOTION-001: scrolling forward past chapter 5 and back does not break its content (no scroll-driven camera here by design)", async ({
+  page,
+}) => {
+  // Same non-animated-chapter lifecycle check as chapter 3's own version: chapter 5 has no
+  // scroll-scrubbed camera either, so this confirms the pinned section survives a full
+  // forward-then-backward scroll pass without a stuck or broken state.
+  await page.goto("/");
+  await scrollToChapter5(page);
+  await expect(page.getByTestId("ch5-city-stage")).toBeVisible();
+  const baseline = await page.getByTestId("ch5-city-stage").getAttribute("viewBox");
+
+  await scrollTo(page, 100000);
+  await scrollToChapter5(page);
+
+  await expect(page.getByTestId("ch5-city-stage")).toBeVisible();
+  const after = await page.getByTestId("ch5-city-stage").getAttribute("viewBox");
+  expect(after).toBe(baseline);
+  await expect(page.getByTestId("run-placebo")).toBeEnabled();
+});

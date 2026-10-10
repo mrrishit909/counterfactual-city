@@ -429,12 +429,60 @@ bordered variation of chapter 2") is addressed with a real rebuild, not another 
 
 This fix has NOT yet been judged by an independent reviewer (see LIMITATIONS.md's own note on this).
 
-## Stage 4-9 remaining: full `CTY-MOTION-001`, independent review, release acceptance
+## `CTY-MOTION-001` full completion
 
-Not yet done: `CTY-MOTION-001`'s full requirement (reverse-scroll for every chapter, reduced-motion
-captures at every breakpoint for every chapter, scroll recordings, contact sheets, real
-production-build frame-pacing measurement); a fresh, worktree-isolated, independent adversarial
-review with no access to this session's own notes; a final requirements matrix / limitations / case
+**DONE.**
+
+- **Reverse-scroll** for every scroll-scrubbed chapter: chapter 2's own camera reframe and chapter
+  4's own divergence both confirmed to return to the EXACT pre-scroll baseline (not just "some
+  different state") after scrolling forward then back (`e2e/chapter2.spec.ts`,
+  `e2e/chapter4.spec.ts`). Chapters 3, 5, 6 have no scroll-driven camera by design (the whole grid
+  stays in frame, their own deliberate archetype choice); each gets a non-animated-lifecycle sanity
+  test instead, confirming their own pinned section survives a full forward-then-backward scroll
+  pass without a stuck or broken state.
+- **Reduced-motion screenshots at every breakpoint for every chapter**: previously only chapter 4;
+  now the intro and all 5 numbered chapters, all 3 breakpoints, 18 total captures
+  (`verification/SCREENSHOTS/{intro,ch2..ch6}-{desktop,tablet,mobile}-reduced-motion.png`), each
+  actually opened and reviewed (ch4's own shows the fully-diverged final state with no animation
+  needed; ch5's own dark console renders correctly unaffected, since it has no camera to disable).
+- **Real scroll recordings + contact sheets** (`e2e/evidence-harness.spec.ts`, a reusable
+  evidence-harness pattern, run against the SAME production preview build every other e2e test
+  uses, not a dev server): a frame sequence captured scrolling through the intro's (8 frames) and
+  chapters 2/4's (6 frames each) own pinned ranges, saved individually
+  (`verification/SCREENSHOTS/scroll-frames/`) and composited into one contact-sheet image per
+  section via a plain HTML grid screenshotted by Playwright itself (no new image-compositing
+  dependency). Each contact sheet opened and visually confirmed to show the REAL animation
+  progression, not a static repeat: the intro's own grid-draw-in into a centered camera push-in on
+  the treated zone; chapter 4's own two stages visibly, continuously separating frame to frame.
+- **Real production-build frame-pacing measurement**: hooked `requestAnimationFrame` during an
+  actual continuous scroll pass (30 steps over ~1.5s, not a single jump) through chapter 4's own
+  scrub animation, against the production preview build. Result written to
+  `verification/FRAME_PACING.json`: mean frame time 16.64ms (~60.1fps), p95 18.4ms, 0 frames worse
+  than a 30fps threshold, a REAL measured number, not invented, meeting the release gate's own
+  60fps-desktop target.
+- **Functional scenario consistency while scrolling**: a dedicated test
+  (`e2e/controls.spec.ts`) sets custom state on 3 different controls, scrolls the full length of
+  the document and back, and confirms every one of them still reads back exactly what was set,
+  with the analytical state (`ScenarioContext`) staying correctly decoupled from every chapter's
+  own animation/camera lifecycle as it mounts, scrubs, and unmounts its own `ScrollTrigger`
+  instances.
+- **Camera/animation lifecycle verification**: relies on `src/scenes/useScene.ts`'s own
+  already-verified guarantees (documented in that file's own header comment: every `setup()` call
+  kills any existing `ScrollTrigger` sharing its `sceneId` before creating a new one; explicit
+  cleanup on unmount rather than `useGSAP`'s own incomplete automatic cleanup) plus this row's own
+  reverse-scroll and the intro's pre-existing fast-jump-recovery tests, which would fail under a
+  real duplicate-trigger or stuck-state bug. No separate instrumentation-based trigger-count test
+  was added, to avoid leaving a production-code debug hook in place merely to assert something
+  already covered behaviorally.
+
+126/126 Playwright across repeated full runs, 35/35 Vitest, tsc/oxlint clean. This full-requirement
+completion pass has NOT yet been independently reviewed.
+
+## Stage 4-9 remaining: independent review, release acceptance
+
+Not yet done: a fresh, worktree-isolated, independent adversarial review with no access to this
+session's own notes (this session's `CTY-MOTION-001` completion above is exactly the kind of
+self-reported work that review exists to check); a final requirements matrix / limitations / case
 study / performance doc / release acceptance report pass.
 
 ## Decision log (append here, do not re-litigate once recorded)

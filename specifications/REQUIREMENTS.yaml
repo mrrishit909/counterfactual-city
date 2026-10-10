@@ -359,7 +359,38 @@ requirements:
     directly contradicts the project's own stated visual identity') stands, not fixed in this
     pass, carried forward as explicit Stage 3 work in docs/ART_DIRECTION.md and LIMITATIONS.md.
     This fix pass itself has not been re-reviewed by a fresh, separate reviewer, so status stays
-    implemented, not independently verified, pending that."
+    implemented, not independently verified, pending that.
+    Stage 3-4 completion of this row's own full requirement (all 6 chapters now exist; 'the intro
+    and all six chapters captured at every required breakpoint, with reverse-scroll and
+    reduced-motion variants tested'): reverse-scroll tests added for every scroll-scrubbed chapter
+    (2's camera reframe, 4's divergence; both confirmed to return to the exact pre-scroll baseline,
+    not just 'a different state'), plus a non-animated-lifecycle sanity test for chapters 3, 5, 6
+    (no scroll-driven camera by design, confirmed their own pinned sections survive a full
+    forward-then-backward scroll pass without a stuck state). Reduced-motion evidence screenshots
+    now cover the intro AND all 5 numbered chapters at all 3 breakpoints (previously chapter 4
+    only), verification/SCREENSHOTS/{intro,ch2..ch6}-{desktop,tablet,mobile}-reduced-motion.png.
+    Real scroll recordings + contact sheets added (e2e/evidence-harness.spec.ts): a frame sequence
+    captured scrolling through the intro's and chapters 2/4's own pinned ranges
+    (verification/SCREENSHOTS/scroll-frames/), composited into one contact-sheet image per section
+    (verification/SCREENSHOTS/{intro,ch2,ch4}-contact-sheet.png), each opened and visually
+    confirmed to show the real animation progression (the intro's own grid-draw-in -> camera
+    push-in sequence, chapter 4's own stages visibly separating), not a static repeat. A real
+    production-build frame-pacing measurement (same test file, hooking requestAnimationFrame
+    during an actual continuous scroll pass through chapter 4's own scrub, not an idle page):
+    verification/FRAME_PACING.json, measured mean frame time 16.64ms (~60.1fps), p95 18.4ms, 0
+    dropped frames against a 33.4ms/frame (worse than 30fps) threshold, meeting the release gate's
+    own 60fps-desktop target on this measurement. Functional scenario consistency while scrolling
+    confirmed with a dedicated test (e2e/controls.spec.ts): custom state set on 3 different
+    controls survives a full scroll pass through all 6 chapters and back to the top, unperturbed.
+    Camera/animation lifecycle correctness relies on src/scenes/useScene.ts's own already-verified
+    guarantees (every setup() call kills any existing ScrollTrigger sharing its sceneId before
+    creating a new one; explicit cleanup on unmount, not relying on useGSAP's own incomplete
+    automatic cleanup, see that file's own header comment) plus this row's own reverse-scroll and
+    fast-jump tests, which would fail under a real duplicate-trigger or stuck-state lifecycle bug;
+    no separate instrumentation-based trigger-count test was added, to avoid leaving a
+    production-code debug hook in place merely to assert something already covered behaviorally.
+    This full-requirement completion pass has not yet been independently reviewed either; status
+    stays implemented."
   - id: CTY-RELEASE-001
     project: "COUNTERFACTUAL CITY"
     priority: P0

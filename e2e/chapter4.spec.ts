@@ -84,6 +84,25 @@ test("scrolling through chapter 4 draws the two timelines apart (real scrub tran
   expect(scrolledCounterfactualTransform).not.toBe(baseObservedTransform);
 });
 
+test("CTY-MOTION-001: reverse-scrolling chapter 4 undoes the divergence deterministically", async ({ page }) => {
+  await page.goto("/");
+  await scrollToChapter4(page);
+  const observed = page.getByTestId("observed-timeline");
+
+  const baseTransform = await observed.evaluate((el) => getComputedStyle(el).transform);
+  const ch4Top = await page.locator("#ch4").evaluate((el) => el.getBoundingClientRect().top + window.scrollY);
+
+  await scrollTo(page, ch4Top + 400);
+  await page.waitForTimeout(1300);
+  const scrolledTransform = await observed.evaluate((el) => getComputedStyle(el).transform);
+  expect(scrolledTransform).not.toBe(baseTransform);
+
+  await scrollTo(page, ch4Top);
+  await page.waitForTimeout(1300);
+  const reversedTransform = await observed.evaluate((el) => getComputedStyle(el).transform);
+  expect(reversedTransform).toBe(baseTransform);
+});
+
 test("the trajectory chart renders a real observed-vs-synthetic path, not an empty/placeholder chart", async ({
   page,
 }) => {

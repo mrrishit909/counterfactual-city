@@ -63,6 +63,31 @@ test("chapter 2's own camera reframes on scroll, independent of the intro's stag
   expect(scrolledViewBox).not.toBe(baseViewBox);
 });
 
+test("CTY-MOTION-001: reverse-scrolling chapter 2 undoes the camera reframe deterministically", async ({
+  page,
+}) => {
+  await page.goto("/");
+  const ch2Stage = page.getByTestId("ch2-city-stage");
+  await scrollToChapter2(page);
+  await expect(ch2Stage).toBeVisible();
+
+  const baseViewBox = await ch2Stage.getAttribute("viewBox");
+  const ch2Top = await page.locator("#ch2").evaluate((el) => el.getBoundingClientRect().top + window.scrollY);
+
+  await scrollTo(page, ch2Top + 400);
+  await page.waitForTimeout(1300);
+  const scrolledViewBox = await ch2Stage.getAttribute("viewBox");
+  expect(scrolledViewBox).not.toBe(baseViewBox);
+
+  // Same GSAP scrub(1) mechanic the intro's own reverse-scroll test (e2e/intro.spec.ts) already
+  // confirms is a pure function of scroll position, not a one-way state machine: scrolling back
+  // must restore the original framing exactly, not leave the camera stuck mid-zoom.
+  await scrollTo(page, ch2Top);
+  await page.waitForTimeout(1300);
+  const reversedViewBox = await ch2Stage.getAttribute("viewBox");
+  expect(reversedViewBox).toBe(baseViewBox);
+});
+
 test("state set in chapter 2 (treated zone) is reflected in the DiD result right there in chapter 2", async ({
   page,
 }) => {

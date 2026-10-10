@@ -81,3 +81,25 @@ test.describe("responsive viewports", () => {
     });
   }
 });
+
+test("CTY-MOTION-001: scrolling forward past chapter 3 and back does not break its content (no scroll-driven camera here by design)", async ({
+  page,
+}) => {
+  // Chapter 3 deliberately has no scroll-scrubbed animation (the whole grid stays in frame, see
+  // Chapter3MatchedControls.tsx's own header comment), so there is no transform to reverse; this
+  // confirms the pinned section's own lifecycle survives a full forward-then-backward scroll pass
+  // (ScrollTrigger re-measurement, sticky positioning) without leaving the chapter in a broken or
+  // stuck state, the non-animated counterpart to chapters 2 and 4's own reverse-scroll tests.
+  await page.goto("/");
+  await scrollToChapter3(page);
+  await expect(page.getByTestId("ch3-city-stage")).toBeVisible();
+  const baseline = await page.getByTestId("ch3-city-stage").getAttribute("viewBox");
+
+  await scrollTo(page, 100000);
+  await scrollToChapter3(page);
+
+  await expect(page.getByTestId("ch3-city-stage")).toBeVisible();
+  const after = await page.getByTestId("ch3-city-stage").getAttribute("viewBox");
+  expect(after).toBe(baseline);
+  await expect(page.locator(".zone-checkbox input[type=checkbox]").first()).toBeEnabled();
+});

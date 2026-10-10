@@ -145,8 +145,15 @@ Reset Scenario satisfies the release gate's "clear navigation" requirement, `evi
 captures all 6 chapters (not just the intro) at every breakpoint, with every image actually
 reviewed per CLAUDE.md's own mandatory rule, and the standalone "Lab" `<main>` section is gone
 (Stage 4: its one real piece of content, the DiD result, now lives inside chapter 2 next to the
-controls that drive it; see `execution/PROGRESS.md`'s own Stage 4 entry). Still not built: the rest
-of the real visual-design pass (varied block treatment, asymmetric composition, texture/depth cues
-beyond the palette re-skin and the first cross-chapter-distinctiveness increment above), 3D/spatial
-rendering (if justified by measurement), responsive compositions per-chapter beyond chapters 1-6's
-own 3 breakpoints, and performance budgets.
+controls that drive it; see `execution/PROGRESS.md`'s own Stage 4 entry). `CTY-MOTION-001`'s full
+requirement is now done too (reverse-scroll, reduced-motion captures at every breakpoint for every
+chapter, real scroll recordings + contact sheets, a real production-build frame-pacing
+measurement, functional scenario consistency while scrolling; see `execution/PROGRESS.md`'s own
+entry), though NOT yet independently reviewed. Still not built: the rest of the real visual-design
+pass (varied block treatment, asymmetric composition, texture/depth cues beyond the palette re-skin
+and the cross-chapter-distinctiveness work in chapters 3 and 5 above), 3D/spatial rendering (if
+justified by measurement), responsive compositions per-chapter beyond chapters 1-6's own 3
+breakpoints, and formal performance budgets beyond the one real frame-pacing measurement taken
+(`verification/FRAME_PACING.json`, chapter 4 only, desktop only; not yet measured for every
+chapter/breakpoint or against Lighthouse's own perf/a11y score thresholds the release gate also
+names).

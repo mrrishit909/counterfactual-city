@@ -208,6 +208,35 @@ test("no console errors or failed requests across a full interaction pass", asyn
   expect(failed).toEqual([]);
 });
 
+test("CTY-MOTION-001: scenario state set before scrolling survives a full scroll pass through all 6 chapters", async ({
+  page,
+}) => {
+  // "Functional scenario consistency while scrolling": the analytical state (ScenarioContext) is
+  // deliberately kept separate from animation/camera state (see CLAUDE.md's own hard rule, and
+  // src/engine/ScenarioContext.tsx's header comment), so scrolling through every chapter's own
+  // ScrollTrigger mount/kill lifecycle must never perturb it. Sets custom state on 3 different
+  // controls, scrolls the full length of the document, then confirms every one of them still
+  // reads back exactly what was set, not reset or corrupted by any chapter's own scroll handling.
+  await page.goto("/");
+  await expect(page.getByTestId("did-result")).toBeVisible();
+
+  await page.locator("#treated-zone").selectOption("3");
+  await page.locator("#outcome-select").selectOption("avg_speed_kmh");
+  await page.locator(".zone-checkbox input[type=checkbox]").nth(1).click();
+
+  const docHeight = await page.evaluate(() => document.documentElement.scrollHeight);
+  const steps = 12;
+  for (let i = 0; i <= steps; i++) {
+    await page.evaluate((y) => window.scrollTo({ top: y, behavior: "auto" }), (docHeight * i) / steps);
+    await page.waitForTimeout(80);
+  }
+  await page.evaluate(() => window.scrollTo({ top: 0, behavior: "auto" }));
+
+  await expect(page.locator("#treated-zone")).toHaveValue("3");
+  await expect(page.locator("#outcome-select")).toHaveValue("avg_speed_kmh");
+  await expect(page.getByText(/using 1 selected zone/i)).toBeVisible();
+});
+
 test.describe("touch operability (real touch-emulated context)", () => {
   test.use({ hasTouch: true });
 

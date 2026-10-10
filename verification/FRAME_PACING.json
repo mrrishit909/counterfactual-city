@@ -1,0 +1,10 @@
+{
+  "chapter": "ch4",
+  "sampleCount": 100,
+  "meanFrameTimeMs": 16.83,
+  "p95FrameTimeMs": 17.8,
+  "estimatedFps": 59.4,
+  "droppedFrames60fpsBudget": 0,
+  "budget": "60fps desktop target (CLAUDE.md release gate): 16.7ms/frame mean; dropped = frame > 33.4ms (worse than 30fps)",
+  "measuredAgainst": "production build (vite preview), real continuous scroll, not an idle page"
+}

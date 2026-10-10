@@ -91,3 +91,25 @@ test.describe("responsive viewports", () => {
     expect(stageY).toBeLessThan(headingY);
   });
 });
+
+test("CTY-MOTION-001: scrolling through chapter 6's own pinned range and back does not break its content (no scroll-driven camera here by design)", async ({
+  page,
+}) => {
+  // Same non-animated-chapter lifecycle check as chapters 3 and 5's own versions. Chapter 6 is the
+  // last chapter, so instead of scrolling past it, this scrolls within its own 130vh pinned range
+  // (same mechanism the scrubbing chapters use, just with no transform tied to progress here) and
+  // back to the top.
+  await page.goto("/");
+  await scrollToChapter6(page);
+  await expect(page.getByTestId("ch6-city-stage")).toBeVisible();
+  const baseline = await page.getByTestId("ch6-city-stage").getAttribute("viewBox");
+  const ch6Top = await page.locator("#ch6").evaluate((el) => el.getBoundingClientRect().top + window.scrollY);
+
+  await scrollTo(page, ch6Top + 300);
+  await scrollTo(page, ch6Top);
+
+  await expect(page.getByTestId("ch6-city-stage")).toBeVisible();
+  const after = await page.getByTestId("ch6-city-stage").getAttribute("viewBox");
+  expect(after).toBe(baseline);
+  await expect(page.locator("#outcome-select")).toBeEnabled();
+});
