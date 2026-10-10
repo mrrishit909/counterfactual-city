@@ -1,0 +1,83 @@
+[
+  {
+    "outcome": "trip_volume",
+    "interventionDay": 120,
+    "att": -197.42657390142267,
+    "preTreatedMean": 2433.4324287481927,
+    "preControlMean": 2398.271944184608,
+    "postTreatedMean": 2197.3912794357307,
+    "postControlMean": 2359.6573687735686
+  },
+  {
+    "outcome": "trip_volume",
+    "interventionDay": 60,
+    "att": -107.52021470612772,
+    "preTreatedMean": 2433.27673277184,
+    "preControlMean": 2392.2449630379783,
+    "postTreatedMean": 2315.4897020801372,
+    "postControlMean": 2381.978147052403
+  },
+  {
+    "outcome": "trip_volume",
+    "interventionDay": 150,
+    "att": -158.08581951028555,
+    "preTreatedMean": 2386.0255470536704,
+    "preControlMean": 2390.3262838721794,
+    "postTreatedMean": 2198.3845385958784,
+    "postControlMean": 2360.771094924673
+  },
+  {
+    "outcome": "avg_speed_kmh",
+    "interventionDay": 120,
+    "att": 3.0012532139200694,
+    "preTreatedMean": 26.41931205585748,
+    "preControlMean": 28.73665670956211,
+    "postTreatedMean": 29.672302024213877,
+    "postControlMean": 28.988393463998438
+  },
+  {
+    "outcome": "avg_speed_kmh",
+    "interventionDay": 60,
+    "att": 1.469762612826127,
+    "preTreatedMean": 26.558682352783986,
+    "preControlMean": 28.855451010399342,
+    "postTreatedMean": 27.97612189157243,
+    "postControlMean": 28.80312793636166
+  },
+  {
+    "outcome": "avg_speed_kmh",
+    "interventionDay": 150,
+    "att": 2.2896051856445467,
+    "preTreatedMean": 27.10567782475239,
+    "preControlMean": 28.804205604757747,
+    "postTreatedMean": 29.493463148095756,
+    "postControlMean": 28.902385742456566
+  },
+  {
+    "outcome": "transit_ridership",
+    "interventionDay": 120,
+    "att": 219.33888164202335,
+    "preTreatedMean": 1820.1349323171137,
+    "preControlMean": 1844.7628501571014,
+    "postTreatedMean": 2044.180691487766,
+    "postControlMean": 1849.4697276857303
+  },
+  {
+    "outcome": "transit_ridership",
+    "interventionDay": 60,
+    "att": 103.77277487161291,
+    "preTreatedMean": 1826.338214086307,
+    "preControlMean": 1847.0350212933624,
+    "postTreatedMean": 1929.056171017843,
+    "postControlMean": 1845.9802033532856
+  },
+  {
+    "outcome": "transit_ridership",
+    "interventionDay": 150,
+    "att": 175.75834150733294,
+    "preTreatedMean": 1864.4951782227145,
+    "preControlMean": 1845.3031924332497,
+    "postTreatedMean": 2046.4252211304158,
+    "postControlMean": 1851.4748938336181
+  }
+]

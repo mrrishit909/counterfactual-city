@@ -13,8 +13,21 @@ requirements:
     behavior: "Change intervention date"
     owner: "data-ai-engineer (computation) + frontend-engineer (control, state)"
     verification: ["unit:estimator reference parity", "e2e:cty_intervention_date"]
-    status: unstarted
-    evidence_paths: []
+    status: implemented
+    evidence_paths: ["src/engine/ScenarioContext.tsx", "src/App.tsx", "src/engine/estimators.ts", "src/engine/estimators.test.ts", "e2e/smoke.spec.ts"]
+    note: "First of the 6 controls wired fully end to end, per the build directive's own M4 guidance
+    (verify one control's architecture before building the rest). A TypeScript port of the Python
+    DiD estimator (src/engine/estimators.ts) is checked for numerical parity against 9 golden cases
+    from the Python oracle (agreement to 1e-6, src/engine/estimators.test.ts) plus 4 boundary cases.
+    The React control (src/App.tsx, via src/engine/ScenarioContext.tsx) updates validated scenario
+    state on every slider change, recomputes a REAL DiD estimate (not a cosmetic change) on every
+    change, visibly explains the changed quantity (pre/post means for both treated and control
+    groups, not just the ATT number), and Reset Scenario restores baseline. Loading/error/ready
+    states implemented (data-state attribute). Keyboard operability confirmed with a real Playwright
+    e2e test driving ArrowLeft against the production build, not just a unit-level synthetic event
+    (15/15 Vitest + 5/5 Playwright passing, tsc clean, oxlint clean). Not yet styled/art-directed
+    (that is M5, docs/VISUAL_REFERENCE_RESEARCH.md and docs/DESIGN_SYSTEM.md are written/pending
+    respectively) and not yet independently verified by a separate reviewer."
   - id: CTY-INT-002
     project: "COUNTERFACTUAL CITY"
     priority: P0

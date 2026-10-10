@@ -2,14 +2,18 @@
 
 ## Current milestone
 
-M2 (analytical specification) done. M0/M1 (environment audit, creative research) done. M3 onward
-(architecture foundation, visual vertical slice, cinematic experience, interactive laboratory,
-integration, polish, independent review, final acceptance, publication) NOT started.
+M0 (environment audit), M1 (creative research), M2 (analytical specification) done. M3 (architecture
+foundation) IN PROGRESS: the scenario-state architecture exists and one control (CTY-INT-001, change
+intervention date) is wired end to end against a real TypeScript port of the Python estimator, with
+parity tests, unit tests, and a real-browser Playwright e2e test, all green, on the production build.
+M4 onward (the other 5 controls, 6 chapters, cinematic intro, art direction/motion, 3D where
+justified, responsive compositions, accessibility, performance, independent review, final acceptance,
+publication) NOT started.
 
 This is an honest in-progress state, not a completion claim. The Atlas's own complexity estimate for
 this project is 9/10 overall with a rough effort of 106-232 focused person-hours (docs/PROJECT_SPEC.md);
-this session has done real, tested, committed work on the two gates that don't depend on any frontend
-or motion work, and stopped there rather than rush the remaining ~85-90% of scope.
+this session has done real, tested, committed work through the start of M3, and stopped at a clean,
+fully-green checkpoint rather than rush the remaining majority of scope.
 
 ## Latest verified commit
 
@@ -26,31 +30,41 @@ same commit as the work it describes, so the latest commit IS the latest verifie
   synthetic control, an independent two-method cross-check, placebo and pretrend diagnostics, and 11
   boundary/infeasible-input cases. See `analysis/validation/test_estimators.py`.
 
-Neither gate is yet `independently verified`, that requires a separate reviewer pass per this
-project's own (CASCADIA-derived) discipline, scheduled for M9, not before the frontend/motion work
-exists to review alongside it.
+None of the 3 implemented gates is yet `independently verified`, that requires a separate reviewer
+pass per this project's own (CASCADIA-derived) discipline, scheduled for M9, not before the rest of
+the frontend/motion work exists to review alongside it.
 
 ## Unfinished requirements
 
-- `CTY-INT-001` through `CTY-INT-006`: all `unstarted`. The Python reference implementation each
-  control needs (`analysis/models/estimators.py`) now exists; what's missing is the React/TS frontend
-  state layer, the six controls themselves, and the Worker/fixture bridge connecting UI actions to
-  real recomputation (either via a browser-side port of the estimators or via versioned precomputed
-  fixtures for the scenario grid, a decision not yet made, see Decision Log below).
-- `CTY-UX-001`, `CTY-MOTION-001`, `CTY-RELEASE-001`: all `unstarted`, depend on the frontend/motion
-  work above.
+- `CTY-INT-001`: **implemented** (see above). Reset/keyboard/invalid-input/visible-explanation all
+  covered; not yet styled.
+- `CTY-INT-002` through `CTY-INT-006`: all `unstarted`. The pattern CTY-INT-001 establishes (a TS
+  port of the matching Python estimator function, parity-tested, wired into `ScenarioState` via
+  `ScenarioContext.tsx`, one new control component in `App.tsx` or its eventual chapter) is the
+  template to repeat for each. `synthetic_control`, `run_placebo_test`, and `pretrend_diagnostic`
+  still need their own TS ports (only `diff_in_diff` is ported so far); the NNLS donor-weight solve
+  in particular needs either a small TS NNLS implementation or a decision to keep that one
+  computation server-precomputed as a versioned fixture grid instead of live in-browser, not yet
+  decided.
+- `CTY-UX-001`, `CTY-MOTION-001`, `CTY-RELEASE-001`: all `unstarted`, depend on the remaining
+  controls, the 6 chapters, and the art-direction/motion work.
 
 ## Passing tests
 
 - `analysis/validation/test_estimators.py`: 25/25 (`source .venv/bin/activate && python3 -m pytest
   analysis/validation/ -v`).
-- Frontend template's own smoke test (`e2e/smoke.spec.ts`) is still the UNMODIFIED scaffold from
-  `templates/frontend` (count-is-0 button), not yet replaced with this project's own content. Not run
-  this session since there is no project-specific frontend yet to test.
+- `src/**/*.test.{ts,tsx}` (Vitest): 15/15 (`npx vitest run`), including 9 TS/Python DiD parity cases
+  agreeing to 1e-6 and 4 boundary cases, plus a real component test of the wired control.
+- `e2e/smoke.spec.ts` (Playwright, against the production build): 5/5 (`npx vite build && npx
+  playwright test`), including a real-keyboard CTY-INT-001 test and 3 responsive-viewport screenshots
+  (desktop/tablet/mobile, `verification/SCREENSHOTS/`, visually opened and confirmed non-blank).
+- `npx tsc -b`: clean. `npx oxlint`: clean (one non-blocking fast-refresh-only warning in
+  `ScenarioContext.tsx` from combining a Provider and a hook in one file, a deliberate, common
+  pattern, not a defect).
 
 ## Failing tests
 
-None currently (nothing beyond the template scaffold has been built to fail).
+None.
 
 ## Open P0/P1 issues
 
@@ -67,26 +81,25 @@ None currently running; this session's work ended at a clean commit boundary.
 
 ## Next critical-path task
 
-**M3: architecture foundation.** In order:
-1. Decide the browser-side computation strategy for the 6 controls: a JS/TS port of
-   `analysis/models/estimators.py` (consistent with CASCADIA's own WASM-solver precedent, but DiD/
-   synthetic-control in JS is a smaller lift than a full LP solver) vs. a precomputed versioned
-   fixture grid (faster to build, less "real" per control). Recommendation: port the estimator math
-   to TypeScript directly (it's linear algebra + a small NNLS solve, no WASM needed), cross-checked
-   against this Python reference the same way CASCADIA's TS solver was cross-checked against its
-   Python oracle.
-2. Set up the React/TS state architecture: a single authoritative scenario-state store (intervention
-   date, treated zone, control pool, donor weights, outcome variable) separate from presentation state
-   (camera, scroll, scene), per Part 10 of the build directive, this is the exact CASCADIA lesson
-   ("shared frontend state requires clear ownership", "animation state must remain separate from
-   analytical state") this project is required to retain.
-3. Wire ONE control (recommend CTY-INT-001, change intervention date, the simplest) end to end against
-   the real TS port, with a real e2e test, before building the other five or any chapter choreography,
-   per Part 21's M4 guidance ("Build one complete sequence... Independently verify the slice. Do not
-   build the entire cinematic experience on an unverified architecture").
-4. Only then: design system (`docs/ART_DIRECTION.md`, `docs/DESIGN_SYSTEM.md`,
+**M3/M4, continuing.** Steps 1-3 of the original M3 plan are DONE (decision made: TS port, not a
+fixture grid; scenario-state architecture built in `ScenarioContext.tsx`; CTY-INT-001 wired end to
+end with parity/unit/e2e tests, all green). Next, in order:
+1. Port `synthetic_control` (with the NNLS donor-weight solve), `run_placebo_test`, and
+   `pretrend_diagnostic` from `analysis/models/estimators.py` to `src/engine/estimators.ts`, each
+   parity-tested against fresh golden cases from the Python oracle, the same pattern `diffInDiff`
+   already establishes. A TS NNLS is a small, well-known algorithm (no new dependency needed); if it
+   proves awkward, the documented fallback is a precomputed fixture grid for just the weight-fit step.
+2. Wire the remaining 5 controls (CTY-INT-002 through 006) against those ports, each with its own
+   parity + unit + e2e test, before any chapter choreography or art direction, per Part 21's M4
+   guidance ("Independently verify the slice. Do not build the entire cinematic experience on an
+   unverified architecture").
+3. Only then: design system (`docs/ART_DIRECTION.md`, `docs/DESIGN_SYSTEM.md`,
    `docs/MOTION_SPECIFICATION.md`, `docs/RESPONSIVE_COMPOSITIONS.md`), informed by
-   `docs/VISUAL_REFERENCE_RESEARCH.md` (already written) and the dossier's palette/metaphor.
+   `docs/VISUAL_REFERENCE_RESEARCH.md` (already written) and the dossier's palette/metaphor (already
+   partially applied to `src/App.css`'s color tokens, not yet to layout/typography/motion).
+4. The 6 chapters, the cinematic intro, and the flagship interaction (two urban timelines diverging)
+   come after all 6 controls are real, not before, so motion work has real data to choreograph rather
+   than placeholder numbers.
 
 ## Decision log (append here, do not re-litigate once recorded)
 
