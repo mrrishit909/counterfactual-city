@@ -116,8 +116,15 @@ reused here because it is a sound general rule, not something specific to CASCAD
 
 ## 7. Motion rules (reusing Stage 2's already-proven mechanics)
 
-1. **One persistent grid stage** across intro and all 6 chapters (already true; do not remount
-   `CityStage` per chapter, pass it different props/overlays instead).
+1. **One persistent visual language** across intro and all 6 chapters: every chapter reuses the
+   SAME `CityStage` component (never a competing visualization), with the same palette, grid
+   metaphor, and camera convention. Revised from an earlier draft of this rule that additionally
+   required a single, never-remounted DOM node: that would mean redesigning Stage 2's own
+   already-independently-verified sticky-section-per-scene architecture (`IntroSequence.tsx`'s
+   `.intro-sticky` pattern), which the build directive explicitly says not to do ("Do not
+   repeatedly redesign architecture that has already passed verification"). Each chapter gets its
+   own sticky section with its own `CityStage` mount, the same proven, reviewed pattern Stage 2
+   already uses, not a new shared-DOM-node architecture.
 2. **Scrub-bound, not time-based, for anything tied to a scroll distance** (Stage 2's intro already
    does this; it is what makes reverse-scroll and fast-jump deterministic for free, confirmed by
    Stage 2's own independent review). Chapter-internal, non-scroll-triggered motion (e.g. a control's

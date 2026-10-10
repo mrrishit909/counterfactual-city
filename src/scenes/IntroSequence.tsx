@@ -183,6 +183,7 @@ export function IntroSequence({ children }: { children: React.ReactNode }) {
             <div className="city-stage-wrap">
               <CityStage
                 ref={stageRef}
+                instanceId="intro"
                 nZones={allZones.length || 24}
                 treatedZone={scenario.treatedZone}
                 zoneColors={visual ? { [scenario.treatedZone]: visual.treatedColor } : undefined}

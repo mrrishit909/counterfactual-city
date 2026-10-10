@@ -118,3 +118,82 @@
     position: relative;
   }
 }
+
+/* Chapter sections (ch2 onward). Each chapter is its own tall wrapper with a sticky inner layer,
+   the same proven pattern .intro-section/.intro-sticky already uses (docs/ART_DIRECTION.md
+   section 7 item 1). An "editorial split" composition per docs/ART_DIRECTION.md section 5: the
+   city stage on one side, the chapter's own prose and controls on the other. */
+.chapter {
+  position: relative;
+  height: 250vh;
+}
+
+.chapter-sticky {
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  overflow: hidden;
+  background: var(--paper);
+  display: flex;
+  align-items: center;
+  gap: 2rem;
+  padding: 2rem;
+}
+
+.chapter-stage-wrap {
+  flex: 1 1 60%;
+  max-width: 60%;
+  aspect-ratio: 820 / 580;
+}
+
+.chapter-controls {
+  flex: 1 1 40%;
+  max-width: 420px;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.chapter-kicker {
+  margin: 0;
+  font-size: 0.8rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--accent-red-text);
+}
+
+.chapter-controls h2 {
+  margin: 0;
+  font-size: 1.5rem;
+}
+
+.chapter-prose {
+  margin: 0;
+  color: var(--hint);
+}
+
+@media (max-width: 1023px) {
+  .chapter-sticky {
+    flex-direction: column;
+    justify-content: center;
+    padding: 1.5rem;
+  }
+  .chapter-stage-wrap,
+  .chapter-controls {
+    max-width: 100%;
+    flex: 0 0 auto;
+  }
+  .chapter-stage-wrap {
+    width: 100%;
+    height: 45vh;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .chapter {
+    height: 100vh;
+  }
+  .chapter-sticky {
+    position: relative;
+  }
+}

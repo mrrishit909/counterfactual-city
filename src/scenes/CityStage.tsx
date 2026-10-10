@@ -10,6 +10,13 @@ export interface CityStageProps {
   /** When set, the treated zone gets a pulsing ring sized by |effect| (also caller-computed from a
    * real result, never decorative). */
   treatedPulseIntensity?: number;
+  /** Disambiguates data-testid values when more than one CityStage is mounted at once (one per
+   * chapter, see docs/ART_DIRECTION.md section 7 item 1: each chapter gets its own CityStage
+   * instance, not a single shared DOM node), e.g. "intro" -> "intro-city-stage",
+   * "intro-city-zone-7". Required once a second chapter exists; a real bug (duplicate
+   * data-testid/role=img causing Playwright strict-mode violations and an axe-core finding) was
+   * found live the moment Chapter 2 was added without this. */
+  instanceId: string;
 }
 
 /**
@@ -20,7 +27,7 @@ export interface CityStageProps {
  * zone colorable by a real computed result.
  */
 export const CityStage = forwardRef<SVGSVGElement, CityStageProps>(function CityStage(
-  { nZones, treatedZone, zoneColors, treatedPulseIntensity },
+  { nZones, treatedZone, zoneColors, treatedPulseIntensity, instanceId },
   ref,
 ) {
   const blocks = computeCityLayout(nZones);
@@ -33,7 +40,7 @@ export const CityStage = forwardRef<SVGSVGElement, CityStageProps>(function City
       className="city-stage"
       role="img"
       aria-label={`City map, ${nZones} zones, zone ${treatedZone} is the treated zone`}
-      data-testid="city-stage"
+      data-testid={`${instanceId}-city-stage`}
     >
       <g className="city-roads" aria-hidden="true">
         {roads.map((r, i) => (
@@ -45,7 +52,7 @@ export const CityStage = forwardRef<SVGSVGElement, CityStageProps>(function City
           const isTreated = b.zone === treatedZone;
           const fill = zoneColors?.[b.zone];
           return (
-            <g key={b.zone} data-testid={`city-zone-${b.zone}`} data-treated={isTreated}>
+            <g key={b.zone} data-testid={`${instanceId}-city-zone-${b.zone}`} data-treated={isTreated}>
               {isTreated && treatedPulseIntensity !== undefined && (
                 <circle
                   className="treated-pulse"

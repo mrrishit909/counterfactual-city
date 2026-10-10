@@ -117,20 +117,30 @@ re-skin.
    asymmetric composition, texture/depth cues), not just the color swap in step 1, per the Stage 2
    review's own honest assessment that the current grid is too uniform/generic to clear the
    portfolio-wide release gate.
-3. Build chapters 2-6 per `docs/ART_DIRECTION.md` section 5's mapping (treatment, matched controls,
-   counterfactual [flagship], diagnostics, limitations), wiring in the remaining 5 controls
-   (currently only CTY-INT-001 is integrated into the cinematic layer; the other 5 live in the
-   plain, unstyled Lab panel below) as their own chapter-appropriate interactions, not a flat list.
-4. Each new chapter gets its own e2e coverage (forward/reverse/fast-jump/reduced-motion/responsive,
-   matching `e2e/intro.spec.ts`'s own pattern) before moving to the next.
+3. **DONE (chapter 2 of 5)**: built chapter 2 ("treatment", `src/scenes/Chapter2Treatment.tsx`),
+   hosting CTY-INT-001 and CTY-INT-002, migrated OUT of the flat Lab panel (no longer duplicated:
+   `InterventionDateControl`/`TreatedZoneControl` moved to `src/controls/TreatmentControls.tsx` to
+   avoid a circular import between `App.tsx` and the new chapter). Its own `CityStage` instance
+   (per `docs/ART_DIRECTION.md` section 7 item 1's revised rule: one visual language, not one DOM
+   node) reframes on scroll to the chosen treated zone, with its own reduced-motion and responsive
+   handling. A real bug was found and fixed while wiring this up: `CityStage` needs a per-instance
+   `instanceId` prop once a second chapter exists, otherwise two mounted stages collide on
+   `data-testid`/`id`, breaking Playwright's strict-mode locators and failing an axe-core "region"
+   check (the plain `<section id="ch2">` also needed `aria-labelledby`, a real landmark-naming
+   finding, not previously an issue with only one top-level section). 8/8 new Playwright
+   (`e2e/chapter2.spec.ts`); full suite after this change: 43/43 Playwright, 35/35 Vitest, tsc
+   clean, oxlint clean.
+4. Still owed: chapters 3-6 (matched controls, counterfactual [flagship], diagnostics, limitations),
+   each wiring in its own 1-2 of the remaining 4 controls (CTY-INT-003 through 006, currently still
+   in the plain Lab panel), each with its own e2e coverage matching chapter 2's own pattern
+   (forward/reverse/fast-jump/reduced-motion/responsive), and the real visual-design pass from step
+   2 above (not yet done).
 
-**Stage 6-9**: laboratory integration inside the full cinematic experience, performance engineering
+**Stage 6-9**: laboratory integration inside the full cinematic experience (once all 6 chapters
+exist, decide what if anything remains in a standalone "lab" section), performance engineering
 (measured, not invented), independent adversarial review of the complete build (including a fresh
-look at Stage 2's remediated intro, not just the new chapters), final release acceptance. Not
-started.
-
-**Stages 3-6** (full chapters, production optimization, independent adversarial review, final release
-acceptance) follow in that order, per the directive.
+look at Stage 2's remediated intro and chapter 2, not just the newest chapters), final release
+acceptance. Not started.
 
 ## Decision log (append here, do not re-litigate once recorded)
 

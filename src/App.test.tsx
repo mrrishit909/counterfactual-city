@@ -1,6 +1,7 @@
 import { fireEvent, render, screen, waitFor } from "@testing-library/react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { Lab } from "./App";
+import { InterventionDateControl } from "./controls/TreatmentControls";
 import { ScenarioProvider } from "./engine/ScenarioContext";
 import panelFixture from "./engine/__fixtures__/panel.json";
 
@@ -30,8 +31,13 @@ describe("Lab", () => {
   });
 
   it("loads the panel, shows a real DiD estimate, and reacts to the intervention-day control", async () => {
+    // InterventionDateControl moved out of Lab into its own module when Chapter 2 was built
+    // (src/scenes/Chapter2Treatment.tsx), so this test renders it alongside Lab directly, the same
+    // composition App.tsx uses, without Chapter2Treatment's own GSAP scene (not needed to test
+    // that the shared scenario state correctly connects the two).
     render(
       <ScenarioProvider>
+        <InterventionDateControl />
         <Lab />
       </ScenarioProvider>,
     );
@@ -52,6 +58,7 @@ describe("Lab", () => {
   it("Reset Scenario restores the baseline intervention day", async () => {
     render(
       <ScenarioProvider>
+        <InterventionDateControl />
         <Lab />
       </ScenarioProvider>,
     );

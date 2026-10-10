@@ -14,7 +14,7 @@ for (const vp of viewports) {
   test(`intro evidence at ${vp.name}`, async ({ page }) => {
     await page.setViewportSize({ width: vp.width, height: vp.height });
     await page.goto("/");
-    await expect(page.getByTestId("city-stage")).toBeVisible();
+    await expect(page.getByTestId("intro-city-stage")).toBeVisible();
     await page.screenshot({ path: path.join(DIR, `intro-${vp.name}-start.png`) });
 
     await page.evaluate(() => window.scrollTo({ top: 1200, behavior: "auto" }));

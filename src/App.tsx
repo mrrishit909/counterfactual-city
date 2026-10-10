@@ -1,4 +1,5 @@
 import { ScenarioProvider, useScenario } from "./engine/ScenarioContext";
+import { Chapter2Treatment } from "./scenes/Chapter2Treatment";
 import { IntroSequence } from "./scenes/IntroSequence";
 import type { Outcome } from "./engine/types";
 import "./App.css";
@@ -9,54 +10,6 @@ const OUTCOME_LABELS: Record<Outcome, string> = {
   avg_speed_kmh: "Average speed (km/h)",
   transit_ridership: "Transit ridership (riders/day)",
 };
-
-function InterventionDateControl() {
-  const { load, scenario, setInterventionDay } = useScenario();
-  if (load.status !== "ready") return null;
-  const { meta } = load.panel;
-  return (
-    <fieldset>
-      <legend>1. Intervention date</legend>
-      <label htmlFor="intervention-day">
-        Intervention day (1{"–"}{meta.n_days - 1})
-      </label>
-      <input
-        id="intervention-day"
-        type="range"
-        min={1}
-        max={meta.n_days - 1}
-        value={scenario.interventionDay}
-        onChange={(e) => setInterventionDay(Number(e.target.value))}
-        aria-describedby="intervention-day-value"
-      />
-      <output id="intervention-day-value" htmlFor="intervention-day">
-        day {scenario.interventionDay}
-      </output>
-    </fieldset>
-  );
-}
-
-function TreatedZoneControl() {
-  const { allZones, scenario, setTreatedZone } = useScenario();
-  if (allZones.length === 0) return null;
-  return (
-    <fieldset>
-      <legend>2. Treated zone</legend>
-      <label htmlFor="treated-zone">Zone receiving the intervention</label>
-      <select
-        id="treated-zone"
-        value={scenario.treatedZone}
-        onChange={(e) => setTreatedZone(Number(e.target.value))}
-      >
-        {allZones.map((z) => (
-          <option key={z} value={z}>
-            Zone {z}
-          </option>
-        ))}
-      </select>
-    </fieldset>
-  );
-}
 
 function ControlPoolControl() {
   const { allZones, scenario, toggleControlZone } = useScenario();
@@ -239,12 +192,11 @@ export function Lab() {
       <p className="disclaimer">
         Difference-in-differences and synthetic-control estimates against a fully synthetic panel
         with a declared treatment (not real-world data); see{" "}
-        <code>specifications/DATA_CONTRACT.yaml</code>. All six controls below trigger a real
-        recomputation, never a cosmetic change.
+        <code>specifications/DATA_CONTRACT.yaml</code>. All six controls on this page (two above,
+        in chapter 2's own section, four below) trigger a real recomputation, never a cosmetic
+        change.
       </p>
 
-      <InterventionDateControl />
-      <TreatedZoneControl />
       <ControlPoolControl />
       <DonorWeightsControl />
       <PlaceboControl />
@@ -284,6 +236,7 @@ function App() {
   return (
     <ScenarioProvider>
       <IntroSequence>
+        <Chapter2Treatment />
         <Lab />
       </IntroSequence>
     </ScenarioProvider>

@@ -31,7 +31,9 @@ file gives the per-chapter trigger/timeline detail that section wasn't the place
 2. Data drives animation, never the reverse (an effect's sign/magnitude decides color and intensity,
    per `src/scenes/resultVisualEncoding.ts`'s existing pattern, reused for every chapter's own
    result, not just the intro's).
-3. One persistent grid stage, never torn down and remounted between chapters.
+3. One persistent visual language (the same `CityStage` component, palette, and camera convention)
+   across every chapter; see `docs/ART_DIRECTION.md` section 7 item 1 for why this is no longer a
+   single-DOM-node requirement.
 4. Every chapter defines entry, exit, and reverse explicitly through `useScene.ts`.
 5. Reduced motion swaps every chapter to its instant final state; this is already proven out in
    Stage 2 and the pattern (an early return in each scene's `setup()` callback) is the one to copy.

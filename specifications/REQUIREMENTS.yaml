@@ -28,7 +28,12 @@ requirements:
     (15/15 Vitest + 5/5 Playwright passing, tsc clean, oxlint clean). Not yet styled/art-directed
     (that is Stage 2, docs/VISUAL_REFERENCE_RESEARCH.md written, design-system docs pending).
     Independently verified (Stage 1 architecture review, verification/STAGE1_ARCHITECTURE_REVIEW.md):
-    confirmed live that state ownership is single-source and async loading is StrictMode-safe."
+    confirmed live that state ownership is single-source and async loading is StrictMode-safe.
+    Stage 3: migrated out of the flat Lab panel into its own cinematic chapter 2 ('treatment',
+    src/scenes/Chapter2Treatment.tsx), with a scroll-scrubbed camera reframe to the chosen treated
+    zone and its own e2e coverage (e2e/chapter2.spec.ts, 8/8 passing). Still shares the same
+    ScenarioContext as the lab, confirmed live that a chapter-2 change is reflected in the lab's
+    own result further down the page."
   - id: CTY-INT-002
     project: "COUNTERFACTUAL CITY"
     priority: P0
@@ -49,7 +54,9 @@ requirements:
     selectOption drives the browser's real selection model, not a React-level hack). Reset Scenario
     restores baseline. Independently verified (Stage 1 architecture review,
     verification/STAGE1_ARCHITECTURE_REVIEW.md): confirmed live this control drives a real
-    recomputation."
+    recomputation. Stage 3: migrated into chapter 2 alongside CTY-INT-001 (same file, same e2e
+    suite); changing it reframes chapter 2's own camera to the newly selected zone, confirmed live
+    and with a dedicated test asserting the correct zone's data-treated attribute flips."
   - id: CTY-INT-003
     project: "COUNTERFACTUAL CITY"
     priority: P0
