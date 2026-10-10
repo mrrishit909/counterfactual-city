@@ -529,12 +529,41 @@ product bug), fixed by using a different valid value instead.
 documented above, unrelated), 35/35 Vitest, 25/25 Python (now reproducible from a clean venv),
 tsc/oxlint clean.
 
-## Stage 4-9 remaining: a second review pass on this round's own fixes, final release decision
+## Independently verified remediation
 
-This session's own fixes above have not themselves been re-reviewed by a THIRD independent pass.
-The pattern every review round in this project has shown: each one finds something the last one
-missed. `verification/RELEASE_ACCEPTANCE.md` is the current honest state against the full release
-gate; deployment remains withheld pending explicit authorization, not a known blocking defect.
+**DONE.** A second, focused, worktree-isolated subagent independently re-verified all 5 findings
+from the adversarial review, reproducing each ORIGINAL bug's exact repro steps against a real
+production build, not reading this session's own account of what was fixed or how. Full report:
+`verification/REMEDIATION_VERIFICATION.md`.
+
+- Finding 1 (nav intro highlight): confirmed `data-active="true"` on `nav-intro-section`
+  immediately on fresh load and after a partial scroll through the intro. **PASS.**
+- Finding 2 (donor-weights dead end): reproduced the exact original steps (narrow control pool to
+  2 zones, set sliders to 0.9/0.5, apply, confirm error AND 2 sliders still present, set to a
+  different valid pair, confirm error clears). **PASS.**
+- Finding 3 (Python reproducibility): installed `requirements.txt` into a genuinely fresh venv at
+  `/tmp/cfc-fresh-venv` (not this project's own long-lived `.venv`), ran the suite from that venv's
+  own `pytest`: 25/25 passed. **PASS.**
+- Finding 4 (pretrend caveat): confirmed the `.result-caveat` element is present adjacent to the
+  pretrend badge after running a real placebo test. **PASS.**
+- Finding 5 (chapter 6 local feedback): confirmed the in-chapter-6 ATT readout changes
+  (`-197.4 trips/day` → `3.0 km/h`) when the outcome dropdown changes, remaining visible within
+  chapter 6 without scrolling away. **PASS.**
+
+**Overall: all 5 findings confirmed fixed, no partial fixes, no regressions.** This closes the
+specific loop CLAUDE.md's own mandatory process requires (an independent reviewer's findings, fixed,
+then independently re-verified, not just self-reported as fixed).
+
+## Stage 4-9 status: release-readiness is current and honest, deployment withheld pending authorization
+
+`verification/RELEASE_ACCEPTANCE.md` is the current, honest state against the full release gate.
+Two things remain genuinely open against that gate: the rest of the chapter-level visual-design
+pass (varied block treatment/texture beyond what chapters 3-5 now have), and a full per-chapter
+performance budget (one real measurement exists, chapter 4 desktop only). Neither is a defect a
+reviewer found and the team failed to fix; both are honestly disclosed scope not yet done. A further
+review round, were one commissioned, would very likely still find something (every round so far
+has), but there is no longer a known, reported, unverified defect outstanding. Deployment remains
+withheld pending explicit authorization, not because of any blocking defect.
 
 ## Decision log (append here, do not re-litigate once recorded)
 

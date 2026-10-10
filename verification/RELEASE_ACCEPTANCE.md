@@ -19,7 +19,7 @@ publish and a final independent review of the fixes described below.
 | Professional quality | **Done, 1 P1 found and fixed by independent review.** `npx tsc -b`, `npx oxlint`, `npx vitest run` (35/35), `npx playwright test` (128/128 across repeated runs), `.venv/bin/python -m pytest analysis/validation/` (25/25) all clean. README/ARCHITECTURE/VISUAL_DESIGN/MOTION_SYSTEM/DATA_SOURCES/TESTING/LIMITATIONS/DEPLOYMENT.md all present. The Python suite had no `requirements.txt`, so it wasn't reproducible from a clean checkout; fixed and re-verified against a genuinely fresh venv. | This repo's own root, `TESTING.md` |
 | GitHub | **Partial.** Real, individual commit history with substantive messages tracking every real bug found and fixed. Not yet pushed to a remote. | `git log` |
 | Deployment | **Not done**, by design (no authorization yet). | `DEPLOYMENT.md` |
-| Portfolio | **Not done**, depends on deployment. |, |
+| Portfolio | **Not done**, depends on deployment. | n/a |
 
 ## What independently verified this build, and what has not yet
 
@@ -36,16 +36,20 @@ publish and a final independent review of the fixes described below.
   verification suite from a clean install and found 1 P0, 2 P1s, and 2 P2s, all fixed this session
   with reproduce-before-fix discipline (see `execution/PROGRESS.md`'s own entry). Full report:
   `verification/INDEPENDENT_ADVERSARIAL_REVIEW.md`.
-- **This round's own fixes have not yet been re-reviewed by a further independent pass.** Every
-  review round on this project so far, self- or independent, has found something the previous round
-  missed. Treat the current state as "adversarially tested once, not exhaustively verified."
+- **A second, focused, worktree-isolated verification pass** independently re-confirmed all 5 fixes
+  above, with its own ad-hoc scripts reproducing each ORIGINAL finding's exact repro steps against a
+  real production build (not reading this session's own account of how each was fixed). Result: all
+  5 PASS, no partial fixes, no regressions. Full report:
+  `verification/REMEDIATION_VERIFICATION.md`.
 
 ## Honest summary
 
 This is a functionally complete, analytically real (no simulated inference, no placeholder numbers),
 accessible (zero axe-core violations across repeated checks), and motion-complete build of all 6
 dossier chapters plus the intro, that has now survived one full worktree-isolated adversarial review
-with every finding fixed and regression-tested. The chapter-level visual distinctiveness work and a
+AND a second, independent, worktree-isolated verification pass confirming every one of that review's
+findings is genuinely fixed, not self-reported. The chapter-level visual distinctiveness work and a
 full per-chapter performance budget are the two largest remaining gaps against the release gate's
-own "Visual design" and "Performance" rows. Deployment is withheld pending explicit authorization,
-not because of any known blocking defect.
+own "Visual design" and "Performance" rows, both honestly disclosed, neither a defect a reviewer
+found and the team failed to fix. Deployment is withheld pending explicit authorization, not because
+of any known blocking defect.
