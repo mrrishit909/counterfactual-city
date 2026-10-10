@@ -1,8 +1,8 @@
 {
   "chapter": "ch4",
-  "sampleCount": 101,
-  "meanFrameTimeMs": 16.66,
-  "p95FrameTimeMs": 17.3,
+  "sampleCount": 98,
+  "meanFrameTimeMs": 16.67,
+  "p95FrameTimeMs": 17.5,
   "estimatedFps": 60,
   "droppedFrames60fpsBudget": 0,
   "budget": "60fps desktop target (CLAUDE.md release gate): 16.7ms/frame mean; dropped = frame > 33.4ms (worse than 30fps)",
