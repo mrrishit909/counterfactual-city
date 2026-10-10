@@ -76,7 +76,13 @@ requirements:
     checkboxes, a real-browser before/after ATT check, a Playwright test covering check/uncheck
     round-trip back to the 'use all zones' baseline, and a dedicated touch-emulated-context test
     (hasTouch: true) confirming tap operability. Independently verified (Stage 1 architecture
-    review, verification/STAGE1_ARCHITECTURE_REVIEW.md)."
+    review, verification/STAGE1_ARCHITECTURE_REVIEW.md).
+    Stage 3: migrated into chapter 3 ('matched controls', src/scenes/Chapter3MatchedControls.tsx),
+    with a real comparative tie-in to the shared city visualization: every zone in the current
+    control pool renders blue on chapter 3's own stage, the treated zone red, confirmed live and
+    with a dedicated e2e test (e2e/chapter3.spec.ts, 6/6 passing). The fuller 3-column
+    small-multiples trajectory comparison docs/ART_DIRECTION.md section 3 describes is not yet
+    built; disclosed in LIMITATIONS.md, not silently dropped."
   - id: CTY-INT-004
     project: "COUNTERFACTUAL CITY"
     priority: P0

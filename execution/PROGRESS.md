@@ -128,13 +128,20 @@ re-skin.
    `data-testid`/`id`, breaking Playwright's strict-mode locators and failing an axe-core "region"
    check (the plain `<section id="ch2">` also needed `aria-labelledby`, a real landmark-naming
    finding, not previously an issue with only one top-level section). 8/8 new Playwright
-   (`e2e/chapter2.spec.ts`); full suite after this change: 43/43 Playwright, 35/35 Vitest, tsc
-   clean, oxlint clean.
-4. Still owed: chapters 3-6 (matched controls, counterfactual [flagship], diagnostics, limitations),
-   each wiring in its own 1-2 of the remaining 4 controls (CTY-INT-003 through 006, currently still
-   in the plain Lab panel), each with its own e2e coverage matching chapter 2's own pattern
-   (forward/reverse/fast-jump/reduced-motion/responsive), and the real visual-design pass from step
-   2 above (not yet done).
+   (`e2e/chapter2.spec.ts`).
+4. **DONE (chapter 3 of 5)**: built chapter 3 ("matched controls", `src/scenes/Chapter3MatchedControls.tsx`),
+   hosting CTY-INT-003 (`ControlPoolControl` similarly moved to `src/controls/ControlPoolControl.tsx`).
+   A static-camera (no scroll-scrub, deliberately: the point is comparing many zones at once, so the
+   whole grid stays in frame) chapter with a real comparative tie-in: every zone in the current
+   control pool renders blue on chapter 3's own stage, confirmed live. Not yet the fuller 3-column
+   small-multiples trajectory comparison `docs/ART_DIRECTION.md` section 3 describes; disclosed in
+   `LIMITATIONS.md`. 6/6 new Playwright (`e2e/chapter3.spec.ts`). Full suite after chapters 2+3:
+   49/49 Playwright total (includes chapter 2 and 3's own new tests), 35/35 Vitest, 25/25 pytest,
+   tsc clean, oxlint clean.
+5. Still owed: chapters 4-6 (counterfactual [flagship], diagnostics, limitations), each wiring in
+   its own 1-2 of the remaining 3 controls (CTY-INT-004 through 006, currently still in the plain
+   Lab panel), each with its own e2e coverage matching chapters 2-3's own pattern, and the real
+   visual-design pass from step 2 above (not yet done).
 
 **Stage 6-9**: laboratory integration inside the full cinematic experience (once all 6 chapters
 exist, decide what if anything remains in a standalone "lab" section), performance engineering

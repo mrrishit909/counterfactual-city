@@ -70,8 +70,17 @@ REQUIREMENTS.yaml` for per-requirement status.
   live-screenshot confirmation), but `CTY-MOTION-001` stays at `implemented`, not
   `independently verified`, until a fresh pass confirms the fixes.
 
+## Chapter 3 (matched controls)
+
+- **Ships the real control with a real comparative tie-in (control-pool zones highlighted blue on
+  the shared stage), not yet the fuller 3-column small-multiples trajectory comparison
+  `docs/ART_DIRECTION.md` section 3 describes.** That fuller view would show each candidate
+  control zone's own trajectory alongside the treated zone's on a shared axis; the current chapter
+  shows WHICH zones are selected spatially, which is real and functional, but not the full
+  envisioned comparative chart. A further visual enhancement, not a defect in what's shipped.
+
 ## Not yet built
 
-Chapters 2-6, the flagship "two urban timelines diverge" interaction (chapter 4, per
+Chapters 4-6 (the flagship "two urban timelines diverge" interaction is chapter 4, per
 `docs/ART_DIRECTION.md`'s chapter plan), 3D/spatial rendering (if justified by measurement),
-responsive compositions per-chapter beyond the intro's own 3 breakpoints, and performance budgets.
+responsive compositions per-chapter beyond chapters 1-3's own 3 breakpoints, and performance budgets.

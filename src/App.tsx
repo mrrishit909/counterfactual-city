@@ -1,5 +1,6 @@
 import { ScenarioProvider, useScenario } from "./engine/ScenarioContext";
 import { Chapter2Treatment } from "./scenes/Chapter2Treatment";
+import { Chapter3MatchedControls } from "./scenes/Chapter3MatchedControls";
 import { IntroSequence } from "./scenes/IntroSequence";
 import type { Outcome } from "./engine/types";
 import "./App.css";
@@ -10,34 +11,6 @@ const OUTCOME_LABELS: Record<Outcome, string> = {
   avg_speed_kmh: "Average speed (km/h)",
   transit_ridership: "Transit ridership (riders/day)",
 };
-
-function ControlPoolControl() {
-  const { allZones, scenario, toggleControlZone } = useScenario();
-  const controlCandidates = allZones.filter((z) => z !== scenario.treatedZone);
-  const usingAll = scenario.controlPool.length === 0;
-  return (
-    <fieldset>
-      <legend>3. Control pool</legend>
-      <p className="hint">
-        {usingAll
-          ? `Using all ${controlCandidates.length} non-treated zones. Check a box to switch to an explicit allow-list of just the zones you check (not an exclude-list).`
-          : `Using ${scenario.controlPool.length} selected zone(s) as an explicit allow-list. Uncheck all to use every zone again.`}
-      </p>
-      <div className="zone-grid" role="group" aria-label="Control pool zone selection">
-        {controlCandidates.map((z) => (
-          <label key={z} className="zone-checkbox">
-            <input
-              type="checkbox"
-              checked={scenario.controlPool.includes(z)}
-              onChange={() => toggleControlZone(z)}
-            />
-            {z}
-          </label>
-        ))}
-      </div>
-    </fieldset>
-  );
-}
 
 function DonorWeightsControl() {
   const { sc, scError, scenario, weightsRevision, setDonorWeight, applyDonorWeights, clearDonorWeights } =
@@ -192,12 +165,11 @@ export function Lab() {
       <p className="disclaimer">
         Difference-in-differences and synthetic-control estimates against a fully synthetic panel
         with a declared treatment (not real-world data); see{" "}
-        <code>specifications/DATA_CONTRACT.yaml</code>. All six controls on this page (two above,
-        in chapter 2's own section, four below) trigger a real recomputation, never a cosmetic
-        change.
+        <code>specifications/DATA_CONTRACT.yaml</code>. All six controls on this page (three above,
+        in chapters 2 and 3's own sections, three below) trigger a real recomputation, never a
+        cosmetic change.
       </p>
 
-      <ControlPoolControl />
       <DonorWeightsControl />
       <PlaceboControl />
       <OutcomeControl />
@@ -237,6 +209,7 @@ function App() {
     <ScenarioProvider>
       <IntroSequence>
         <Chapter2Treatment />
+        <Chapter3MatchedControls />
         <Lab />
       </IntroSequence>
     </ScenarioProvider>
