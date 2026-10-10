@@ -2,6 +2,7 @@ import { ScenarioProvider, useScenario } from "./engine/ScenarioContext";
 import { Chapter2Treatment } from "./scenes/Chapter2Treatment";
 import { Chapter3MatchedControls } from "./scenes/Chapter3MatchedControls";
 import { Chapter4Counterfactual } from "./scenes/Chapter4Counterfactual";
+import { Chapter5Diagnostics } from "./scenes/Chapter5Diagnostics";
 import { IntroSequence } from "./scenes/IntroSequence";
 import type { Outcome } from "./engine/types";
 import "./App.css";
@@ -12,38 +13,6 @@ const OUTCOME_LABELS: Record<Outcome, string> = {
   avg_speed_kmh: "Average speed (km/h)",
   transit_ridership: "Transit ridership (riders/day)",
 };
-
-function PlaceboControl() {
-  const { placebo, runPlacebo } = useScenario();
-  return (
-    <fieldset>
-      <legend>5. Placebo test</legend>
-      <p className="hint">
-        Re-runs the synthetic control treating every non-treated zone as if it were treated, to see
-        where the real effect ranks in that null distribution.
-      </p>
-      <button type="button" onClick={runPlacebo} data-testid="run-placebo">
-        Run placebo test
-      </button>
-      {placebo.status === "running" && <p data-state="loading">Running placebo test{"…"}</p>}
-      {placebo.status === "error" && (
-        <p className="error" role="alert" data-testid="placebo-error">
-          {placebo.message}
-        </p>
-      )}
-      {placebo.status === "done" && (
-        <dl className="result" data-testid="placebo-result">
-          <dt>Real effect rank among {placebo.result.nPlacebos + 1} units (by |effect|)</dt>
-          <dd data-testid="placebo-rank">
-            {placebo.result.rank} of {placebo.result.nPlacebos + 1}
-          </dd>
-          <dt>Permutation p-value</dt>
-          <dd>{placebo.result.pValue.toFixed(3)}</dd>
-        </dl>
-      )}
-    </fieldset>
-  );
-}
 
 function OutcomeControl() {
   const { load, scenario, setOutcome } = useScenario();
@@ -64,18 +33,6 @@ function OutcomeControl() {
         ))}
       </select>
     </fieldset>
-  );
-}
-
-function PretrendBadge() {
-  const { pretrend } = useScenario();
-  if (!pretrend) return null;
-  return (
-    <p className="hint" data-testid="pretrend-badge" data-passes={pretrend.passes}>
-      Pretrend diagnostic: {pretrend.passes ? "PASS" : "FAIL"} (slope p-value{" "}
-      {pretrend.slopePvalue.toFixed(3)}). A significant pre-trend means the parallel-trends
-      assumption is suspect for this treated unit and donor pool.
-    </p>
   );
 }
 
@@ -103,12 +60,11 @@ export function Lab() {
       <p className="disclaimer">
         Difference-in-differences and synthetic-control estimates against a fully synthetic panel
         with a declared treatment (not real-world data); see{" "}
-        <code>specifications/DATA_CONTRACT.yaml</code>. All six controls on this page (four above,
-        in chapters 2-4's own sections, two below) trigger a real recomputation, never a cosmetic
+        <code>specifications/DATA_CONTRACT.yaml</code>. All six controls on this page (five above,
+        in chapters 2-5's own sections, one below) trigger a real recomputation, never a cosmetic
         change.
       </p>
 
-      <PlaceboControl />
       <OutcomeControl />
 
       <button type="button" onClick={reset} aria-label="Reset scenario to baseline" className="reset-button">
@@ -135,8 +91,6 @@ export function Lab() {
           </dd>
         </dl>
       )}
-
-      <PretrendBadge />
     </main>
   );
 }
@@ -148,6 +102,7 @@ function App() {
         <Chapter2Treatment />
         <Chapter3MatchedControls />
         <Chapter4Counterfactual />
+        <Chapter5Diagnostics />
         <Lab />
       </IntroSequence>
     </ScenarioProvider>

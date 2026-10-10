@@ -148,7 +148,15 @@ requirements:
     continuously auto-recomputed), showing the real effect's rank and permutation p-value among the
     full placebo distribution. An infeasible case (pool narrowed below the 2-unit minimum) shows a
     visible error (placebo-error) rather than crashing, verified live. Independently verified
-    (Stage 1 architecture review, verification/STAGE1_ARCHITECTURE_REVIEW.md)."
+    (Stage 1 architecture review, verification/STAGE1_ARCHITECTURE_REVIEW.md).
+    Stage 3: this control now lives in chapter 5 ('diagnostics', src/scenes/Chapter5Diagnostics.tsx),
+    the dossier's 'focused inspector' archetype, moved verbatim out of the plain Lab panel into
+    src/controls/PlaceboControl.tsx, paired with the pretrend-diagnostic badge (also moved out of
+    Lab, into the same chapter) so the chapter hosts both real diagnostics together rather than
+    splitting them across the cinematic experience and the lab. The whole city grid stays in frame
+    (no scroll-scrubbed camera), the same deliberate choice chapter 3 already made for its own
+    archetype. Covered by e2e/chapter5.spec.ts (7 tests: layout, real rank/p-value, infeasible-pool
+    error, shared state with other chapters, 3-breakpoint responsiveness)."
   - id: CTY-INT-006
     project: "COUNTERFACTUAL CITY"
     priority: P0

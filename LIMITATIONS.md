@@ -95,6 +95,6 @@ REQUIREMENTS.yaml` for per-requirement status.
 
 ## Not yet built
 
-Chapters 5-6 (diagnostics, limitations, per `docs/ART_DIRECTION.md`'s chapter plan), 3D/spatial
-rendering (if justified by measurement), responsive compositions per-chapter beyond chapters 1-4's
-own 3 breakpoints, and performance budgets.
+Chapter 6 (limitations, per `docs/ART_DIRECTION.md`'s chapter plan), 3D/spatial rendering (if
+justified by measurement), responsive compositions per-chapter beyond chapters 1-5's own 3
+breakpoints, and performance budgets.

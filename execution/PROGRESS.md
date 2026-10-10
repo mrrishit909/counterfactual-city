@@ -157,9 +157,18 @@ re-skin.
    resize-debounce race during the test's own position measurement; fixed with a scroll-height
    settle wait, same pattern applied to chapter 4's own test helper). Full suite after chapters 2-4:
    58/58 Playwright (stable across repeated full runs), 35/35 Vitest, tsc clean, oxlint clean.
-6. Still owed: chapters 5-6 (diagnostics, limitations), each wiring in its own remaining control
-   (CTY-INT-005/006, currently still in the plain Lab panel), each with its own e2e coverage matching
-   chapters 2-4's own pattern, and the real visual-design pass from step 2 above (not yet done).
+6. **DONE (chapter 5 of 5... well, 5 of 6)**: built chapter 5 ("diagnostics", the "focused
+   inspector" archetype, `src/scenes/Chapter5Diagnostics.tsx`), hosting CTY-INT-005 (`PlaceboControl`
+   moved to `src/controls/PlaceboControl.tsx`), paired with the pretrend-diagnostic badge (also moved
+   out of the plain Lab panel into this chapter). No scroll-scrubbed camera, matching chapter 3's own
+   precedent: a diagnostic looks at the whole panel at once. No new bugs found; this one built clean
+   on the first pass, reusing chapters 2/3's own `.chapter-stage-wrap`/`.chapter-controls` CSS
+   unchanged. 7/7 new Playwright (`e2e/chapter5.spec.ts`). Full suite after chapters 2-5: 65/65
+   Playwright (stable across 5 repeated full runs), 35/35 Vitest, tsc clean, oxlint clean.
+7. Still owed: chapter 6 (limitations: CTY-INT-006 [change outcome] + explicit
+   methodology/limitations copy, the dossier's own "editorial, text-led" archetype), its own e2e
+   coverage matching chapters 2-5's own pattern, and the real visual-design pass from step 2 above
+   (not yet done).
 
 **Stage 6-9**: laboratory integration inside the full cinematic experience (once all 6 chapters
 exist, decide what if anything remains in a standalone "lab" section), performance engineering
