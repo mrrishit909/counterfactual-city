@@ -140,6 +140,53 @@ test.describe("reduced motion", () => {
   });
 });
 
+test("regression: a panel-fetch failure does not trap the lab behind a permanent, reachless loading state", async ({ page }) => {
+  // An independent review caught this: the intro's own early return handled BOTH "loading" and
+  // "error" status identically, with no message and no way to reach the lab below, which has its
+  // own correct error branch for this exact failure but was never rendered. Routing the fetch to
+  // fail and confirming the lab's own real error message appears (not a permanent spinner).
+  await page.route("**/data/panel.json", (route) => route.abort());
+  await page.goto("/");
+  const errorPanel = page.locator('[data-state="error"]');
+  await expect(errorPanel).toBeVisible({ timeout: 5000 });
+  await expect(errorPanel).toContainText(/failed to load/i);
+});
+
+test("regression: Skip Intro actually scrolls under reduced motion", async ({ page }) => {
+  await page.emulateMedia({ reducedMotion: "reduce" });
+  await page.goto("/");
+  await expect(page.getByTestId("city-stage")).toBeVisible();
+  const before = await page.evaluate(() => window.scrollY);
+  await page.getByTestId("skip-intro").click();
+  await expect(async () => {
+    const after = await page.evaluate(() => window.scrollY);
+    expect(after).toBeGreaterThan(before);
+  }).toPass();
+});
+
+test("regression: the camera pushes the treated zone toward the viewport center, not off-screen", async ({ page }) => {
+  // An independent review caught a real targeting bug: a percentage transformOrigin was resolved
+  // against the SVG element's own bbox, not the viewBox the target coordinate was computed in,
+  // pushing the treated zone entirely off the top of the viewport (confirmed by direct
+  // measurement against the pre-fix code: rect.bottom was -104.9, i.e. not even partially
+  // visible) instead of centering it. Fixed with GSAP's svgOrigin (viewBox-space coordinates
+  // directly). This assertion (at least some part of the block on screen) was confirmed, by
+  // reverting this fix locally and rerunning, to actually fail against the pre-fix code, not
+  // just pass trivially.
+  await page.goto("/");
+  await expect(page.getByTestId("city-stage")).toBeVisible();
+  const sectionHeight = await page.locator("#intro-section").evaluate((el) => el.getBoundingClientRect().height);
+  await page.evaluate((y) => window.scrollTo({ top: y, behavior: "auto" }), sectionHeight * 0.95);
+  await page.waitForTimeout(1500); // let the scrubbed (1s ease) transform settle
+
+  const treatedRect = await page
+    .locator('[data-testid="city-zone-7"] .zone-block-treated')
+    .evaluate((el) => el.getBoundingClientRect());
+  const viewportSize = page.viewportSize()!;
+  expect(treatedRect.bottom).toBeGreaterThan(0);
+  expect(treatedRect.top).toBeLessThan(viewportSize.height);
+});
+
 test.describe("responsive viewports", () => {
   const viewports = [
     { name: "desktop", width: 1440, height: 900 },

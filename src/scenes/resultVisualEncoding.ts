@@ -18,3 +18,20 @@ export function encodeResult(att: number, scale: number): ResultVisualEncoding {
     pulseIntensity: Math.min(1, magnitude),
   };
 }
+
+// An independent review caught a real calibration gap: a single hardcoded scale (300) was used
+// for every outcome, but the panel's 3 outcomes have genuinely different units and magnitudes
+// (analysis/data/synthetic_panel.py's declared TRUE_ATT: trip_volume ~180, avg_speed_kmh ~3.2,
+// transit_ridership ~240), so a scale calibrated for trip_volume left avg_speed_kmh's pulse
+// intensity near-invisible and could saturate transit_ridership's. Each scale here is ~1.67x the
+// outcome's own true injected effect, so a solver estimate near the true effect reads as a
+// strong but not instantly-maxed pulse, consistent across all 3 outcomes.
+const DEFAULT_SCALE_BY_OUTCOME: Record<string, number> = {
+  trip_volume: 300,
+  avg_speed_kmh: 6,
+  transit_ridership: 400,
+};
+
+export function defaultScaleForOutcome(outcome: string): number {
+  return DEFAULT_SCALE_BY_OUTCOME[outcome] ?? 300;
+}

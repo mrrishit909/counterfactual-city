@@ -3,10 +3,13 @@
 ## Current milestone
 
 M0-M4 and Stage 1 (architecture acceptance) DONE. Stage 2 (cinematic vertical slice: intro only,
-beats A-C) DONE and about to go through independent review. All 6 required interactions, CTY-DATA-001,
-CTY-MATH-001, CTY-UX-001, and CTY-MOTION-001 are implemented; all but CTY-DATA-001 (data strategy,
-outside Stage 1's review scope) and CTY-MOTION-001 (pending the Stage 2 review about to run) are
-**independently verified**.
+beats A-C) built, independently reviewed, and remediated. The review's verdict was SLICE NOT SOUND
+with 3 blocking defects; all 3 (plus 3 non-blocking findings) are fixed and self-verified with
+reproduce-before-fix evidence (see `verification/STAGE2_INDEPENDENT_REVIEW.md`), but this fix pass
+has not itself gone through a fresh re-review, so `CTY-MOTION-001` stays `implemented`, not
+`independently verified`. The review's own honest visual-quality assessment (current intro reads as
+a generic wireframe grid, not yet "distinctive, polished, art-directed") is carried forward as
+explicit Stage 3 work, not fixed in this pass.
 
 Full 6-chapter build, laboratory integration inside the cinematic experience, performance engineering,
 and final adversarial review are explicitly NOT started yet, by design, not oversight. See "Next
@@ -48,23 +51,28 @@ same commit as the work it describes, so the latest commit IS the latest verifie
 
 ## Unfinished requirements
 
-- `CTY-MOTION-001`, `CTY-RELEASE-001`: `unstarted`, depend on the chapters/intro/motion work (Stage
-  2-3) and deployment (Stage 6).
+- `CTY-MOTION-001`: **implemented** (intro only, beats A-C). See `verification/
+  STAGE2_INDEPENDENT_REVIEW.md` for the full review/fix record. Not yet `independently verified`
+  (the fix pass itself hasn't had a fresh review) and not yet covering chapters 2-6.
+- `CTY-RELEASE-001`: `unstarted`, depends on the full chapter build (Stage 3-5) and deployment
+  readiness (Stage 9).
 
 ## Passing tests
 
 - `analysis/validation/test_estimators.py`: 25/25 (`source .venv/bin/activate && python3 -m pytest
   analysis/validation/ -v`).
-- `src/**/*.test.{ts,tsx}` (Vitest): 27/27 (`npx vitest run`), including DiD parity (9 cases, 1e-6),
+- `src/**/*.test.{ts,tsx}` (Vitest): 35/35 (`npx vitest run`), including DiD parity (9 cases, 1e-6),
   synthetic-control/placebo/pretrend parity (looser tolerance, different NNLS algorithm, documented
-  in the test file and LIMITATIONS.md), and boundary/infeasible cases for all 4 estimator functions.
-- `e2e/smoke.spec.ts` + `e2e/controls.spec.ts` + `e2e/a11y.spec.ts` (Playwright, production build):
-  18/18 (`npx vite build && npx playwright test`). Covers all 6 controls' real recomputation, Reset
-  Scenario restoring every control (not just one), sequential multi-control composition, keyboard
-  operability (range/select), a dedicated touch-emulated-context test, zero console errors/failed
-  requests across a full interaction pass, zero axe-core violations before and after interacting
-  with every control, and a regression test for the Stage 1 review's slider-desync finding (confirmed
-  to fail against the pre-fix code before confirming it passes against the fix).
+  in the test file and LIMITATIONS.md), boundary/infeasible cases for all 4 estimator functions, and
+  the city-layout/result-encoding pure-function tests added in Stage 2.
+- `e2e/*.spec.ts` (Playwright, production build): 35/35 (`npx vite build && npx playwright test`).
+  Covers all 6 controls' real recomputation, Reset Scenario restoring every control, sequential
+  multi-control composition, keyboard operability, a touch-emulated-context test, zero console
+  errors/failed requests, zero axe-core violations, a regression test for the Stage 1 review's
+  slider-desync finding, and (Stage 2) the intro's forward/reverse/fast-jump scroll, Skip Intro
+  (normal and reduced motion), 3 responsive breakpoints, and 3 regression tests for the Stage 2
+  review's 3 blocking defects, all confirmed to fail against the pre-fix code before confirming
+  they pass against the fix.
 - `npx tsc -b`: clean. `npx oxlint`: clean (one non-blocking fast-refresh-only warning in
   `ScenarioContext.tsx` from combining a Provider and a hook in one file, a deliberate pattern).
 
@@ -88,29 +96,36 @@ None currently running; this session's work ended at a clean, fully green commit
 
 ## Next critical-path task
 
-**Stage 1 is done** (verdict ARCHITECTURE SOUND, 2 findings fixed, see
-`verification/STAGE1_ARCHITECTURE_REVIEW.md`). **Stage 2 (intro-only vertical slice) is built**: a
-persistent SVG city stage, a 3-beat scroll sequence (street grid, data labels, camera push + real
-result encoding), Skip Intro, reduced motion, 3 responsive breakpoints, reverse/fast-jump scroll all
-confirmed deterministic. 11/11 Playwright (`e2e/intro.spec.ts`). Two real defects found and fixed
-during this build (GSAP `pin: true` trapping scroll with no way out, fixed by switching to CASCADIA's
-own proven CSS-sticky architecture; Skip Intro reading a pinned element's dead rect, fixed after the
-architecture change). See `specifications/REQUIREMENTS.yaml`'s `CTY-MOTION-001` row for full detail.
+**Stage 1 done** (verdict ARCHITECTURE SOUND, see `verification/STAGE1_ARCHITECTURE_REVIEW.md`).
+**Stage 2 done and remediated**: an independent review returned SLICE NOT SOUND with 3 blocking
+defects (error-state dead end, Skip Intro no-op under reduced motion, camera pushing the treated
+zone off-screen); all 3 fixed and re-verified with reproduce-before-fix evidence, plus 3
+non-blocking findings fixed in the same pass (see `verification/STAGE2_INDEPENDENT_REVIEW.md`). The
+review's own visual-quality verdict (reads as a generic wireframe, not yet "distinctive, polished,
+art-directed") was NOT addressed in the fix pass and is carried into Stage 3 below as explicit,
+tracked work, not silently dropped. Design-system docs written ahead of Stage 3
+(`docs/ART_DIRECTION.md`, `DESIGN_SYSTEM.json`, `MOTION_SPECIFICATION.md`,
+`RESPONSIVE_COMPOSITIONS.md`), including the 6-chapter-to-control mapping and the flagged palette
+re-skin.
 
-Next: commission an independent review of this Stage 2 slice specifically (architecture, visual
-quality, real-vs-cosmetic result encoding, accessibility, responsive behavior), per the directive's
-own instruction not to build all 6 chapters until the slice is independently verified. Then:
-
-**Stage 3-5: full 6-chapter build.** Each dossier chapter (context, system, method, intervention,
-diagnostics, comparison per the execution contract's naming) gets its own distinct composition and
-camera choreography, wiring in the remaining 5 controls (currently only CTY-INT-001 is integrated
-into the cinematic layer; the other 5 live in the plain, unstyled Lab panel below) as their own
-chapter-appropriate interactions, not just a flat control list. The flagship interaction (two urban
-timelines diverging) is part of this stage, not a separate one.
+**Stage 3-5: full 6-chapter build.** In order:
+1. Re-skin the persistent city stage from Stage 2's dark placeholder palette to the dossier's real
+   light palette (`#F3F0E8`/`#D65343`/`#4B84C5`, already used elsewhere in `src/App.css`), per
+   `docs/ART_DIRECTION.md` section 1, FIRST, not after chapters are built on the wrong palette.
+2. Do a real visual-design pass on the city grid itself (varied block treatment, asymmetric
+   composition, texture/depth cues), not just a color swap, per the Stage 2 review's own honest
+   assessment that the current grid is too uniform/generic to clear the portfolio-wide release gate.
+3. Build chapters 2-6 per `docs/ART_DIRECTION.md` section 5's mapping (treatment, matched controls,
+   counterfactual [flagship], diagnostics, limitations), wiring in the remaining 5 controls
+   (currently only CTY-INT-001 is integrated into the cinematic layer; the other 5 live in the
+   plain, unstyled Lab panel below) as their own chapter-appropriate interactions, not a flat list.
+4. Each new chapter gets its own e2e coverage (forward/reverse/fast-jump/reduced-motion/responsive,
+   matching `e2e/intro.spec.ts`'s own pattern) before moving to the next.
 
 **Stage 6-9**: laboratory integration inside the full cinematic experience, performance engineering
-(measured, not invented), independent adversarial review of the complete build, final release
-acceptance. Not started.
+(measured, not invented), independent adversarial review of the complete build (including a fresh
+look at Stage 2's remediated intro, not just the new chapters), final release acceptance. Not
+started.
 
 **Stages 3-6** (full chapters, production optimization, independent adversarial review, final release
 acceptance) follow in that order, per the directive.

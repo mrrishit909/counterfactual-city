@@ -248,7 +248,23 @@ requirements:
     deviation from the dossier's literal storyboard wording: beat B substitutes zone-label
     resolution for literal 'traffic pulses' (an infinite loop doesn't compose with a scrub-bound
     timeline, which is what makes reverse/fast-jump determinism free); see IntroSequence.tsx's own
-    header comment. Not yet independently verified by a separate reviewer."
+    header comment.
+    An independent review (verification/STAGE2_INDEPENDENT_REVIEW.md) returned verdict SLICE NOT
+    SOUND with 3 blocking defects: an error-state dead end (children/lab never rendered on a fetch
+    failure), Skip Intro a no-op under reduced motion, and the beat-C camera pushing the treated
+    zone off-screen instead of centering it (two layered causes: a transformOrigin bbox-vs-viewBox
+    mismatch, then a deeper conceptual gap where scaling around a fixed point does not recenter
+    it; fixed by animating the SVG's own viewBox attribute directly, a true pan+zoom). All 3 fixed
+    and independently re-verified by this session with reproduce-before-fix evidence for each
+    (regression tests confirmed to fail against the pre-fix code, then pass against the fix,
+    e2e/intro.spec.ts's 3 new 'regression:' tests). 3 non-blocking findings also fixed in the same
+    pass (hardcoded treated-zone stroke/pulse color ignoring the effect's sign; a single
+    pulse-intensity scale miscalibrated for 2 of the 3 outcomes; a stale PROGRESS.md status).
+    The review's own honest visual-quality assessment (current intro 'reads as a wireframe...
+    directly contradicts the project's own stated visual identity') stands, not fixed in this
+    pass, carried forward as explicit Stage 3 work in docs/ART_DIRECTION.md and LIMITATIONS.md.
+    This fix pass itself has not been re-reviewed by a fresh, separate reviewer, so status stays
+    implemented, not independently verified, pending that."
   - id: CTY-RELEASE-001
     project: "COUNTERFACTUAL CITY"
     priority: P0

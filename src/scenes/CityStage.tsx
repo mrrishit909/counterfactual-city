@@ -52,7 +52,7 @@ export const CityStage = forwardRef<SVGSVGElement, CityStageProps>(function City
                   cx={b.cx}
                   cy={b.cy}
                   r={b.width * 0.6}
-                  style={{ opacity: Math.min(0.6, Math.abs(treatedPulseIntensity)) }}
+                  style={{ opacity: Math.min(0.6, Math.abs(treatedPulseIntensity)), fill: fill ?? undefined }}
                 />
               )}
               <rect
@@ -62,7 +62,11 @@ export const CityStage = forwardRef<SVGSVGElement, CityStageProps>(function City
                 height={b.height}
                 rx={4}
                 className={isTreated ? "zone-block zone-block-treated" : "zone-block"}
-                style={fill ? { fill } : undefined}
+                // An independent review caught the stroke/pulse ring staying a hardcoded red
+                // (via CSS var(--accent-red)) regardless of the real effect's sign, so a positive
+                // (blue-fill) result still got a red halo, muddying the two-color encoding. Both
+                // fill AND stroke now come from the same computed color (resultVisualEncoding.ts).
+                style={fill ? { fill, stroke: isTreated ? fill : undefined } : undefined}
               />
               <text x={b.cx} y={b.cy} textAnchor="middle" dominantBaseline="middle" className="zone-label">
                 {b.zone}

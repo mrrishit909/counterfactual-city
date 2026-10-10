@@ -53,8 +53,23 @@ REQUIREMENTS.yaml` for per-requirement status.
   and the dossier's palette describe. Intentional sequencing (verify the architecture before
   investing in visuals), not an oversight.
 
+## Cinematic intro (Stage 2)
+
+- **Visual quality does not yet meet the "distinctive, polished, art-directed" bar.** An
+  independent review's own words: the current intro "reads as a wireframe, not a finished
+  cinematic city... a uniform grid of identical flat gray rounded rectangles... no skyline, no
+  depth, no texture." This is accurate. Three real functional defects found by the same review
+  (an error-state dead end, a reduced-motion Skip Intro no-op, and a camera-targeting bug) were
+  fixed and verified (`verification/STAGE2_INDEPENDENT_REVIEW.md`); the visual-design gap was not
+  fixed in that pass, it is carried forward as explicit Stage 3 work (`docs/ART_DIRECTION.md`
+  section 1), not silently dropped.
+- **This fix pass has not itself been re-reviewed by a fresh, separate reviewer.** Self-verified
+  thoroughly (reproduce-before-fix evidence for all 3 blocking defects, full suite green,
+  live-screenshot confirmation), but `CTY-MOTION-001` stays at `implemented`, not
+  `independently verified`, until a fresh pass confirms the fixes.
+
 ## Not yet built
 
-All 6 chapters, the cinematic intro, the flagship "two urban timelines diverge" interaction, 3D/
-spatial rendering (if justified by measurement), responsive compositions beyond the 3 smoke-test
-viewports, reduced-motion handling (there is no motion yet to reduce), and performance budgets.
+Chapters 2-6, the flagship "two urban timelines diverge" interaction (chapter 4, per
+`docs/ART_DIRECTION.md`'s chapter plan), 3D/spatial rendering (if justified by measurement),
+responsive compositions per-chapter beyond the intro's own 3 breakpoints, and performance budgets.
