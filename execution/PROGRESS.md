@@ -2,15 +2,15 @@
 
 ## Current milestone
 
-M0-M4 and Stage 1 (architecture acceptance) DONE. All 6 required interactions (CTY-INT-001 through
-006), CTY-DATA-001, CTY-MATH-001, and CTY-UX-001 are implemented; all but CTY-DATA-001 are now
-**independently verified** (see `verification/STAGE1_ARCHITECTURE_REVIEW.md`). A fresh reviewer with
-no access to this session's own notes found and this session fixed one real defect (slider thumb
-desync after clearing custom weights) and one test-quality gap (a parity tolerance 40x looser than
-actually needed); verdict was ARCHITECTURE SOUND to proceed.
+M0-M4 and Stage 1 (architecture acceptance) DONE. Stage 2 (cinematic vertical slice: intro only,
+beats A-C) DONE and about to go through independent review. All 6 required interactions, CTY-DATA-001,
+CTY-MATH-001, CTY-UX-001, and CTY-MOTION-001 are implemented; all but CTY-DATA-001 (data strategy,
+outside Stage 1's review scope) and CTY-MOTION-001 (pending the Stage 2 review about to run) are
+**independently verified**.
 
-Chapters, intro, art direction, 3D, and motion are explicitly NOT started, by design (Stage 2 next),
-not oversight.
+Full 6-chapter build, laboratory integration inside the cinematic experience, performance engineering,
+and final adversarial review are explicitly NOT started yet, by design, not oversight. See "Next
+critical-path task" below.
 
 This is an honest in-progress state, not a completion claim. The Atlas's own complexity estimate for
 this project is 9/10 overall with a rough effort of 106-232 focused person-hours (docs/PROJECT_SPEC.md).
@@ -89,14 +89,28 @@ None currently running; this session's work ended at a clean, fully green commit
 ## Next critical-path task
 
 **Stage 1 is done** (verdict ARCHITECTURE SOUND, 2 findings fixed, see
-`verification/STAGE1_ARCHITECTURE_REVIEW.md`). Next:
+`verification/STAGE1_ARCHITECTURE_REVIEW.md`). **Stage 2 (intro-only vertical slice) is built**: a
+persistent SVG city stage, a 3-beat scroll sequence (street grid, data labels, camera push + real
+result encoding), Skip Intro, reduced motion, 3 responsive breakpoints, reverse/fast-jump scroll all
+confirmed deterministic. 11/11 Playwright (`e2e/intro.spec.ts`). Two real defects found and fixed
+during this build (GSAP `pin: true` trapping scroll with no way out, fixed by switching to CASCADIA's
+own proven CSS-sticky architecture; Skip Intro reading a pinned element's dead rect, fixed after the
+architecture change). See `specifications/REQUIREMENTS.yaml`'s `CTY-MOTION-001` row for full detail.
 
-**Stage 2: cinematic vertical slice.** One integrated sequence with a real
-3D/spatial city environment, continuous camera movement, GSAP scroll choreography, a functional
-intervention control, real counterfactual computation, a data-driven visual change, reverse-scroll
-restoration, and responsive/reduced-motion alternatives, art-directed per
-`docs/VISUAL_REFERENCE_RESEARCH.md` and the dossier's palette (`#F3F0E8`/`#D65343`/`#4B84C5`). Do NOT
-build all 6 chapters until this slice is independently verified (directive's own explicit instruction).
+Next: commission an independent review of this Stage 2 slice specifically (architecture, visual
+quality, real-vs-cosmetic result encoding, accessibility, responsive behavior), per the directive's
+own instruction not to build all 6 chapters until the slice is independently verified. Then:
+
+**Stage 3-5: full 6-chapter build.** Each dossier chapter (context, system, method, intervention,
+diagnostics, comparison per the execution contract's naming) gets its own distinct composition and
+camera choreography, wiring in the remaining 5 controls (currently only CTY-INT-001 is integrated
+into the cinematic layer; the other 5 live in the plain, unstyled Lab panel below) as their own
+chapter-appropriate interactions, not just a flat control list. The flagship interaction (two urban
+timelines diverging) is part of this stage, not a separate one.
+
+**Stage 6-9**: laboratory integration inside the full cinematic experience, performance engineering
+(measured, not invented), independent adversarial review of the complete build, final release
+acceptance. Not started.
 
 **Stages 3-6** (full chapters, production optimization, independent adversarial review, final release
 acceptance) follow in that order, per the directive.
@@ -128,3 +142,12 @@ acceptance) follow in that order, per the directive.
   actual achieved agreement (sub-1-unit on all 3 outcomes); the Stage 1 review correctly flagged it
   as a regression-safety gap, not a currently-wrong result. Tightened with headroom above observed
   drift.
+- **The persistent cinematic stage uses plain CSS `position: sticky`, not GSAP's `pin: true`.**
+  `pin: true` + a relative percentage `end` value was tried first for the intro and found, by direct
+  browser inspection (not assumed), to produce a pin-spacer with ZERO added height for the pin
+  duration, trapping scroll inside the section with literally no way to reach the lab below,
+  confirmed live with 100 real wheel-scroll ticks. CASCADIA's own persistent-stage chapters
+  (`~/cascadia/src/scenes/experience.css`'s `.stage-sticky`) already use plain CSS sticky instead of
+  GSAP pinning, a proven pattern reused here per the build directive's own instruction to reuse
+  verified infrastructure rather than re-fight the same bug from scratch. `src/scenes/useScene.ts`
+  (the shared GSAP lifecycle wrapper) is ported directly from CASCADIA's own implementation.

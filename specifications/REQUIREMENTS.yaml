@@ -221,8 +221,34 @@ requirements:
     behavior: "Intro and all six chapter captures, reverse-scroll and reduced-motion tests."
     owner: "motion-engineer (build) + qa-engineer/creative-director (independent review)"
     verification: ["manual:browser-design-review skill output", "visual:verification/SCREENSHOTS"]
-    status: unstarted
-    evidence_paths: []
+    status: implemented
+    evidence_paths: ["src/scenes/IntroSequence.tsx", "src/scenes/CityStage.tsx", "src/scenes/useScene.ts", "src/scenes/scenes.css", "e2e/intro.spec.ts", "verification/SCREENSHOTS"]
+    note: "Stage 2 cinematic vertical slice only (intro beat A-C); the 6 full chapters are not yet
+    built (Stage 3-5). Intro: a persistent 24-zone SVG city stage (src/scenes/CityStage.tsx), a
+    3-beat scroll sequence (street grid draws in, zone data labels resolve, camera pushes toward
+    the treated zone while the treated zone's color/pulse resolves to the REAL current DiD result,
+    src/scenes/resultVisualEncoding.ts, not a placeholder), Skip Intro, and a reduced-motion
+    instant-final-state path. 11/11 Playwright tests (e2e/intro.spec.ts): forward scroll, reverse
+    scroll (confirmed deterministic, GSAP scrub is a pure function of scroll position), fast-jump
+    recovery, Skip Intro (keyboard-operable), reduced motion (2 tests), 3 responsive breakpoints
+    with no horizontal overflow, zero console errors. Screenshots at all 3 breakpoints opened and
+    visually confirmed, not just generated (verification/SCREENSHOTS/intro-*.png).
+    Two real defects found and fixed during this build, not glossed over: (1) GSAP's `pin: true` +
+    a relative percentage end value was tried first and found, by direct browser inspection, to
+    produce a pin-spacer with ZERO added height for the pin duration, silently trapping scroll
+    with no way to reach the lab below, confirmed live (100 real wheel-scroll ticks could not
+    escape it); fixed by switching to CASCADIA's own proven architecture, plain CSS `position:
+    sticky` for the persistent stage with ScrollTrigger reading scroll progress only (no pin), per
+    ~/cascadia/src/scenes/experience.css's `.stage-sticky`. (2) Skip Intro computed its scroll
+    target from the pinned element's own getBoundingClientRect(), which is constant once pinned
+    (position: fixed), landing nowhere; fixed, and after the architecture change, verified to land
+    at the exact, correct boundary between intro and lab. The shared GSAP lifecycle wrapper
+    (src/scenes/useScene.ts) is ported directly from CASCADIA's own verified implementation, not
+    re-derived, per the build directive's instruction to reuse proven infrastructure. Documented
+    deviation from the dossier's literal storyboard wording: beat B substitutes zone-label
+    resolution for literal 'traffic pulses' (an infinite loop doesn't compose with a scrub-bound
+    timeline, which is what makes reverse/fast-jump determinism free); see IntroSequence.tsx's own
+    header comment. Not yet independently verified by a separate reviewer."
   - id: CTY-RELEASE-001
     project: "COUNTERFACTUAL CITY"
     priority: P0

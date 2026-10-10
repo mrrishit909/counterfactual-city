@@ -1,0 +1,114 @@
+.intro-section {
+  position: relative;
+  /* Real scroll distance for the scrubbed sequence: 100vh of sticky viewport plus 300vh of extra
+     scroll to scrub across. Plain CSS height, not GSAP's pin-spacer (see IntroSequence.tsx's own
+     header comment for why: GSAP's own pin-spacer was found to add zero height for the pin
+     duration under this exact pin+scrub config, trapping scroll with no way out). */
+  height: 400vh;
+}
+
+.intro-sticky {
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  overflow: hidden;
+  background: #1c1c1a;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.intro-title {
+  position: absolute;
+  top: 10%;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 3;
+  text-align: center;
+  color: var(--paper);
+}
+
+.intro-title h1 {
+  margin: 0;
+  font-size: 2.25rem;
+}
+
+.intro-title p {
+  margin: 0.25rem 0 0;
+  color: #cfcabb;
+}
+
+.skip-intro {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  z-index: 4;
+  background: transparent;
+  color: var(--paper);
+  border-color: var(--paper);
+}
+
+.city-stage-wrap {
+  width: min(90vw, 900px);
+  aspect-ratio: 820 / 580;
+}
+
+.city-stage {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+.road {
+  stroke: #3a3a35;
+  stroke-width: 6;
+}
+
+.zone-block {
+  fill: #4a4a44;
+  stroke: #6b6b62;
+  stroke-width: 1;
+}
+
+.zone-block-treated {
+  stroke: var(--accent-red);
+  stroke-width: 2;
+}
+
+.zone-label {
+  fill: #e8e5db;
+  font-size: 18px;
+  font-family: ui-sans-serif, system-ui, sans-serif;
+  pointer-events: none;
+}
+
+.treated-pulse {
+  fill: var(--accent-red);
+}
+
+@media (max-width: 1023px) {
+  .city-stage-wrap {
+    width: min(94vw, 600px);
+  }
+  .intro-title h1 {
+    font-size: 1.5rem;
+  }
+}
+
+@media (max-width: 599px) {
+  .intro-title {
+    top: 6%;
+  }
+  .city-stage-wrap {
+    width: 94vw;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .intro-section {
+    height: 100vh;
+  }
+  .intro-sticky {
+    position: relative;
+  }
+}

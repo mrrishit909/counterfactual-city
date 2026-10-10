@@ -1,6 +1,8 @@
 import { ScenarioProvider, useScenario } from "./engine/ScenarioContext";
+import { IntroSequence } from "./scenes/IntroSequence";
 import type { Outcome } from "./engine/types";
 import "./App.css";
+import "./scenes/scenes.css";
 
 const OUTCOME_LABELS: Record<Outcome, string> = {
   trip_volume: "Trip volume (trips/day)",
@@ -213,7 +215,7 @@ function PretrendBadge() {
   );
 }
 
-function Lab() {
+export function Lab() {
   const { load, did, didError, reset } = useScenario();
 
   if (load.status === "loading") {
@@ -281,7 +283,9 @@ function Lab() {
 function App() {
   return (
     <ScenarioProvider>
-      <Lab />
+      <IntroSequence>
+        <Lab />
+      </IntroSequence>
     </ScenarioProvider>
   );
 }

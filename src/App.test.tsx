@@ -1,15 +1,24 @@
 import { fireEvent, render, screen, waitFor } from "@testing-library/react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
-import App from "./App";
+import { Lab } from "./App";
+import { ScenarioProvider } from "./engine/ScenarioContext";
 import panelFixture from "./engine/__fixtures__/panel.json";
 
 // jsdom does not drive a native <input type="range">'s value from synthetic ArrowLeft/ArrowRight
 // key events the way a real browser does (the same class of tooling gap CASCADIA's own e2e suite
 // documented for <select> elements), so these tests use fireEvent.change directly, matching how
 // Testing Library's own docs recommend testing range inputs, while the real keyboard path is left
-// to a Playwright e2e test against a real browser (e2e/intervention-date.spec.ts).
+// to a Playwright e2e test against a real browser (e2e/smoke.spec.ts).
+//
+// Renders <Lab/> directly (the control panel), not the full <App/> (which wraps it in
+// <IntroSequence>, a pinned ScrollTrigger scene): jsdom cannot correctly revert ScrollTrigger's
+// pin-spacer DOM restructuring on unmount (confirmed directly: RTL's automatic cleanup throws
+// "NotFoundError: the node to be removed is not a child of this node" even after explicitly
+// killing every ScrollTrigger in test-setup.ts's afterEach), a jsdom limitation, not a real-browser
+// one, Playwright's e2e suite (e2e/smoke.spec.ts, e2e/intro.spec.ts) exercises the full pinned App
+// in an actual browser instead, which is the correct place to test scroll-pin behavior anyway.
 
-describe("App", () => {
+describe("Lab", () => {
   beforeEach(() => {
     vi.stubGlobal(
       "fetch",
@@ -21,7 +30,11 @@ describe("App", () => {
   });
 
   it("loads the panel, shows a real DiD estimate, and reacts to the intervention-day control", async () => {
-    render(<App />);
+    render(
+      <ScenarioProvider>
+        <Lab />
+      </ScenarioProvider>,
+    );
     await waitFor(() => expect(screen.getByTestId("did-result")).toBeInTheDocument());
 
     const attBefore = screen.getByTestId("att-value").textContent;
@@ -37,7 +50,11 @@ describe("App", () => {
   });
 
   it("Reset Scenario restores the baseline intervention day", async () => {
-    render(<App />);
+    render(
+      <ScenarioProvider>
+        <Lab />
+      </ScenarioProvider>,
+    );
     await waitFor(() => expect(screen.getByTestId("did-result")).toBeInTheDocument());
 
     const slider = screen.getByLabelText<HTMLInputElement>(/intervention day/i);
