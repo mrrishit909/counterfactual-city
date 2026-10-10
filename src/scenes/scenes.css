@@ -175,8 +175,16 @@
 @media (max-width: 1023px) {
   .chapter-sticky {
     flex-direction: column;
-    justify-content: center;
+    justify-content: flex-start;
     padding: 1.5rem;
+    /* A real bug found during the evidence-sweep visual QA pass: with the base `overflow: hidden`
+       (set for the desktop pin-free layout), any chapter whose stacked mobile content exceeds
+       100vh clips the rest for the chapter's entire pinned scroll duration (position: sticky holds
+       the box in place; nothing re-measures or reflows the content inside it as the outer page
+       scrolls), permanently hiding controls below the fold. Confirmed live on chapters 2 and 3's
+       own mobile captures (verification/SCREENSHOTS/ch2-mobile-start.png,
+       ch3-mobile-start.png) before this fix. */
+    overflow-y: auto;
   }
   .chapter-stage-wrap,
   .chapter-controls {
@@ -197,6 +205,30 @@
     position: relative;
   }
 }
+
+/* Visual distinctiveness pass (first increment): chapters 2 and 3 are literally adjacent and
+   otherwise share the exact same grid-left/controls-right skeleton (docs/ART_DIRECTION.md section
+   5's own "no two adjacent chapters share an archetype" rule, and a real finding from the
+   project's own visual QA self-review). Chapter 3 mirrors the composition (controls left, grid
+   right) and takes a subtle wash of its own accent color, rather than changing the verified
+   sticky-section architecture itself. Chapter 5 (not adjacent to 2/3, but visually close to them
+   otherwise) gets a bordered "inspector" framing to read as its own distinct archetype. This is a
+   first increment, not the full visual-design pass still owed (see LIMITATIONS.md). */
+.chapter-matched-controls .chapter-sticky {
+  background: color-mix(in srgb, var(--accent-blue) 6%, var(--paper));
+}
+
+.chapter-diagnostics .chapter-sticky {
+  border-top: 1px solid var(--hairline);
+  border-bottom: 1px solid var(--hairline);
+}
+
+.chapter-diagnostics .chapter-controls {
+  border: 1px solid var(--hairline);
+  padding: 1.25rem;
+  background: var(--paper);
+}
+
 
 /* Chapter 4, the flagship interaction: two city stages that draw apart on scroll. */
 .chapter-sticky-flagship {

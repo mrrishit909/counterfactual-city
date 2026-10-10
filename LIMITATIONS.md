@@ -100,23 +100,39 @@ REQUIREMENTS.yaml` for per-requirement status.
   mandatory independent visual review (CLAUDE.md) should judge against real screenshots, not
   something this build pass judged on its own.
 
-## Cross-chapter visual distinctiveness (flagged for the mandatory visual QA pass)
+## Cross-chapter visual distinctiveness (first increment done, full pass still owed)
 
-Chapters 2, 3, and 5 currently share the same grid-left/controls-right composition and CSS classes
-(`.chapter-stage-wrap`/`.chapter-controls`), differing in content (what the control does, whether the
-grid highlights zones) but not in layout skeleton. This is exactly the failure mode CLAUDE.md's own
-mandatory-visual-QA section warns about by name. The still-owed "real visual-design pass" below is
-meant to address this; until an independent visual QA pass with real screenshots confirms otherwise,
-treat chapter-level visual distinctiveness as NOT yet verified, not as done.
+Chapters 2, 3, and 5 originally shared the same grid-left/controls-right composition and CSS classes
+(`.chapter-stage-wrap`/`.chapter-controls`), differing in content but not in layout skeleton, exactly
+the failure mode CLAUDE.md's own mandatory-visual-QA section warns about by name. A first increment
+is done: chapter 3 (literally adjacent to chapter 2) now mirrors the composition (grid right instead
+of left, via actual element reordering so DOM/tab order still matches visual order) with a subtle
+accent-blue wash; chapter 5 gets a bordered "inspector" panel treatment. This was NOT judged by an
+independent reviewer, only by this session's own self-review of real screenshots
+(`verification/SCREENSHOTS/ch3-desktop-start.png`, `ch5-desktop-start.png`); treat it as a real but
+partial improvement, not confirmation that the full release-gate bar is met.
+
+## Mobile content overflow (found and fixed during the evidence sweep)
+
+Found via the mandatory visual QA pass, not from any passing test: any chapter whose stacked mobile
+content exceeds 100vh was permanently clipping the rest of that content for the chapter's entire
+pinned scroll duration (`.chapter-sticky`'s `overflow: hidden`, correct for the desktop layout, never
+re-measured as the outer page scrolls under `position: sticky`). This affected chapters 2 and 3 at
+minimum and had shipped undetected across three prior commits. Fixed with `overflow-y: auto` on
+`.chapter-sticky` at the mobile/tablet breakpoint (confirmed live: the previously-unreachable
+"Treated zone" dropdown on chapter 2's own mobile view is now reachable via an internal scroll
+gesture within the chapter's own sticky panel). This is a nested-scroll-area pattern (the chapter
+panel scrolls independently of the outer page scroll while pinned); it was not tested for how it
+feels on a real touch device, only confirmed programmatically reachable.
 
 ## Not yet built
 
-All 6 chapters now exist, and a fixed chapter nav (`src/scenes/ChapterNav.tsx`) with an
-always-reachable Reset Scenario now satisfies the release gate's "clear navigation" requirement.
-Still not built: the real visual-design pass (varied block treatment, asymmetric composition,
-texture/depth cues beyond the palette re-skin, and the cross-chapter distinctiveness gap noted
-above), the full per-chapter evidence-harness sweep (CTY-MOTION-001; `evidence.spec.ts` currently
-covers only the intro), 3D/spatial rendering (if
+All 6 chapters now exist, a fixed chapter nav (`src/scenes/ChapterNav.tsx`) with an always-reachable
+Reset Scenario satisfies the release gate's "clear navigation" requirement, and `evidence.spec.ts`
+now captures all 6 chapters (not just the intro) at every breakpoint, with every image actually
+reviewed this pass per CLAUDE.md's own mandatory rule. Still not built: the rest of the real
+visual-design pass (varied block treatment, asymmetric composition, texture/depth cues beyond the
+palette re-skin and the first cross-chapter-distinctiveness increment above), 3D/spatial rendering (if
 justified by measurement), responsive compositions per-chapter beyond chapters 1-6's own 3
 breakpoints, and performance budgets. The plain Lab `<main>` section below chapter 6 still shows the
 raw DiD result; whether it should be trimmed now that every control has its own chapter home is an

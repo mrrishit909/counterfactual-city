@@ -202,18 +202,7 @@ re-skin.
      kicker labels used the `&mdash;` entity; commit subjects used the unicode character itself).
      Not amending prior commits per the project's own git discipline; fixed going forward and in
      all current file contents.
-9. Still owed before Stage 3 can be called done against the release gate (not yet done):
-   - **The mandatory visual-design pass** (step 2 above): chapters 2, 3, and 5 currently share the
-     identical grid-left/controls-right composition and CSS classes (chapter 5's own commit says so
-     directly), which is exactly the "technically functional but visually ordinary" failure mode
-     CLAUDE.md's own SIGNALROOM story warns against. Chapter 4's divergence motion is also real but
-     subtle (xPercent ±6 on ~320px-wide stages); whether it needs to be more pronounced to read as
-     the dossier's flagship moment is an open visual-QA question, not yet judged by a reviewer.
-   - **The full chapter evidence sweep** (`CTY-MOTION-001`): `evidence.spec.ts` only captures the
-     intro; chapters 2-6 need the same screenshot-at-every-breakpoint-plus-scroll-recording pass
-     before an independent visual QA reviewer looks at them, per CLAUDE.md's own mandatory
-     independent-visual-QA rule.
-10. **DONE: chapter navigation** (`src/scenes/ChapterNav.tsx`), closing the release gate's "clear
+9. **DONE: chapter navigation** (`src/scenes/ChapterNav.tsx`), closing the release gate's "clear
     navigation" + nav-transitions motion-layer gap. A fixed chapter index (right-anchored dot rail
     desktop/tablet, a bottom bar on mobile) built on `useActiveChapter` (`src/scenes/useActiveChapter.ts`,
     already in the codebase ported from CASCADIA, never previously wired to any UI). Clicking a dot
@@ -234,18 +223,44 @@ re-skin.
     CPU-contention flake class documented earlier in this file, roughly 1 in 20+ runs, not a new
     regression), 35/35 Vitest (one existing unit test updated for the Reset Scenario move), tsc
     clean, oxlint clean.
+10. **DONE: full chapter evidence sweep + real self-review of the images (not just green tests)**,
+    closing `CTY-MOTION-001`'s own "intro and all six chapters captured at every breakpoint" gap.
+    `e2e/evidence.spec.ts` extended from intro-only to all of chapters 2-6 (start + mid-scroll state
+    per chapter per breakpoint, plus a reduced-motion capture for chapter 4). Per CLAUDE.md's own
+    mandatory rule ("Read the resulting images yourself... before calling anything done"), every
+    image was actually opened and inspected this pass, not just generated. That inspection found and
+    fixed two more real defects, neither visible from passing tests alone:
+    - **Chapters 2 and 3 were visually near-identical** (same grid-left/controls-right skeleton,
+      literally adjacent in the chapter order), confirmed directly by comparing their own desktop
+      start-state captures side by side. Fixed with a first real increment of the still-owed visual
+      pass (not the full pass): chapter 3 now mirrors the composition (prose/controls left, grid
+      right, the actual JSX element order swapped, not a CSS `order` trick, to keep DOM/tab
+      order matching visual order) and takes a subtle wash of its own accent-blue color; chapter 5
+      gets a bordered "inspector" panel treatment to read as its own distinct archetype rather than
+      a third repeat of the same skeleton.
+    - **A real mobile-overflow bug**: any chapter whose stacked mobile content is taller than 100vh
+      was permanently clipping the rest for that chapter's entire pinned scroll duration
+      (`.chapter-sticky`'s `overflow: hidden`, inherited from the desktop layout where it's correct,
+      never re-measures or reflows as the outer page scrolls under `position: sticky`). Confirmed
+      directly on chapter 2's own mobile capture (the "Treated zone" dropdown was below the fold
+      and unreachable) before the fix, and confirmed reachable via internal scroll after it (added
+      `overflow-y: auto` at the mobile breakpoint). This affected every existing chapter (2 and 3
+      at minimum) and had shipped undetected across three prior "done" chapter commits, exactly the
+      kind of defect CLAUDE.md's own mandatory visual QA rule exists to catch before tests alone say
+      green.
+    Re-verified after both fixes: 95/95 Playwright across repeated full runs (same pre-existing
+    chapter 2 CPU-contention flake class, unrelated), zero axe-core violations, tsc/oxlint clean.
 
 **Still owed before Stage 3 can be called done against the release gate** (not yet done):
-- **The mandatory visual-design pass**: chapters 2, 3, and 5 currently share the identical
-  grid-left/controls-right composition and CSS classes, which is exactly the "technically
-  functional but visually ordinary" failure mode CLAUDE.md's own SIGNALROOM story warns against.
-  Chapter 4's divergence motion is also real but subtle (xPercent ±6 on ~320px-wide stages); whether
-  it needs to be more pronounced to read as the dossier's flagship moment is an open visual-QA
-  question, not yet judged by a reviewer.
-- **The full chapter evidence sweep** (`CTY-MOTION-001`): `evidence.spec.ts` only captures the
-  intro; chapters 2-6 need the same screenshot-at-every-breakpoint-plus-scroll-recording pass before
-  an independent visual QA reviewer looks at them, per CLAUDE.md's own mandatory
-  independent-visual-QA rule.
+- **The rest of the visual-design pass**: chapter 3/5's new distinguishing treatments are a first
+  increment, not the full pass (varied block treatment, asymmetric composition, texture/depth cues
+  beyond the palette re-skin, still not done). Chapter 4's divergence motion is also real but subtle
+  (xPercent ±6 on ~320px-wide stages); whether it needs to be more pronounced to read as the
+  dossier's flagship moment is an open visual-QA question, not yet judged by an independent reviewer.
+- **An independent visual QA reviewer has not yet looked at the evidence** generated this pass
+  (`verification/SCREENSHOTS/ch2..ch6-{desktop,tablet,mobile}-{start,midscroll}.png` plus the
+  chapter-4 reduced-motion set); this session's own self-review is not a substitute for CLAUDE.md's
+  own "genuinely independent" requirement.
 
 **Stage 4-9**: laboratory integration inside the full cinematic experience (decide what, if
 anything, remains in the standalone "lab" `<main>` section now that all 6 chapters host their own

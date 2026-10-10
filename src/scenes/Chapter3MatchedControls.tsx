@@ -53,9 +53,6 @@ export function Chapter3MatchedControls() {
       aria-labelledby="ch3-heading"
     >
       <div className="chapter-sticky">
-        <div className="chapter-stage-wrap">
-          <CityStage ref={stageRef} instanceId="ch3" nZones={24} treatedZone={scenario.treatedZone} zoneColors={zoneColors} />
-        </div>
         <div className="chapter-controls">
           <p className="chapter-kicker">03 - Matched controls</p>
           <h2 id="ch3-heading">Choose what the treated zone is compared against</h2>
@@ -64,6 +61,9 @@ export function Chapter3MatchedControls() {
             changes with every zone you add or remove, never a cosmetic preview.
           </p>
           <ControlPoolControl />
+        </div>
+        <div className="chapter-stage-wrap">
+          <CityStage ref={stageRef} instanceId="ch3" nZones={24} treatedZone={scenario.treatedZone} zoneColors={zoneColors} />
         </div>
       </div>
     </section>
