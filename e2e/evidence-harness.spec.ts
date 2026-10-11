@@ -13,6 +13,10 @@ import { fileURLToPath } from "node:url";
 // already-captured PNGs, screenshotted by Playwright itself, no new image library needed.
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
+// Evidence capture, not a behaviour test: the committed contact sheets and FRAME_PACING.json are
+// Chromium measurements, so the Firefox/WebKit projects skip this file rather than overwrite them.
+test.skip(({ browserName }) => browserName !== "chromium", "evidence is captured in Chromium only");
+
 const DIR = path.join(__dirname, "..", "verification", "SCREENSHOTS");
 const FRAMES_DIR = path.join(DIR, "scroll-frames");
 fs.mkdirSync(FRAMES_DIR, { recursive: true });
