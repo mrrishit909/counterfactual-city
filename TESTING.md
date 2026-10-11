@@ -10,6 +10,13 @@
 | Typecheck | `npx tsc -b` |, |
 | Lint | `npx oxlint` |, |
 
+**2026-10-11 update (CI hardening):** Playwright now has Chromium, Firefox and WebKit projects
+(`--project=<name>`): 128 tests per engine (384/384 passed locally across all three before the
+evidence-harness skip below; Firefox/WebKit now skip its 4 tests); CI runs each engine as its own job and
+the Pages deploy waits for all of them. `e2e/evidence-harness.spec.ts` (contact sheets,
+`FRAME_PACING.json`) runs in Chromium only so other engines don't overwrite the committed
+Chromium evidence. `PW_PORT=<port>` moves the preview off 4173.
+
 Vitest deliberately does NOT render the full pinned `<App/>`: jsdom cannot correctly revert
 `ScrollTrigger`'s own pin-spacer DOM restructuring on unmount. Scroll-pin behavior is exclusively a
 Playwright concern, against a real browser.
