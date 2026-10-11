@@ -13,9 +13,10 @@
 **2026-10-11 update (CI hardening):** Playwright now has Chromium, Firefox and WebKit projects
 (`--project=<name>`): 128 tests per engine (384/384 passed locally across all three before the
 evidence-harness skip below; Firefox/WebKit now skip its 4 tests); CI runs each engine as its own job and
-the Pages deploy waits for all of them. `e2e/evidence-harness.spec.ts` (contact sheets,
-`FRAME_PACING.json`) runs in Chromium only so other engines don't overwrite the committed
-Chromium evidence. `PW_PORT=<port>` moves the preview off 4173.
+the Pages deploy waits for all of them. The committed evidence stays Chromium's: the evidence
+harness (contact sheets, `FRAME_PACING.json`) runs in Chromium only, and `evidence.spec.ts` /
+`smoke.spec.ts` write their screenshots to `verification/SCREENSHOTS/` only in Chromium (other
+engines write to `test-results/`). `PW_PORT=<port>` moves the preview off 4173.
 
 Vitest deliberately does NOT render the full pinned `<App/>`: jsdom cannot correctly revert
 `ScrollTrigger`'s own pin-spacer DOM restructuring on unmount. Scroll-pin behavior is exclusively a
