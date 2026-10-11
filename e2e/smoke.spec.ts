@@ -7,6 +7,8 @@ import { fileURLToPath } from "node:url";
 // invoked from. ES module ("type": "module" in package.json), so __dirname isn't available directly.
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const SCREENSHOTS_DIR = path.join(__dirname, "..", "verification", "SCREENSHOTS");
+// The committed evidence is Chromium's; Firefox/WebKit runs keep their screenshots in test-results.
+const shotDir = () => (test.info().project.name === "chromium" ? SCREENSHOTS_DIR : test.info().outputDir);
 
 test("production preview loads the real panel data and shows a DiD estimate", async ({ page }) => {
   const errors: string[] = [];
@@ -19,7 +21,7 @@ test("production preview loads the real panel data and shows a DiD estimate", as
   await expect(page.getByTestId("did-result")).toBeVisible();
   await expect(page.getByTestId("att-value")).not.toHaveText("");
   expect(errors).toEqual([]);
-  await page.screenshot({ path: path.join(SCREENSHOTS_DIR, "cty-smoke-desktop.png"), fullPage: true });
+  await page.screenshot({ path: path.join(shotDir(), "cty-smoke-desktop.png"), fullPage: true });
 });
 
 test("CTY-INT-001: changing the intervention day via real keyboard input recomputes the ATT, and Reset Scenario restores baseline", async ({ page }) => {
@@ -55,7 +57,7 @@ test.describe("responsive viewports", () => {
       await page.setViewportSize({ width: vp.width, height: vp.height });
       await page.goto("/");
       await expect(page.getByTestId("did-result")).toBeVisible();
-      await page.screenshot({ path: path.join(SCREENSHOTS_DIR, `cty-${vp.name}.png`), fullPage: true });
+      await page.screenshot({ path: path.join(shotDir(), `cty-${vp.name}.png`), fullPage: true });
     });
   }
 });

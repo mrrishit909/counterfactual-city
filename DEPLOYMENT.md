@@ -6,6 +6,15 @@
 live smoke-test and Lighthouse results, independent review). The steps below remain accurate as
 the process actually used, kept as the reference for any future redeploy.
 
+## CI (since 2026-10-11)
+
+`.github/workflows/deploy.yml` runs on every push to `main` and on pull requests, as separate jobs:
+**checks** (`tsc -b`, `oxlint`, Vitest), **python** (pinned `requirements.txt`, then `pytest analysis/validation/`), **e2e** (the full Playwright suite
+including the axe-core spec, one job per engine: Chromium, Firefox, WebKit) and **build**. The
+**deploy** job `needs:` all four and runs only for a push to `main`, never for a pull request.
+Every job is read-only (`contents: read`, checkout `persist-credentials: false`); only the deploy
+job gets `pages: write` and `id-token: write`. No secrets are used. npm and pip are cached.
+
 ## Production build
 
 ```bash

@@ -3,6 +3,8 @@ import path from "node:path";
 import { fileURLToPath } from "node:url";
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const DIR = path.join(__dirname, "..", "verification", "SCREENSHOTS");
+// The committed evidence is Chromium's; Firefox/WebKit runs keep their screenshots in test-results.
+const shotDir = () => (test.info().project.name === "chromium" ? DIR : test.info().outputDir);
 
 const viewports = [
   { name: "desktop", width: 1440, height: 900 },
@@ -15,15 +17,15 @@ for (const vp of viewports) {
     await page.setViewportSize({ width: vp.width, height: vp.height });
     await page.goto("/");
     await expect(page.getByTestId("intro-city-stage")).toBeVisible();
-    await page.screenshot({ path: path.join(DIR, `intro-${vp.name}-start.png`) });
+    await page.screenshot({ path: path.join(shotDir(), `intro-${vp.name}-start.png`) });
 
     await page.evaluate(() => window.scrollTo({ top: 1200, behavior: "auto" }));
     await page.waitForTimeout(1300);
-    await page.screenshot({ path: path.join(DIR, `intro-${vp.name}-midbeat.png`) });
+    await page.screenshot({ path: path.join(shotDir(), `intro-${vp.name}-midbeat.png`) });
 
     await page.getByTestId("skip-intro").click();
     await page.waitForTimeout(300);
-    await page.screenshot({ path: path.join(DIR, `intro-${vp.name}-handoff.png`) });
+    await page.screenshot({ path: path.join(shotDir(), `intro-${vp.name}-handoff.png`) });
   });
 }
 
@@ -35,7 +37,7 @@ for (const vp of viewports) {
     await page.setViewportSize({ width: vp.width, height: vp.height });
     await page.goto("/");
     await expect(page.getByTestId("intro-city-stage")).toBeVisible();
-    await page.screenshot({ path: path.join(DIR, `intro-${vp.name}-reduced-motion.png`) });
+    await page.screenshot({ path: path.join(shotDir(), `intro-${vp.name}-reduced-motion.png`) });
   });
 }
 
@@ -67,11 +69,11 @@ for (const vp of viewports) {
       const top = await page.locator(`#${chapterId}`).evaluate((el) => el.getBoundingClientRect().top + window.scrollY);
       await page.evaluate((y) => window.scrollTo({ top: y, behavior: "auto" }), top);
       await page.waitForTimeout(300);
-      await page.screenshot({ path: path.join(DIR, `${chapterId}-${vp.name}-start.png`) });
+      await page.screenshot({ path: path.join(shotDir(), `${chapterId}-${vp.name}-start.png`) });
 
       await page.evaluate((y) => window.scrollTo({ top: y + 400, behavior: "auto" }), top);
       await page.waitForTimeout(1300);
-      await page.screenshot({ path: path.join(DIR, `${chapterId}-${vp.name}-midscroll.png`) });
+      await page.screenshot({ path: path.join(shotDir(), `${chapterId}-${vp.name}-midscroll.png`) });
     });
   }
 }
@@ -93,7 +95,7 @@ for (const vp of viewports) {
       const top = await page.locator(`#${chapterId}`).evaluate((el) => el.getBoundingClientRect().top + window.scrollY);
       await page.evaluate((y) => window.scrollTo({ top: y, behavior: "auto" }), top);
       await page.waitForTimeout(300);
-      await page.screenshot({ path: path.join(DIR, `${chapterId}-${vp.name}-reduced-motion.png`) });
+      await page.screenshot({ path: path.join(shotDir(), `${chapterId}-${vp.name}-reduced-motion.png`) });
     });
   }
 }
@@ -114,5 +116,5 @@ test("ch5 placebo-result evidence (post-click state) at desktop", async ({ page 
   await page.getByTestId("run-placebo").click();
   await expect(page.getByTestId("placebo-result")).toBeVisible();
   await page.waitForTimeout(200);
-  await page.screenshot({ path: path.join(DIR, "ch5-desktop-placebo-result.png") });
+  await page.screenshot({ path: path.join(shotDir(), "ch5-desktop-placebo-result.png") });
 });
